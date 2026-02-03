@@ -1,25 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
 import { toast, Toaster } from 'sonner';
 import type { Submission } from '@shared/types';
-import { Check, X, ShieldAlert, Database, AlertCircle } from 'lucide-react';
+import { Check, X, Database, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
 export function AdminPage() {
   const queryClient = useQueryClient();
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [pass, setPass] = useState('');
-  const [errorCount, setErrorCount] = useState(0);
+
   useEffect(() => {
     document.title = 'NapMovies 🌙 | Terminal';
   }, []);
+
   const { data: submissions, isLoading } = useQuery({
     queryKey: ['admin-submissions'],
     queryFn: () => api<Submission[]>('/api/admin/submissions'),
-    enabled: isAuthorized
+    enabled: true
   });
+
   const moderateMutation = useMutation({
     mutationFn: ({ id, action }: { id: string; action: 'approve' | 'reject' }) =>
       api(`/api/admin/submissions/${id}/moderate`, {
@@ -33,6 +34,7 @@ export function AdminPage() {
     },
     onError: () => toast.error('Moderation signal lost.')
   });
+
   const resetMutation = useMutation({
     mutationFn: () => api('/api/admin/reset-seeds', { method: 'POST' }),
     onSuccess: () => {
@@ -42,59 +44,9 @@ export function AdminPage() {
     },
     onError: () => toast.error('Resync failure.')
   });
-  const handleLogin = () => {
-    if (pass === 'sleep') {
-      setIsAuthorized(true);
-      toast.success('Access granted.');
-    } else {
-      setErrorCount(prev => prev + 1);
-      toast.error('INVALID_ACCESS_KEY');
-      setPass('');
-    }
-  };
-  if (!isAuthorized) {
-    return (
-      <div className="min-h-screen bg-retro-bg text-retro-text flex items-center justify-center p-4 relative">
-        <div className="crt-overlay" />
-        <motion.div
-          key={errorCount}
-          initial={errorCount > 0 ? { x: [-10, 10, -10, 10, 0] } : {}}
-          transition={{ duration: 0.4 }}
-          className="max-w-md w-full border border-retro-muted/40 bg-retro-card p-12 space-y-10 shadow-2xl shadow-black/80 relative z-10"
-        >
-          <div className="flex justify-center text-retro-accent">
-            <ShieldAlert className="w-16 h-16 animate-pulse" />
-          </div>
-          <div className="space-y-3">
-            <h1 className="text-center font-black uppercase tracking-[0.5em] text-sm text-white">SECURE_TERMINAL_V5</h1>
-            <p className="text-center text-[10px] opacity-40 tracking-[0.3em] uppercase">Identification_Required_For_Root_Access</p>
-          </div>
-          <input
-            type="password"
-            placeholder="ACCESS_KEY"
-            className="w-full bg-black/40 border border-retro-muted/40 p-6 text-center text-xl rounded-none focus:border-retro-accent focus:ring-1 focus:ring-retro-accent/20 outline-none transition-all placeholder:opacity-10 text-retro-accent tracking-[0.5em]"
-            value={pass}
-            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-            onChange={(e) => setPass(e.target.value)}
-            autoFocus
-          />
-          <Button
-            className="w-full bg-retro-accent/10 text-retro-accent border border-retro-accent/30 uppercase text-[11px] font-black tracking-[0.4em] rounded-none h-16 hover:bg-retro-accent hover:text-retro-bg transition-all duration-slow"
-            onClick={handleLogin}
-          >
-            Authenticate
-          </Button>
-          {errorCount > 0 && (
-            <p className="text-center text-retro-danger text-[9px] font-bold tracking-widest uppercase animate-bounce">
-              Failed_Attempts: {errorCount}
-            </p>
-          )}
-        </motion.div>
-        <Toaster theme="dark" position="bottom-center" />
-      </div>
-    );
-  }
+
   const pendingSubmissions = submissions?.filter(s => s.status === 'pending') ?? [];
+
   return (
     <div className="min-h-screen bg-retro-bg text-retro-text relative">
       <div className="crt-overlay" />
@@ -150,16 +102,16 @@ export function AdminPage() {
                       <div className="space-y-6 flex-1">
                         <div className="flex items-center gap-4">
                           <h3 className="text-2xl font-black uppercase tracking-widest text-white">{sub.title}</h3>
-                          <span className="text-retro-accent/50 font-black text-sm tracking-tighter">[{sub.year}]</span>
+                          <span className="text-retro-accent/50 font-black text-sm tracking-tighter">[{sub.year || 'N/A'}]</span>
                         </div>
                         <div className="relative">
                           <div className="absolute top-0 left-0 w-1.5 h-full bg-retro-accent/20" />
                           <p className="text-base italic text-retro-text/90 leading-relaxed pl-8 max-w-2xl font-light">
-                            "{sub.reason}"
+                            "{sub.reason || 'No reason provided'}"
                           </p>
                         </div>
                         <div className="text-[9px] opacity-30 uppercase tracking-widest font-bold">
-                          Received_At: {new Date(sub.createdAt).toISOString()}
+                          Received_At: {sub.createdAt ? new Date(sub.createdAt).toISOString() : 'Unknown'}
                         </div>
                       </div>
                       <div className="flex gap-4 w-full md:w-auto">
@@ -192,3 +144,4 @@ export function AdminPage() {
     </div>
   );
 }
+//

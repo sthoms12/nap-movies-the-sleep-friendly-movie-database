@@ -35,12 +35,6 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <Link
-              to="/admin"
-              className="text-[9px] opacity-20 hover:opacity-100 hover:text-retro-accent transition-all uppercase tracking-widest ml-4 px-2 py-1 border border-transparent hover:border-retro-accent/20"
-            >
-              /ADMIN
-            </Link>
           </div>
         </div>
       </div>
