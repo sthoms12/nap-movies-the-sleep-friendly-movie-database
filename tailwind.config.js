@@ -10,31 +10,31 @@ export default {
   		},
   		colors: {
         'retro': {
-          bg: '#0a0a14',
-          card: '#0d0d1f',
+          bg: '#111827',
+          card: '#1f2937',
           text: '#c7d2fe',
-          accent: '#a3bffa',
-          muted: '#43447a',
-          danger: '#f1c0c0'
+          accent: '#60a5fa',
+          muted: '#4b5563',
+          danger: '#f87171'
         },
-  			background: '#0a0a14',
+  			background: '#111827',
   			foreground: '#c7d2fe',
   			muted: {
-  				DEFAULT: 'hsl(244 15% 15%)',
-  				foreground: 'hsl(244 15% 65%)'
+  				DEFAULT: 'hsl(215 25% 27%)',
+  				foreground: 'hsl(215 20% 65%)'
   			},
   			primary: {
-  				DEFAULT: '#a3bffa',
-  				foreground: '#0a0a14'
+  				DEFAULT: '#60a5fa',
+  				foreground: '#111827'
   			},
-  			border: '#111122',
-  			ring: '#a3bffa',
+  			border: '#374151',
+  			ring: '#60a5fa',
   			card: {
-  				DEFAULT: '#0d0d1f',
+  				DEFAULT: '#1f2937',
   				foreground: '#c7d2fe'
   			},
   			secondary: {
-  				DEFAULT: '#111122',
+  				DEFAULT: '#111827',
   				foreground: '#c7d2fe'
   			},
   		},

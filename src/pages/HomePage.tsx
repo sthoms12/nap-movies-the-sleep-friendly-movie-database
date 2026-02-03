@@ -9,7 +9,7 @@ import { Moon, Star } from 'lucide-react';
 export function HomePage() {
   const queryClient = useQueryClient();
   useEffect(() => {
-    document.title = 'NapMovies ����';
+    document.title = 'NapMovies 🌙';
   }, []);
   const { data: movies, isLoading } = useQuery({
     queryKey: ['movies'],
@@ -23,7 +23,7 @@ export function HomePage() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['movies'] });
-      toast.success('Vote registered. Rest well.');
+      toast.success('Signal received. Sleep well.');
     },
     onError: () => toast.error('Transmission error.')
   });
@@ -32,40 +32,43 @@ export function HomePage() {
       <div className="crt-overlay" />
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-8 md:py-10 lg:py-12">
+        <div className="py-8 md:py-10 lg:py-16">
           <div className="max-w-5xl mx-auto">
-            <header className="mb-20 space-y-6 text-center pt-8">
+            <header className="mb-24 space-y-8 text-center pt-8">
               <div className="flex justify-center mb-6">
-                <div className="p-4 border border-retro-muted/20 opacity-40">
-                  <Moon className="w-10 h-10 text-retro-accent" />
+                <div className="p-5 border border-retro-accent/10 bg-retro-accent/5 animate-pulse">
+                  <Moon className="w-12 h-12 text-retro-accent" />
                 </div>
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold tracking-[0.2em] uppercase opacity-90">
-                Nap <span className="text-retro-accent/80">Movies</span>
-              </h1>
-              <p className="text-retro-muted text-sm md:text-base max-w-lg mx-auto border-l border-retro-muted/30 pl-4 italic opacity-80 leading-relaxed">
-                "A quiet collection of low-stress cinema for late-night drifting."
+              <div className="space-y-4">
+                <h1 className="text-5xl md:text-6xl font-black tracking-[0.25em] uppercase text-white">
+                  NAP <span className="text-retro-accent">MOVIES</span>
+                </h1>
+                <div className="h-px w-24 bg-retro-accent/40 mx-auto" />
+              </div>
+              <p className="text-retro-text/80 text-base md:text-lg max-w-xl mx-auto italic font-light leading-relaxed">
+                "An opinionated index of low-stress cinema optimized for the drift into sleep."
               </p>
             </header>
-            <section className="space-y-8">
-              <div className="flex items-center justify-between border-b border-retro-muted/10 pb-4">
-                <h2 className="text-sm font-bold tracking-widest flex items-center gap-3 opacity-60">
-                  <Star className="w-4 h-4" /> CURRENT RANKINGS
+            <section className="space-y-10">
+              <div className="flex items-center justify-between border-b border-retro-muted/30 pb-6">
+                <h2 className="text-xs font-black tracking-[0.4em] flex items-center gap-3 text-retro-accent/80">
+                  <Star className="w-4 h-4" /> RECENT_ARCHIVE_RANKINGS
                 </h2>
-                <span className="text-[10px] opacity-40 uppercase">System.Index.v3.0</span>
+                <span className="text-[10px] opacity-30 uppercase tracking-[0.2em]">v3.5.refined</span>
               </div>
               {isLoading ? (
                 <div className="space-y-6">
                   {[1, 2, 3, 4].map(i => (
-                    <div key={i} className="h-32 bg-retro-card/30 border border-retro-muted/5 animate-pulse" />
+                    <div key={i} className="h-32 bg-retro-card/40 border border-retro-muted/10 animate-pulse" />
                   ))}
                 </div>
               ) : movies?.length === 0 ? (
-                <div className="text-center py-24 border border-dashed border-retro-muted/10 opacity-40 text-xs tracking-widest uppercase">
-                  Zero entries in database.
+                <div className="text-center py-32 border border-dashed border-retro-muted/20 opacity-40 text-xs tracking-[0.4em] uppercase">
+                  ARCHIVE_EMPTY_WAITING_FOR_INPUT
                 </div>
               ) : (
-                <div className="grid gap-6">
+                <div className="grid gap-8">
                   {movies?.map((movie, idx) => (
                     <MovieCard
                       key={movie.id}
@@ -79,9 +82,11 @@ export function HomePage() {
               )}
             </section>
           </div>
-          <footer className="py-16 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">
-            <p>System.Nap_Movies_Archive_v3.0</p>
-            <p className="mt-2">© {new Date().getFullYear()} Minimalist Sleep Foundation</p>
+          <footer className="py-24 text-center border-t border-retro-muted/10 mt-20">
+            <div className="opacity-40 text-[10px] tracking-[0.5em] uppercase space-y-3">
+              <p>Minimalist_Sleep_Foundation // Terminal_Access_004</p>
+              <p>© {new Date().getFullYear()} NAP_MOVIES_INTERNATIONAL</p>
+            </div>
           </footer>
         </div>
       </div>
