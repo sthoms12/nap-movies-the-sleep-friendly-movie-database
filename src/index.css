@@ -3,48 +3,48 @@
 @tailwind utilities;
 @layer base {
   :root {
-    /* Refined Retro Palette */
-    --background: 240 33% 4%;
+    /* Refined Retro Palette - Slate Blue / Gray */
+    --background: 222 47% 11%;
     --foreground: 228 94% 89%;
-    --primary: 221 83% 81%;
-    --primary-foreground: 240 33% 4%;
-    --muted: 244 15% 15%;
-    --muted-foreground: 244 15% 65%;
-    --border: 240 33% 10%;
-    --ring: 221 83% 81%;
-    --card: 240 33% 6%;
+    --primary: 214 95% 68%;
+    --primary-foreground: 222 47% 11%;
+    --muted: 215 25% 27%;
+    --muted-foreground: 215 20% 75%;
+    --border: 215 19% 26%;
+    --ring: 214 95% 68%;
+    --card: 217 33% 17%;
     --card-foreground: 228 94% 89%;
-    --popover: 240 33% 6%;
+    --popover: 217 33% 17%;
     --popover-foreground: 228 94% 89%;
-    --secondary: 240 33% 10%;
+    --secondary: 222 47% 15%;
     --secondary-foreground: 228 94% 89%;
-    --accent: 240 33% 15%;
+    --accent: 217 33% 25%;
     --accent-foreground: 228 94% 89%;
-    --destructive: 0 65% 85%;
-    --destructive-foreground: 240 33% 4%;
-    --input: 240 33% 10%;
+    --destructive: 0 91% 71%;
+    --destructive-foreground: 222 47% 11%;
+    --input: 215 19% 26%;
     --radius: 0;
   }
   .dark {
-    --background: 240 33% 4%;
+    --background: 222 47% 11%;
     --foreground: 228 94% 89%;
-    --primary: 221 83% 81%;
-    --primary-foreground: 240 33% 4%;
-    --muted: 244 15% 15%;
-    --muted-foreground: 244 15% 65%;
-    --border: 240 33% 10%;
-    --ring: 221 83% 81%;
-    --card: 240 33% 6%;
+    --primary: 214 95% 68%;
+    --primary-foreground: 222 47% 11%;
+    --muted: 215 25% 27%;
+    --muted-foreground: 215 20% 75%;
+    --border: 215 19% 26%;
+    --ring: 214 95% 68%;
+    --card: 217 33% 17%;
     --card-foreground: 228 94% 89%;
-    --popover: 240 33% 6%;
+    --popover: 217 33% 17%;
     --popover-foreground: 228 94% 89%;
-    --secondary: 240 33% 10%;
+    --secondary: 222 47% 15%;
     --secondary-foreground: 228 94% 89%;
-    --accent: 240 33% 15%;
+    --accent: 217 33% 25%;
     --accent-foreground: 228 94% 89%;
-    --destructive: 0 65% 85%;
-    --destructive-foreground: 240 33% 4%;
-    --input: 240 33% 10%;
+    --destructive: 0 91% 71%;
+    --destructive-foreground: 222 47% 11%;
+    --input: 215 19% 26%;
   }
   * {
     @apply border-border;
@@ -60,14 +60,14 @@
     text-rendering: optimizeLegibility;
   }
   ::selection {
-    background: rgba(163, 191, 250, 0.2);
-    color: #c7d2fe;
+    background: rgba(96, 165, 250, 0.3);
+    color: #ffffff;
   }
 }
 @layer components {
   .crt-overlay {
-    @apply pointer-events-none fixed inset-0 z-50 opacity-[0.015];
-    background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.25) 50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06));
+    @apply pointer-events-none fixed inset-0 z-50 opacity-[0.012];
+    background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.2) 50%),linear-gradient(90deg,rgba(255,0,0,0.04),rgba(0,255,0,0.02),rgba(0,0,255,0.04));
     background-size: 100% 2px, 3px 100%;
   }
 }
