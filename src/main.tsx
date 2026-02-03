@@ -14,6 +14,7 @@ import '@/index.css'
 import { HomePage } from '@/pages/HomePage'
 import { SubmitPage } from '@/pages/SubmitPage'
 import { AdminPage } from '@/pages/AdminPage'
+import { Toaster } from 'sonner';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -42,9 +43,10 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ErrorBoundary>
-        <RouterProvider router={router} />
-      </ErrorBoundary>
+        <ErrorBoundary>
+          <RouterProvider router={router} />
+        </ErrorBoundary>
+        <Toaster theme="dark" position="bottom-center" />
     </QueryClientProvider>
   </StrictMode>,
 )
