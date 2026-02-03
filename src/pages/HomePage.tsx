@@ -17,7 +17,7 @@ export function HomePage() {
   });
   const voteMutation = useMutation({
     mutationFn: ({ id, type }: { id: string; type: 'nap' | 'engaging' }) =>
-      api(`/api/movies/${id}/vote`, {
+      api<{ success: boolean }>(`/api/movies/${id}/vote`, {
         method: 'POST',
         body: JSON.stringify({ type })
       }),

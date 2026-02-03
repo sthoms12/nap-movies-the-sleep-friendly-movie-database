@@ -81,4 +81,16 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     }
     return ok(c, { success: true });
   });
+
+  // MAINTENANCE
+  app.post('/api/admin/reset-seeds', async (c) => {
+    // 1. Clear existing movies from index and storage
+    const { items: ids } = await MovieEntity.list(c.env, null, 1000);
+    if (ids.length > 0) {
+      await MovieEntity.deleteMany(c.env, ids.map(m => m.id));
+    }
+    // 2. Force re-seed using latest INITIAL_MOVIES
+    await MovieEntity.ensureSeed(c.env);
+    return ok(c, { message: 'Archive Resynchronized' });
+  });
 }
