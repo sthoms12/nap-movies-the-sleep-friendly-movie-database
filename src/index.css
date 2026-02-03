@@ -12,11 +12,12 @@
     --muted-foreground: 215 20% 75%;
     --border: 215 19% 26%;
     --ring: 214 95% 68%;
-    --card: 217 33% 17%;
+    /* #1f2937 = 215 28% 17% */
+    --card: 215 28% 17%;
     --card-foreground: 228 94% 89%;
-    --popover: 217 33% 17%;
+    --popover: 215 28% 17%;
     --popover-foreground: 228 94% 89%;
-    --secondary: 222 47% 15%;
+    --secondary: 215 28% 17%;
     --secondary-foreground: 228 94% 89%;
     --accent: 217 33% 25%;
     --accent-foreground: 228 94% 89%;
@@ -34,11 +35,11 @@
     --muted-foreground: 215 20% 75%;
     --border: 215 19% 26%;
     --ring: 214 95% 68%;
-    --card: 217 33% 17%;
+    --card: 215 28% 17%;
     --card-foreground: 228 94% 89%;
-    --popover: 217 33% 17%;
+    --popover: 215 28% 17%;
     --popover-foreground: 228 94% 89%;
-    --secondary: 222 47% 15%;
+    --secondary: 215 28% 17%;
     --secondary-foreground: 228 94% 89%;
     --accent: 217 33% 25%;
     --accent-foreground: 228 94% 89%;
@@ -66,7 +67,7 @@
 }
 @layer components {
   .crt-overlay {
-    @apply pointer-events-none fixed inset-0 z-50 opacity-[0.012];
+    @apply pointer-events-none fixed inset-0 z-50 opacity-[0.015];
     background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.2) 50%),linear-gradient(90deg,rgba(255,0,0,0.04),rgba(0,255,0,0.02),rgba(0,0,255,0.04));
     background-size: 100% 2px, 3px 100%;
   }

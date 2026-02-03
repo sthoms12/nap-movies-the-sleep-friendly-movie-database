@@ -29,7 +29,6 @@ export function HomePage() {
     },
     onError: () => toast.error('Transmission error.')
   });
-  // We explicitly take the top 50 as the "Nap Index" authority
   const topFifty = movies?.slice(0, 50) ?? [];
   if (error) {
     return (
@@ -49,7 +48,7 @@ export function HomePage() {
   }
   return (
     <div className="min-h-screen bg-retro-bg text-retro-text relative overflow-x-hidden selection:bg-retro-accent/30 selection:text-white">
-      <div className="crt-overlay opacity-[0.015]" />
+      <div className="crt-overlay" />
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-8 md:py-10 lg:py-16">

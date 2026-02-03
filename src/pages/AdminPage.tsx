@@ -55,7 +55,7 @@ export function AdminPage() {
   if (!isAuthorized) {
     return (
       <div className="min-h-screen bg-retro-bg text-retro-text flex items-center justify-center p-4 relative">
-        <div className="crt-overlay opacity-[0.03]" />
+        <div className="crt-overlay" />
         <motion.div
           key={errorCount}
           initial={errorCount > 0 ? { x: [-10, 10, -10, 10, 0] } : {}}
@@ -97,7 +97,7 @@ export function AdminPage() {
   const pendingSubmissions = submissions?.filter(s => s.status === 'pending') ?? [];
   return (
     <div className="min-h-screen bg-retro-bg text-retro-text relative">
-      <div className="crt-overlay opacity-[0.012]" />
+      <div className="crt-overlay" />
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-8 md:py-10 lg:py-16">
