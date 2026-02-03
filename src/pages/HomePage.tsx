@@ -29,6 +29,7 @@ export function HomePage() {
     },
     onError: () => toast.error('Transmission error.')
   });
+  // We explicitly take the top 50 as the "Nap Index" authority
   const topFifty = movies?.slice(0, 50) ?? [];
   if (error) {
     return (
@@ -36,7 +37,7 @@ export function HomePage() {
         <div className="text-center space-y-4 border border-retro-danger/30 p-12 bg-retro-danger/5">
           <h2 className="text-retro-danger font-black tracking-[0.3em] uppercase">Connection_Lost</h2>
           <p className="text-xs opacity-60">Unable to synchronize with the Index.</p>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="text-[10px] font-bold underline tracking-widest uppercase hover:text-white transition-colors"
           >
@@ -67,7 +68,7 @@ export function HomePage() {
                 <div className="h-px w-24 bg-retro-accent/40 mx-auto" />
               </div>
               <p className="text-retro-text/70 text-base md:text-lg max-w-xl mx-auto italic font-light leading-relaxed">
-                "Browse the Top 50 Nap Movies Index — an opinionated list optimized for the drift into sleep."
+                "Browse the official Top 50 Nap Index — an opinionated collection optimized for the drift into sleep."
               </p>
             </header>
             <section className="space-y-10">
@@ -83,7 +84,7 @@ export function HomePage() {
                 </div>
                 <div className="flex items-center gap-4">
                   {isFetching && <RefreshCw className="w-3 h-3 text-retro-accent animate-spin opacity-50" />}
-                  <span className="text-[9px] opacity-30 uppercase tracking-[0.2em] hidden sm:inline">Build_4.0_Stable</span>
+                  <span className="text-[9px] opacity-30 uppercase tracking-[0.2em] hidden sm:inline">Build_4.1_Stable</span>
                 </div>
               </div>
               {isLoading ? (

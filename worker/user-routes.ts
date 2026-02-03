@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import type { Env } from './core-utils';
 import { MovieEntity, SubmissionEntity } from "./entities";
-import { ok, bad } from './core-utils';
+import { ok, bad, Index } from './core-utils';
 export function userRoutes(app: Hono<{ Bindings: Env }>) {
   // MOVIES
   app.get('/api/movies', async (c) => {
@@ -80,19 +80,19 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     }
     return ok(c, { success: true });
   });
-  // MAINTENANCE: System Reset
+  // MAINTENANCE: System Reset (Fixed to use public Index methods)
   app.post('/api/admin/reset-seeds', async (c) => {
     // 1. Clear Movies Index & Entities
-    const { items: movieIds } = await new (class extends MovieEntity {})(c.env, '').stub.listPrefix('movie:');
-    for (const mid of movieIds) {
-      const id = mid.split(':')[1];
-      if (id) await MovieEntity.delete(c.env, id);
+    const movieIndex = new Index(c.env, MovieEntity.indexName);
+    const movieIds = await movieIndex.list();
+    for (const id of movieIds) {
+      await MovieEntity.delete(c.env, id);
     }
     // 2. Clear Submissions Index & Entities
-    const { items: subIds } = await new (class extends SubmissionEntity {})(c.env, '').stub.listPrefix('submission:');
-    for (const sid of subIds) {
-      const id = sid.split(':')[1];
-      if (id) await SubmissionEntity.delete(c.env, id);
+    const subIndex = new Index(c.env, SubmissionEntity.indexName);
+    const subIds = await subIndex.list();
+    for (const id of subIds) {
+      await SubmissionEntity.delete(c.env, id);
     }
     // 3. Force re-seed from shared/mock-data.ts
     await MovieEntity.ensureSeed(c.env);
