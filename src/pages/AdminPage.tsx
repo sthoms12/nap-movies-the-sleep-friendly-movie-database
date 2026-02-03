@@ -29,7 +29,7 @@ export function AdminPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-submissions'] });
       queryClient.invalidateQueries({ queryKey: ['movies'] });
-      toast.success('Archive updated successfully.');
+      toast.success('Index updated successfully.');
     },
     onError: () => toast.error('Moderation signal lost.')
   });
@@ -38,7 +38,7 @@ export function AdminPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['movies'] });
       queryClient.invalidateQueries({ queryKey: ['admin-submissions'] });
-      toast.success('System Purge and Resync Complete');
+      toast.success('System Index and Queues Purged and Resynchronized');
     },
     onError: () => toast.error('Resync failure.')
   });
@@ -56,7 +56,7 @@ export function AdminPage() {
     return (
       <div className="min-h-screen bg-retro-bg text-retro-text flex items-center justify-center p-4 relative">
         <div className="crt-overlay opacity-[0.03]" />
-        <motion.div 
+        <motion.div
           key={errorCount}
           initial={errorCount > 0 ? { x: [-10, 10, -10, 10, 0] } : {}}
           transition={{ duration: 0.4 }}
@@ -105,12 +105,12 @@ export function AdminPage() {
             <header className="mb-16 border-b border-retro-muted/30 pb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
               <div>
                 <h1 className="text-4xl font-black uppercase tracking-[0.3em] text-white">MODERATION_QUEUE</h1>
-                <p className="text-retro-text/60 text-xs mt-4 tracking-[0.2em] font-medium">Pending Council Verification for Entry.</p>
+                <p className="text-retro-text/60 text-xs mt-4 tracking-[0.2em] font-medium">Pending Council Verification for Index Entry.</p>
               </div>
               <div className="flex gap-4 items-center">
                 <Button
                   onClick={() => {
-                    if (window.confirm('WARNING: THIS WILL PURGE ALL SUBMISSIONS AND RESET MOVIE LIST. PROCEED?')) {
+                    if (window.confirm('WARNING: THIS WILL PURGE ALL SUBMISSIONS AND RESET THE INDEX. PROCEED?')) {
                       resetMutation.mutate();
                     }
                   }}
@@ -139,7 +139,7 @@ export function AdminPage() {
               <div className="space-y-10">
                 <AnimatePresence mode="popLayout">
                   {pendingSubmissions.map((sub) => (
-                    <motion.div 
+                    <motion.div
                       key={sub.id}
                       layout
                       initial={{ opacity: 0, y: 20 }}

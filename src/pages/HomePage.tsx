@@ -5,17 +5,17 @@ import { MovieCard } from '@/components/MovieCard';
 import { Navbar } from '@/components/layout/Navbar';
 import { Toaster, toast } from 'sonner';
 import type { Movie } from '@shared/types';
-import { Moon, Star, RefreshCw } from 'lucide-react';
+import { Moon, Star, RefreshCw, Award } from 'lucide-react';
 export function HomePage() {
   const queryClient = useQueryClient();
   useEffect(() => {
-    document.title = 'NapMovies 🌙 | Archive';
+    document.title = 'NapMovies 🌙 | Index';
   }, []);
   const { data: movies, isLoading, isFetching } = useQuery({
     queryKey: ['movies'],
     queryFn: () => api<Movie[]>('/api/movies'),
-    staleTime: 30000, // 30 seconds fresh
-    refetchInterval: 60000, // Background poll every minute
+    staleTime: 30000, 
+    refetchInterval: 60000,
   });
   const voteMutation = useMutation({
     mutationFn: ({ id, type }: { id: string; type: 'nap' | 'engaging' }) =>
@@ -29,6 +29,8 @@ export function HomePage() {
     },
     onError: () => toast.error('Transmission error.')
   });
+  // Limit display to top 50
+  const topFifty = movies?.slice(0, 50) ?? [];
   return (
     <div className="min-h-screen bg-retro-bg text-retro-text relative overflow-x-hidden selection:bg-retro-accent/30 selection:text-white">
       <div className="crt-overlay opacity-[0.015]" />
@@ -50,24 +52,23 @@ export function HomePage() {
                 <div className="h-px w-24 bg-retro-accent/40 mx-auto" />
               </div>
               <p className="text-retro-text/70 text-base md:text-lg max-w-xl mx-auto italic font-light leading-relaxed">
-                "An opinionated index of low-stress cinema optimized for the drift into sleep."
+                "Browse the Top 50 Nap Movies Index — an opinionated list optimized for the drift into sleep."
               </p>
             </header>
             <section className="space-y-10">
               <div className="flex items-center justify-between border-b border-retro-muted/30 pb-6">
                 <div className="flex items-center gap-4">
                   <h2 className="text-xs font-black tracking-[0.4em] flex items-center gap-3 text-retro-accent/80 uppercase">
-                    <Star className="w-4 h-4" /> ARCHIVE_RANKINGS
+                    <Star className="w-4 h-4" /> INDEX_RANKINGS
                   </h2>
-                  {!isLoading && (
-                    <span className="text-[10px] bg-retro-accent/10 text-retro-accent px-2 py-0.5 font-bold tracking-widest border border-retro-accent/20">
-                      {movies?.length ?? 0}_FILMS_INDEXED
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2 bg-retro-accent/10 text-retro-accent border border-retro-accent/20 px-3 py-1 text-[10px] font-bold tracking-widest uppercase">
+                    <Award className="w-3 h-3" />
+                    Top 50 Curated
+                  </div>
                 </div>
                 <div className="flex items-center gap-4">
                   {isFetching && <RefreshCw className="w-3 h-3 text-retro-accent animate-spin opacity-50" />}
-                  <span className="text-[9px] opacity-30 uppercase tracking-[0.2em] hidden sm:inline">Build_3.5_Stable</span>
+                  <span className="text-[9px] opacity-30 uppercase tracking-[0.2em] hidden sm:inline">Build_4.0_Stable</span>
                 </div>
               </div>
               {isLoading ? (
@@ -76,13 +77,13 @@ export function HomePage() {
                     <div key={i} className="h-32 bg-retro-card/40 border border-retro-muted/10 animate-pulse" />
                   ))}
                 </div>
-              ) : movies?.length === 0 ? (
+              ) : topFifty.length === 0 ? (
                 <div className="text-center py-40 border border-dashed border-retro-muted/20 opacity-40 text-xs tracking-[0.4em] uppercase">
-                  ARCHIVE_EMPTY_WAITING_FOR_UPLINK
+                  INDEX_EMPTY_WAITING_FOR_UPLINK
                 </div>
               ) : (
                 <div className="grid gap-8">
-                  {movies?.map((movie, idx) => (
+                  {topFifty.map((movie, idx) => (
                     <MovieCard
                       key={movie.id}
                       movie={movie}
@@ -97,7 +98,7 @@ export function HomePage() {
           </div>
           <footer className="py-32 text-center border-t border-retro-muted/10 mt-24">
             <div className="opacity-40 text-[10px] tracking-[0.5em] uppercase space-y-4">
-              <p className="font-bold">Minimalist_Sleep_Foundation // Terminal_Access_004</p>
+              <p className="font-bold">Minimalist_Sleep_Foundation // Index_Terminal_004</p>
               <div className="flex justify-center gap-8 text-[8px] opacity-50">
                 <span>LATENCY: LOW</span>
                 <span>STATUS: SECURE</span>

@@ -49,7 +49,7 @@ export function SubmitPage() {
               onClick={() => navigate('/')}
               className="flex items-center gap-2 text-[10px] font-bold text-retro-accent/60 hover:text-retro-accent transition-all mb-12 tracking-[0.3em] uppercase"
             >
-              <ArrowLeft className="w-3 h-3" /> RETURN_TO_ARCHIVE
+              <ArrowLeft className="w-3 h-3" /> RETURN_TO_INDEX
             </button>
             <header className="mb-16 border-b border-retro-muted/20 pb-10">
               <h1 className="text-3xl md:text-4xl font-black uppercase tracking-[0.3em] text-white">PROPOSE_ENTRY</h1>

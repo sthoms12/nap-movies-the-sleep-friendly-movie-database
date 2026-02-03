@@ -5,7 +5,7 @@ import { Moon } from 'lucide-react';
 export function Navbar() {
   const location = useLocation();
   const links = [
-    { href: '/', label: 'ARCHIVE' },
+    { href: '/', label: 'INDEX' },
     { href: '/submit', label: 'PROPOSE' },
   ];
   return (
