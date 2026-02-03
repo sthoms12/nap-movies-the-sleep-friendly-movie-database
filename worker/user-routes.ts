@@ -1,75 +1,66 @@
 import { Hono } from "hono";
 import type { Env } from './core-utils';
-import { UserEntity, ChatBoardEntity } from "./entities";
-import { ok, bad, notFound, isStr } from './core-utils';
-
+import { MovieEntity, SubmissionEntity } from "./entities";
+import { ok, bad, isStr } from './core-utils';
 export function userRoutes(app: Hono<{ Bindings: Env }>) {
-  app.get('/api/test', (c) => c.json({ success: true, data: { name: 'CF Workers Demo' }}));
-
-  // USERS
-  app.get('/api/users', async (c) => {
-    await UserEntity.ensureSeed(c.env);
-    const cq = c.req.query('cursor');
-    const lq = c.req.query('limit');
-    const page = await UserEntity.list(c.env, cq ?? null, lq ? Math.max(1, (Number(lq) | 0)) : undefined);
-    return ok(c, page);
+  // MOVIES
+  app.get('/api/movies', async (c) => {
+    await MovieEntity.ensureSeed(c.env);
+    const { items } = await MovieEntity.list(c.env, null, 100);
+    // Sort by net nap score descending
+    const sorted = items
+      .filter(m => m.status === 'active')
+      .sort((a, b) => (b.votesNap - b.votesEngaging) - (a.votesNap - a.votesEngaging));
+    return ok(c, sorted);
   });
-
-  app.post('/api/users', async (c) => {
-    const { name } = (await c.req.json()) as { name?: string };
-    if (!name?.trim()) return bad(c, 'name required');
-    return ok(c, await UserEntity.create(c.env, { id: crypto.randomUUID(), name: name.trim() }));
+  app.post('/api/movies/:id/vote', async (c) => {
+    const id = c.req.param('id');
+    const { type } = (await c.req.json()) as { type: 'nap' | 'engaging' };
+    if (type !== 'nap' && type !== 'engaging') return bad(c, 'invalid vote type');
+    const movie = new MovieEntity(c.env, id);
+    if (!await movie.exists()) return bad(c, 'movie not found');
+    const updated = await movie.addVote(type);
+    return ok(c, updated);
   });
-
-  // CHATS
-  app.get('/api/chats', async (c) => {
-    await ChatBoardEntity.ensureSeed(c.env);
-    const cq = c.req.query('cursor');
-    const lq = c.req.query('limit');
-    const page = await ChatBoardEntity.list(c.env, cq ?? null, lq ? Math.max(1, (Number(lq) | 0)) : undefined);
-    return ok(c, page);
+  // SUBMISSIONS
+  app.post('/api/submit', async (c) => {
+    const { title, year, reason } = (await c.req.json()) as { title: string; year: number; reason: string };
+    if (!title?.trim() || !year || !reason?.trim()) return bad(c, 'title, year, and reason required');
+    const submission = await SubmissionEntity.create(c.env, {
+      id: crypto.randomUUID(),
+      title: title.trim(),
+      year,
+      reason: reason.trim(),
+      status: 'pending',
+      createdAt: Date.now()
+    });
+    return ok(c, submission);
   });
-
-  app.post('/api/chats', async (c) => {
-    const { title } = (await c.req.json()) as { title?: string };
-    if (!title?.trim()) return bad(c, 'title required');
-    const created = await ChatBoardEntity.create(c.env, { id: crypto.randomUUID(), title: title.trim(), messages: [] });
-    return ok(c, { id: created.id, title: created.title });
+  // ADMIN
+  app.get('/api/admin/submissions', async (c) => {
+    const { items } = await SubmissionEntity.list(c.env, null, 100);
+    return ok(c, items.sort((a, b) => b.createdAt - a.createdAt));
   });
-
-  // MESSAGES
-  app.get('/api/chats/:chatId/messages', async (c) => {
-    const chat = new ChatBoardEntity(c.env, c.req.param('chatId'));
-    if (!await chat.exists()) return notFound(c, 'chat not found');
-    return ok(c, await chat.listMessages());
-  });
-
-  app.post('/api/chats/:chatId/messages', async (c) => {
-    const chatId = c.req.param('chatId');
-    const { userId, text } = (await c.req.json()) as { userId?: string; text?: string };
-    if (!isStr(userId) || !text?.trim()) return bad(c, 'userId and text required');
-    const chat = new ChatBoardEntity(c.env, chatId);
-    if (!await chat.exists()) return notFound(c, 'chat not found');
-    return ok(c, await chat.sendMessage(userId, text.trim()));
-  });
-
-  // DELETE: Users
-  app.delete('/api/users/:id', async (c) => ok(c, { id: c.req.param('id'), deleted: await UserEntity.delete(c.env, c.req.param('id')) }));
-
-  app.post('/api/users/deleteMany', async (c) => {
-    const { ids } = (await c.req.json()) as { ids?: string[] };
-    const list = ids?.filter(isStr) ?? [];
-    if (list.length === 0) return bad(c, 'ids required');
-    return ok(c, { deletedCount: await UserEntity.deleteMany(c.env, list), ids: list });
-  });
-
-  // DELETE: Chats
-  app.delete('/api/chats/:id', async (c) => ok(c, { id: c.req.param('id'), deleted: await ChatBoardEntity.delete(c.env, c.req.param('id')) }));
-
-  app.post('/api/chats/deleteMany', async (c) => {
-    const { ids } = (await c.req.json()) as { ids?: string[] };
-    const list = ids?.filter(isStr) ?? [];
-    if (list.length === 0) return bad(c, 'ids required');
-    return ok(c, { deletedCount: await ChatBoardEntity.deleteMany(c.env, list), ids: list });
+  app.post('/api/admin/submissions/:id/moderate', async (c) => {
+    const id = c.req.param('id');
+    const { action } = (await c.req.json()) as { action: 'approve' | 'reject' };
+    const sub = new SubmissionEntity(c.env, id);
+    if (!await sub.exists()) return bad(c, 'submission not found');
+    const data = await sub.getState();
+    if (action === 'approve') {
+      await sub.mutate(s => ({ ...s, status: 'approved' }));
+      await MovieEntity.create(c.env, {
+        id: crypto.randomUUID(),
+        title: data.title,
+        year: data.year,
+        status: 'active',
+        votesNap: 1, // Submitter gets first vote
+        votesEngaging: 0,
+        tags: ['User Submitted']
+      });
+    } else {
+      await sub.mutate(s => ({ ...s, status: 'rejected' }));
+    }
+    return ok(c, { success: true });
   });
 }
