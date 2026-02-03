@@ -5,7 +5,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
 import { toast, Toaster } from 'sonner';
 import type { Submission } from '@shared/types';
-import { Check, X, ShieldAlert } from 'lucide-react';
+import { Check, X, ShieldAlert, Database } from 'lucide-react';
 export function AdminPage() {
   const queryClient = useQueryClient();
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -30,6 +30,17 @@ export function AdminPage() {
       toast.success('Archive updated.');
     }
   });
+
+  const resetMutation = useMutation({
+    mutationFn: () => api('/api/admin/reset-seeds', { method: 'POST' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['movies'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-submissions'] });
+      toast.success('Archive Resynchronized');
+    },
+    onError: () => toast.error('Sync failure.')
+  });
+
   if (!isAuthorized) {
     return (
       <div className="min-h-screen bg-retro-bg text-retro-text flex items-center justify-center p-4">
@@ -73,6 +84,14 @@ export function AdminPage() {
                 <h1 className="text-3xl font-black uppercase tracking-[0.3em] text-white">MODERATION_QUEUE</h1>
                 <p className="text-retro-text/60 text-xs mt-3 tracking-widest">Pending entries awaiting council verification.</p>
               </div>
+              <Button
+                onClick={() => resetMutation.mutate()}
+                disabled={resetMutation.isPending}
+                variant="outline"
+                className="mb-1 border-retro-accent/40 text-retro-accent hover:bg-retro-accent hover:text-retro-bg rounded-none text-[10px] tracking-[0.2em] h-10 px-4 transition-all"
+              >
+                <Database className="w-3 h-3 mr-2" /> SYNC_ARCHIVE
+              </Button>
               <div className="text-[10px] text-retro-accent font-black tracking-[0.2em] border border-retro-accent/20 px-3 py-1 bg-retro-accent/5">
                 ROOT_ACCESS_LEVEL_A
               </div>
