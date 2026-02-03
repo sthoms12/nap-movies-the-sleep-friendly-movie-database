@@ -7,27 +7,21 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
   app.get('/api/movies', async (c) => {
     await MovieEntity.ensureSeed(c.env);
     const { items } = await MovieEntity.list(c.env, null, 100);
-    // Sort by Nap Score percentage (votesNap / total)
-    // Secondary tie-breaker: Total engagement (total votes)
-    // Tertiary tie-breaker: Net score (nap - engaging)
+    // Filtering active movies and applying ranking logic
     const sorted = items
       .filter(m => m.status === 'active')
       .sort((a, b) => {
         const totalA = a.votesNap + a.votesEngaging;
         const totalB = b.votesNap + b.votesEngaging;
-        const scoreA = totalA > 0 ? (a.votesNap / totalA) : 0.5;
-        const scoreB = totalB > 0 ? (b.votesNap / totalB) : 0.5;
-        if (scoreB !== scoreA) {
-          return scoreB - scoreA;
-        }
-        // Tie-breaker 1: More votes = higher rank for high scores
-        if (totalB !== totalA) {
-          return totalB - totalA;
-        }
-        // Tie-breaker 2: Net votes
-        const netA = a.votesNap - a.votesEngaging;
-        const netB = b.votesNap - b.votesEngaging;
-        return netB - netA;
+        // Bayesian-lite scoring to prevent 1/1 votes beating 100/100 votes
+        // We add a small "prior" to smooth out low-volume rankings
+        const priorVotes = 5;
+        const priorNapRate = 0.5;
+        const scoreA = (a.votesNap + priorVotes * priorNapRate) / (totalA + priorVotes);
+        const scoreB = (b.votesNap + priorVotes * priorNapRate) / (totalB + priorVotes);
+        if (scoreB !== scoreA) return scoreB - scoreA;
+        if (totalB !== totalA) return totalB - totalA;
+        return (b.votesNap - b.votesEngaging) - (a.votesNap - a.votesEngaging);
       });
     return ok(c, sorted);
   });
@@ -67,30 +61,36 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     const data = await sub.getState();
     if (action === 'approve') {
       await sub.mutate(s => ({ ...s, status: 'approved' }));
+      // Give new entries the same starting baseline as seed data (15-3)
+      // This prevents "1 vote = 100%" bias for new entries
       await MovieEntity.create(c.env, {
         id: crypto.randomUUID(),
         title: data.title,
         year: data.year,
         status: 'active',
-        votesNap: 1,
-        votesEngaging: 0,
-        tags: ['User Submitted']
+        votesNap: 15,
+        votesEngaging: 3,
+        tags: ['Community Selection']
       });
     } else {
       await sub.mutate(s => ({ ...s, status: 'rejected' }));
     }
     return ok(c, { success: true });
   });
-
-  // MAINTENANCE
+  // MAINTENANCE: Deep Clean
   app.post('/api/admin/reset-seeds', async (c) => {
-    // 1. Clear existing movies from index and storage
-    const { items: ids } = await MovieEntity.list(c.env, null, 1000);
-    if (ids.length > 0) {
-      await MovieEntity.deleteMany(c.env, ids.map(m => m.id));
+    // 1. Clear Movies
+    const { items: movieItems } = await MovieEntity.list(c.env, null, 1000);
+    if (movieItems.length > 0) {
+      await MovieEntity.deleteMany(c.env, movieItems.map(m => m.id));
     }
-    // 2. Force re-seed using latest INITIAL_MOVIES
+    // 2. Clear Submissions
+    const { items: subItems } = await SubmissionEntity.list(c.env, null, 1000);
+    if (subItems.length > 0) {
+      await SubmissionEntity.deleteMany(c.env, subItems.map(s => s.id));
+    }
+    // 3. Force re-seed
     await MovieEntity.ensureSeed(c.env);
-    return ok(c, { message: 'Archive Resynchronized' });
+    return ok(c, { message: 'Archive and Queues Purged and Resynchronized' });
   });
 }
