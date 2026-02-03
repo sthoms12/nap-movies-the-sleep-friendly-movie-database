@@ -5,29 +5,45 @@
   padding: 0;
   text-align: left;
 }
-/* CRT Flicker Effect */
+/* Subtler CRT Flicker Effect */
 @keyframes flicker {
-  0% { opacity: 0.27861; }
-  5% { opacity: 0.34769; }
-  10% { opacity: 0.23604; }
-  15% { opacity: 0.90626; }
-  20% { opacity: 0.18128; }
-  25% { opacity: 0.83891; }
-  30% { opacity: 0.65583; }
-  35% { opacity: 0.57807; }
-  40% { opacity: 0.26559; }
-  45% { opacity: 0.84693; }
-  50% { opacity: 0.96019; }
-  55% { opacity: 0.08594; }
-  60% { opacity: 0.20313; }
-  65% { opacity: 0.71988; }
-  70% { opacity: 0.53455; }
-  75% { opacity: 0.37288; }
-  80% { opacity: 0.71428; }
-  85% { opacity: 0.70419; }
-  90% { opacity: 0.7003; }
-  95% { opacity: 0.36108; }
-  100% { opacity: 0.24387; }
+  0% { opacity: 0.98; }
+  5% { opacity: 0.95; }
+  10% { opacity: 0.99; }
+  15% { opacity: 0.93; }
+  20% { opacity: 0.97; }
+  25% { opacity: 0.99; }
+  30% { opacity: 0.92; }
+  35% { opacity: 0.98; }
+  40% { opacity: 0.94; }
+  45% { opacity: 0.99; }
+  50% { opacity: 0.97; }
+  55% { opacity: 0.92; }
+  60% { opacity: 0.98; }
+  65% { opacity: 0.95; }
+  70% { opacity: 0.99; }
+  75% { opacity: 0.96; }
+  80% { opacity: 0.98; }
+  85% { opacity: 0.94; }
+  90% { opacity: 0.99; }
+  95% { opacity: 0.97; }
+  100% { opacity: 0.98; }
+}
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #111827;
+}
+::-webkit-scrollbar-thumb {
+  background: #1f2937;
+  border: 2px solid #111827;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #60a5fa;
+}
+input, textarea {
+  outline: none !important;
 }
 .crt-scanlines {
   position: relative;
@@ -44,20 +60,4 @@
   z-index: 2;
   background-size: 100% 2px, 3px 100%;
   pointer-events: none;
-}
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #050510;
-}
-::-webkit-scrollbar-thumb {
-  background: #1e1b4b;
-  border: 2px solid #050510;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #4ade80;
-}
-input, textarea {
-  outline: none !important;
 }
