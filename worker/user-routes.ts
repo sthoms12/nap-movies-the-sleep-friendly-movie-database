@@ -11,8 +11,8 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     const sorted = items
       .filter(m => m.status === 'active')
       .sort((a, b) => {
-        const totalA = a.votesNap + a.votesEngaging;
-        const totalB = b.votesNap + b.votesEngaging;
+        const totalA = a.votesNap + (a.votesEngaging || 0);
+        const totalB = b.votesNap + (b.votesEngaging || 0);
         // Bayesian-lite scoring to penalize low-sample size items
         const priorVotes = 10;
         const priorNapRate = 0.7; // We expect nap movies to be mostly good
@@ -53,10 +53,20 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
   });
   // ADMIN
   app.get('/api/admin/submissions', async (c) => {
+    const email = c.req.header('cf-access-authenticated-user-email')?.toLowerCase();
+    const allowedEmails = ((c.env as any).ADMIN_EMAILS ?? '').split(',').map((e: string) => e.toLowerCase().trim()).filter(Boolean);
+    if (!email || !allowedEmails.includes(email)) {
+      return bad(c, 'Unauthorized: Cloudflare Access required.');
+    }
     const { items } = await SubmissionEntity.list(c.env, null, 100);
-    return ok(c, items.sort((a, b) => b.createdAt - a.createdAt));
+    return ok(c, items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)));
   });
   app.post('/api/admin/submissions/:id/moderate', async (c) => {
+    const email = c.req.header('cf-access-authenticated-user-email')?.toLowerCase();
+    const allowedEmails = ((c.env as any).ADMIN_EMAILS ?? '').split(',').map((e: string) => e.toLowerCase().trim()).filter(Boolean);
+    if (!email || !allowedEmails.includes(email)) {
+      return bad(c, 'Unauthorized: Cloudflare Access required.');
+    }
     const id = c.req.param('id');
     const body = await c.req.json().catch(() => ({}));
     const { action } = body as { action: 'approve' | 'reject' };
@@ -82,6 +92,11 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
   });
   // MAINTENANCE: System Reset (Fixed to use public Index methods)
   app.post('/api/admin/reset-seeds', async (c) => {
+    const email = c.req.header('cf-access-authenticated-user-email')?.toLowerCase();
+    const allowedEmails = ((c.env as any).ADMIN_EMAILS ?? '').split(',').map((e: string) => e.toLowerCase().trim()).filter(Boolean);
+    if (!email || !allowedEmails.includes(email)) {
+      return bad(c, 'Unauthorized: Cloudflare Access required.');
+    }
     // 1. Clear Movies Index & Entities
     const movieIndex = new Index(c.env, MovieEntity.indexName);
     const movieIds = await movieIndex.list();
