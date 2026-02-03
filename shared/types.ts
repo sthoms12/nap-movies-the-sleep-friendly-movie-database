@@ -22,7 +22,7 @@ export interface Submission {
   status: SubmissionStatus;
   createdAt: number;
 }
-// Keep existing User/Chat types for template compatibility if needed, 
+// Keep existing User/Chat types for template compatibility if needed,
 // though we'll focus on the Nap Movies entities.
 export interface User {
   id: string;

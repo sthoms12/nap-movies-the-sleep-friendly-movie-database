@@ -14,7 +14,14 @@ import '@/index.css'
 import { HomePage } from '@/pages/HomePage'
 import { SubmitPage } from '@/pages/SubmitPage'
 import { AdminPage } from '@/pages/AdminPage'
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 const router = createBrowserRouter([
   {
     path: "/",
