@@ -11,85 +11,62 @@ interface MovieCardProps {
   isVoting: boolean;
 }
 export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
-  const totalVotes = movie.votesNap + movie.votesEngaging;
-  const score = totalVotes > 0
-    ? Math.round((movie.votesNap / totalVotes) * 100)
-    : 50;
+  const score = movie.votesNap - movie.votesEngaging;
   return (
-    <div className="group relative border border-retro-muted/20 bg-retro-card p-6 md:p-8 transition-all duration-slow hover:border-retro-accent/40 hover:bg-retro-card/90 hover:shadow-2xl hover:shadow-black/40">
-      {/* Rank Indicator */}
-      <div className="absolute -top-3 -left-2 md:-left-4 bg-retro-muted text-retro-text px-3 py-1.5 text-[11px] font-black flex items-center gap-1 border border-retro-muted/40 z-10 group-hover:bg-retro-accent group-hover:text-retro-bg transition-all shadow-lg group-hover:scale-110">
-        <Hash className="w-3.5 h-3.5" /> {rank.toString().padStart(2, '0')}
+    <div className="group relative border border-retro-muted/30 bg-retro-card p-6 transition-all hover:border-retro-accent/50 hover:bg-retro-card/80">
+      <div className="absolute -top-3 -left-3 bg-retro-accent text-retro-bg px-2 py-1 text-xs font-bold flex items-center gap-1">
+        <Hash className="w-3 h-3" /> {rank}
       </div>
-      <div className="flex flex-col md:flex-row justify-between gap-8">
-        <div className="space-y-5 flex-1">
+      <div className="flex flex-col md:flex-row justify-between gap-6">
+        <div className="space-y-3">
           <div>
-            <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-white group-hover:text-retro-accent transition-colors leading-none mb-2">
-              {movie.title}
-            </h3>
-            <p className="text-retro-text/40 text-xs font-bold tracking-[0.1em] group-hover:text-retro-text/60 transition-colors">
-              RELEASE_DATELINE: {movie.year}
-            </p>
+            <h3 className="text-2xl font-bold uppercase tracking-tight">{movie.title}</h3>
+            <p className="text-retro-muted text-sm">{movie.year}</p>
           </div>
-          <div className="flex flex-wrap gap-2 min-h-[24px]">
+          <div className="flex flex-wrap gap-2">
             {movie.tags.map(tag => (
-              <Badge
-                key={tag}
-                variant="outline"
-                className="rounded-none border-retro-muted/40 text-[9px] uppercase text-retro-text/60 font-black px-2.5 py-0.5 group-hover:border-retro-accent/30 group-hover:text-retro-accent transition-all"
+              <Badge 
+                key={tag} 
+                variant="outline" 
+                className="rounded-none border-retro-muted/40 text-[10px] uppercase text-retro-muted"
               >
                 {tag}
               </Badge>
             ))}
           </div>
-          <div className="w-full max-w-sm space-y-3 pt-2">
-            <div className="h-1 w-full bg-black/40 overflow-hidden relative">
-              <div
-                className={cn(
-                  "h-full transition-all duration-[1500ms] ease-out relative z-10",
-                  score >= 70 ? "bg-retro-accent shadow-[0_0_10px_rgba(96,165,250,0.5)]" : 
-                  score >= 50 ? "bg-retro-accent/60" : "bg-retro-danger"
-                )}
-                style={{ width: `${score}%` }}
-              />
-              <div className="absolute inset-0 bg-retro-muted/10 z-0" />
-            </div>
-            <div className="flex justify-between items-center text-[9px] uppercase tracking-[0.3em] font-bold opacity-30 group-hover:opacity-60 transition-opacity">
-              <span>Low-Stress_Threshold</span>
-              <span>Metric_Verified</span>
-            </div>
-          </div>
         </div>
-        <div className="flex items-center gap-8 md:border-l border-retro-muted/20 md:pl-10">
-          <div className="text-center min-w-[100px] border-r border-retro-muted/10 md:border-r-0 pr-8 md:pr-0">
+        <div className="flex items-center gap-8 md:border-l border-retro-muted/20 md:pl-8">
+          <div className="text-center min-w-[80px]">
             <div className={cn(
-              "text-4xl md:text-5xl font-black transition-all group-hover:scale-105 duration-slow",
-              score >= 70 ? "text-retro-accent" : "text-retro-danger"
+              "text-3xl font-black",
+              score >= 0 ? "text-retro-accent" : "text-retro-danger"
             )}>
-              {score}<span className="text-[14px] opacity-40 ml-1 font-bold">%</span>
+              {score > 0 ? `+${score}` : score}
             </div>
-            <div className="text-[10px] uppercase opacity-40 font-black tracking-widest mt-1">NAP_INDEX</div>
+            <div className="text-[10px] uppercase opacity-40 font-bold">Nap Score</div>
           </div>
-          <div className="flex flex-col gap-3 w-full sm:w-auto">
+          <div className="flex flex-col gap-2">
             <Button
               size="sm"
               disabled={isVoting}
               onClick={() => onVote('nap')}
-              className="bg-retro-accent/10 text-retro-accent hover:bg-retro-accent hover:text-retro-bg rounded-none border border-retro-accent/30 text-[10px] font-black uppercase transition-all h-10 px-6 tracking-widest active:scale-95 shadow-lg shadow-retro-accent/5"
+              className="bg-retro-accent/10 text-retro-accent hover:bg-retro-accent hover:text-retro-bg rounded-none border border-retro-accent/30 text-xs font-bold uppercase"
             >
-              <ThumbsUp className="w-3.5 h-3.5 mr-2" /> Nap-Approved
+              <ThumbsUp className="w-3 h-3 mr-2" /> Nap-Approved
             </Button>
             <Button
               size="sm"
               disabled={isVoting}
               onClick={() => onVote('engaging')}
-              className="bg-retro-danger/10 text-retro-danger hover:bg-retro-danger hover:text-retro-bg rounded-none border border-retro-danger/30 text-[10px] font-black uppercase transition-all h-10 px-6 tracking-widest active:scale-95 shadow-lg shadow-retro-danger/5"
+              className="bg-retro-danger/10 text-retro-danger hover:bg-retro-danger hover:text-retro-bg rounded-none border border-retro-danger/30 text-xs font-bold uppercase"
             >
-              <ThumbsDown className="w-3.5 h-3.5 mr-2" /> Too Engaging
+              <ThumbsDown className="w-3 h-3 mr-2" /> Too Engaging
             </Button>
           </div>
         </div>
       </div>
+      {/* CRT Scanline Effect Overlay (Internal) */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]"></div>
     </div>
   );
 }
