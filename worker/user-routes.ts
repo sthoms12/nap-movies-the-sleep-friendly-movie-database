@@ -13,9 +13,9 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
       .sort((a, b) => {
         const totalA = a.votesNap + a.votesEngaging;
         const totalB = b.votesNap + b.votesEngaging;
-        // Bayesian-lite scoring
-        const priorVotes = 5;
-        const priorNapRate = 0.5;
+        // Bayesian-lite scoring to penalize low-sample size items
+        const priorVotes = 10;
+        const priorNapRate = 0.7; // We expect nap movies to be mostly good
         const scoreA = (a.votesNap + priorVotes * priorNapRate) / (totalA + priorVotes);
         const scoreB = (b.votesNap + priorVotes * priorNapRate) / (totalB + priorVotes);
         if (scoreB !== scoreA) return scoreB - scoreA;
@@ -26,7 +26,8 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
   });
   app.post('/api/movies/:id/vote', async (c) => {
     const id = c.req.param('id');
-    const { type } = (await c.req.json()) as { type: 'nap' | 'engaging' };
+    const body = await c.req.json().catch(() => ({}));
+    const { type } = body as { type: 'nap' | 'engaging' };
     if (type !== 'nap' && type !== 'engaging') return bad(c, 'invalid vote type');
     const movie = new MovieEntity(c.env, id);
     if (!await movie.exists()) return bad(c, 'movie not found');
@@ -35,8 +36,11 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
   });
   // SUBMISSIONS
   app.post('/api/submit', async (c) => {
-    const { title, year, reason } = (await c.req.json()) as { title: string; year: number; reason: string };
-    if (!title?.trim() || !year || !reason?.trim()) return bad(c, 'title, year, and reason required');
+    const body = await c.req.json().catch(() => ({}));
+    const { title, year, reason } = body as { title: string; year: number; reason: string };
+    if (!title?.trim() || !year || !reason?.trim()) {
+      return bad(c, 'title, year, and reason required');
+    }
     const submission = await SubmissionEntity.create(c.env, {
       id: crypto.randomUUID(),
       title: title.trim(),
@@ -54,20 +58,21 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
   });
   app.post('/api/admin/submissions/:id/moderate', async (c) => {
     const id = c.req.param('id');
-    const { action } = (await c.req.json()) as { action: 'approve' | 'reject' };
+    const body = await c.req.json().catch(() => ({}));
+    const { action } = body as { action: 'approve' | 'reject' };
     const sub = new SubmissionEntity(c.env, id);
     if (!await sub.exists()) return bad(c, 'submission not found');
     const data = await sub.getState();
     if (action === 'approve') {
       await sub.mutate(s => ({ ...s, status: 'approved' }));
-      // Baseline seeds
+      // Create active movie from approved submission
       await MovieEntity.create(c.env, {
         id: crypto.randomUUID(),
         title: data.title,
         year: data.year,
         status: 'active',
-        votesNap: 15,
-        votesEngaging: 3,
+        votesNap: 1, // Start with 1 vote
+        votesEngaging: 0,
         tags: ['Community Selection']
       });
     } else {
@@ -75,20 +80,22 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     }
     return ok(c, { success: true });
   });
-  // MAINTENANCE: Deep Clean
+  // MAINTENANCE: System Reset
   app.post('/api/admin/reset-seeds', async (c) => {
-    // 1. Clear Movies
-    const { items: movieItems } = await MovieEntity.list(c.env, null, 1000);
-    if (movieItems.length > 0) {
-      await MovieEntity.deleteMany(c.env, movieItems.map(m => m.id));
+    // 1. Clear Movies Index & Entities
+    const { items: movieIds } = await new (class extends MovieEntity {})(c.env, '').stub.listPrefix('movie:');
+    for (const mid of movieIds) {
+      const id = mid.split(':')[1];
+      if (id) await MovieEntity.delete(c.env, id);
     }
-    // 2. Clear Submissions
-    const { items: subItems } = await SubmissionEntity.list(c.env, null, 1000);
-    if (subItems.length > 0) {
-      await SubmissionEntity.deleteMany(c.env, subItems.map(s => s.id));
+    // 2. Clear Submissions Index & Entities
+    const { items: subIds } = await new (class extends SubmissionEntity {})(c.env, '').stub.listPrefix('submission:');
+    for (const sid of subIds) {
+      const id = sid.split(':')[1];
+      if (id) await SubmissionEntity.delete(c.env, id);
     }
-    // 3. Force re-seed
+    // 3. Force re-seed from shared/mock-data.ts
     await MovieEntity.ensureSeed(c.env);
-    return ok(c, { message: 'Index and Queues Purged and Resynchronized' });
+    return ok(c, { message: 'System Index and Queues Purged and Resynchronized' });
   });
 }
