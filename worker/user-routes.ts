@@ -13,8 +13,7 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
       .sort((a, b) => {
         const totalA = a.votesNap + a.votesEngaging;
         const totalB = b.votesNap + b.votesEngaging;
-        // Bayesian-lite scoring to prevent 1/1 votes beating 100/100 votes
-        // We add a small "prior" to smooth out low-volume rankings
+        // Bayesian-lite scoring
         const priorVotes = 5;
         const priorNapRate = 0.5;
         const scoreA = (a.votesNap + priorVotes * priorNapRate) / (totalA + priorVotes);
@@ -61,8 +60,7 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     const data = await sub.getState();
     if (action === 'approve') {
       await sub.mutate(s => ({ ...s, status: 'approved' }));
-      // Give new entries the same starting baseline as seed data (15-3)
-      // This prevents "1 vote = 100%" bias for new entries
+      // Baseline seeds
       await MovieEntity.create(c.env, {
         id: crypto.randomUUID(),
         title: data.title,
@@ -91,6 +89,6 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     }
     // 3. Force re-seed
     await MovieEntity.ensureSeed(c.env);
-    return ok(c, { message: 'Archive and Queues Purged and Resynchronized' });
+    return ok(c, { message: 'Index and Queues Purged and Resynchronized' });
   });
 }
