@@ -10,32 +10,32 @@ export default {
   		},
   		colors: {
         'retro': {
-          bg: '#050510',
-          card: '#0a0a20',
-          text: '#e2e8f0',
-          accent: '#4ade80',
-          muted: '#6366f1',
-          danger: '#f87171'
+          bg: '#0a0a14',
+          card: '#0d0d1f',
+          text: '#c7d2fe',
+          accent: '#a3bffa',
+          muted: '#43447a',
+          danger: '#f1c0c0'
         },
-  			background: '#050510',
-  			foreground: '#e2e8f0',
+  			background: '#0a0a14',
+  			foreground: '#c7d2fe',
   			muted: {
-  				DEFAULT: 'hsl(240 5% 15%)',
-  				foreground: 'hsl(240 5% 65%)'
+  				DEFAULT: 'hsl(244 15% 15%)',
+  				foreground: 'hsl(244 15% 65%)'
   			},
   			primary: {
-  				DEFAULT: '#4ade80',
-  				foreground: '#050510'
+  				DEFAULT: '#a3bffa',
+  				foreground: '#0a0a14'
   			},
-  			border: '#1e1b4b',
-  			ring: '#4ade80',
+  			border: '#111122',
+  			ring: '#a3bffa',
   			card: {
-  				DEFAULT: '#0a0a20',
-  				foreground: '#e2e8f0'
+  				DEFAULT: '#0d0d1f',
+  				foreground: '#c7d2fe'
   			},
   			secondary: {
-  				DEFAULT: '#1e1b4b',
-  				foreground: '#e2e8f0'
+  				DEFAULT: '#111122',
+  				foreground: '#c7d2fe'
   			},
   		},
   		borderRadius: {
@@ -44,6 +44,10 @@ export default {
         md: '0',
         lg: '0',
   		},
+      transitionDuration: {
+        'DEFAULT': '300ms',
+        'slow': '500ms',
+      }
   	}
   },
   plugins: [require("tailwindcss-animate")]
