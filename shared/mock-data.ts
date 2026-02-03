@@ -24,7 +24,32 @@ export const INITIAL_MOVIES: Movie[] = [
   { id: '22', title: 'Samsara', year: 2011, status: 'active', votesNap: 105, votesEngaging: 5, tags: ['Visual Poem', 'Epic', 'No Dialogue'] },
   { id: '23', title: 'Solaris', year: 1972, status: 'active', votesNap: 88, votesEngaging: 35, tags: ['Space', 'Psychological', 'Very Slow'] },
   { id: '24', title: 'Only Yesterday', year: 1991, status: 'active', votesNap: 66, votesEngaging: 4, tags: ['Ghibli', 'Memory', 'Countryside'] },
-  { id: '25', title: 'O Brother, Where Art Thou?', year: 2000, status: 'active', votesNap: 50, votesEngaging: 15, tags: ['Folk Music', 'Sepia', 'Familiar'] }
+  { id: '25', title: 'O Brother, Where Art Thou?', year: 2000, status: 'active', votesNap: 50, votesEngaging: 15, tags: ['Folk Music', 'Sepia', 'Familiar'] },
+  { id: '26', title: 'The Tree of Life', year: 2011, status: 'active', votesNap: 115, votesEngaging: 22, tags: ['Cosmic', 'Watercolor', 'Whispers'] },
+  { id: '27', title: 'Embrace of the Serpent', year: 2015, status: 'active', votesNap: 82, votesEngaging: 10, tags: ['Amazon', 'Monochrome', 'Mystical'] },
+  { id: '28', title: 'Koyaanisqatsi', year: 1982, status: 'active', votesNap: 145, votesEngaging: 8, tags: ['Philip Glass', 'Time-lapse', 'Ambient'] },
+  { id: '29', title: 'Uncle Boonmee Who Can Recall His Past Lives', year: 2010, status: 'active', votesNap: 74, votesEngaging: 12, tags: ['Jungle', 'Liminal', 'Static'] },
+  { id: '30', title: 'Planet Earth: Caves', year: 2006, status: 'active', votesNap: 160, votesEngaging: 2, tags: ['Nature', 'Attenborough', 'Echo'] },
+  { id: '31', title: 'Stalker', year: 1979, status: 'active', votesNap: 98, votesEngaging: 30, tags: ['Philosophical', 'Rain', 'Slow Cinema'] },
+  { id: '32', title: 'The Tale of the Princess Kaguya', year: 2013, status: 'active', votesNap: 89, votesEngaging: 7, tags: ['Watercolor', 'Folklore', 'Ghibli'] },
+  { id: '33', title: 'March of the Penguins', year: 2005, status: 'active', votesNap: 112, votesEngaging: 4, tags: ['Ice', 'Wind', 'Narrated'] },
+  { id: '34', title: 'Man with a Movie Camera', year: 1929, status: 'active', votesNap: 54, votesEngaging: 15, tags: ['Silent', 'Rhythmic', 'City'] },
+  { id: '35', title: 'The Mirror', year: 1975, status: 'active', votesNap: 77, votesEngaging: 18, tags: ['Poetic', 'Dreamlike', 'Tarkovsky'] },
+  { id: '36', title: 'Arrival', year: 2016, status: 'active', votesNap: 81, votesEngaging: 24, tags: ['Language', 'Fog', 'Low Frequency'] },
+  { id: '37', title: 'Werckmeister Harmonies', year: 2000, status: 'active', votesNap: 45, votesEngaging: 10, tags: ['Long Takes', 'Piano', 'B&W'] },
+  { id: '38', title: 'Portrait of a Lady on Fire', year: 2019, status: 'active', votesNap: 67, votesEngaging: 9, tags: ['Ocean', 'Painting', 'Static'] },
+  { id: '39', title: 'Under the Skin', year: 2013, status: 'active', votesNap: 59, votesEngaging: 28, tags: ['Synthesizer', 'Abstract', 'Cold'] },
+  { id: '40', title: 'Memoria', year: 2021, status: 'active', votesNap: 132, votesEngaging: 5, tags: ['Sonic', 'Stillness', 'Jungles'] },
+  { id: '41', title: 'The Night of the Hunter', year: 1955, status: 'active', votesNap: 44, votesEngaging: 12, tags: ['Fairy Tale', 'River', 'Noir'] },
+  { id: '42', title: 'Sunrise: A Song of Two Humans', year: 1927, status: 'active', votesNap: 51, votesEngaging: 6, tags: ['Silent', 'Orchestral', 'Classic'] },
+  { id: '43', title: 'Encounters at the End of the World', year: 2007, status: 'active', votesNap: 72, votesEngaging: 8, tags: ['Antarctica', 'Herzog', 'Seal Sounds'] },
+  { id: '44', title: 'When Marnie Was There', year: 2014, status: 'active', votesNap: 84, votesEngaging: 3, tags: ['Marsh', 'Ghibli', 'Quiet'] },
+  { id: '45', title: 'The Assassination of Jesse James by the Coward Robert Ford', year: 2007, status: 'active', votesNap: 92, votesEngaging: 15, tags: ['Snow', 'Lyrical', 'Deakins'] },
+  { id: '46', title: 'Cemetery of Splendour', year: 2015, status: 'active', votesNap: 118, votesEngaging: 4, tags: ['Hospital', 'Lights', 'Hypnotic'] },
+  { id: '47', title: 'Mon Oncle', year: 1958, status: 'active', votesNap: 49, votesEngaging: 11, tags: ['French', 'Whimsical', 'Low Dialogue'] },
+  { id: '48', title: 'Atanarjuat: The Fast Runner', year: 2001, status: 'active', votesNap: 63, votesEngaging: 5, tags: ['Arctic', 'Inuit', 'Vast'] },
+  { id: '49', title: 'Le Quattro Volte', year: 2010, status: 'active', votesNap: 88, votesEngaging: 2, tags: ['Goats', 'Village', 'Silent'] },
+  { id: '50', title: 'Jiro Dreams of Sushi', year: 2011, status: 'active', votesNap: 71, votesEngaging: 14, tags: ['Routine', 'Minimalist', 'Jazz'] }
 ];
 export const MOCK_USERS = [];
 export const MOCK_CHATS = [];

@@ -6,76 +6,79 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Toaster, toast } from 'sonner';
 import type { Movie } from '@shared/types';
 import { Moon, Star } from 'lucide-react';
-export function HomePage() {
+export default function HomePage() {
   const queryClient = useQueryClient();
   const { data: movies, isLoading } = useQuery({
     queryKey: ['movies'],
     queryFn: () => api<Movie[]>('/api/movies'),
   });
   const voteMutation = useMutation({
-    mutationFn: ({ id, type }: { id: string; type: 'nap' | 'engaging' }) => 
+    mutationFn: ({ id, type }: { id: string; type: 'nap' | 'engaging' }) =>
       api(`/api/movies/${id}/vote`, {
         method: 'POST',
         body: JSON.stringify({ type })
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['movies'] });
-      toast.success('Vote registered. Sleep tight.');
+      toast.success('Vote registered. Rest well.');
     },
-    onError: () => toast.error('Failed to vote.')
+    onError: () => toast.error('Transmission error.')
   });
   return (
-    <div className="min-h-screen bg-retro-bg text-retro-text selection:bg-retro-accent selection:text-retro-bg font-mono">
+    <div className="min-h-screen bg-retro-bg text-retro-text selection:bg-retro-accent/20 font-mono">
+      <div className="crt-overlay" />
       <Navbar />
-      <main className="max-w-4xl mx-auto px-4 py-12 md:py-20">
-        <header className="mb-16 space-y-6 text-center">
-          <div className="flex justify-center mb-4">
-            <div className="p-4 border-2 border-retro-accent/30 animate-pulse">
-              <Moon className="w-12 h-12 text-retro-accent" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="py-8 md:py-12 lg:py-16">
+          <header className="mb-20 space-y-6 text-center">
+            <div className="flex justify-center mb-6">
+              <div className="p-4 border border-retro-muted/20 opacity-40">
+                <Moon className="w-10 h-10 text-retro-accent" />
+              </div>
             </div>
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter uppercase">
-            Nap <span className="text-retro-accent">Movies</span>
-          </h1>
-          <p className="text-retro-muted text-lg max-w-xl mx-auto border-l-2 border-retro-muted pl-4 italic">
-            "The definitive, community-ranked collection of low-stress cinema perfect for drifting off to sleep."
-          </p>
-        </header>
-        <section className="space-y-6">
-          <div className="flex items-center justify-between border-b border-retro-muted/30 pb-4">
-            <h2 className="text-xl font-bold flex items-center gap-2">
-              <Star className="w-5 h-5" /> LEADERBOARD
-            </h2>
-            <span className="text-2xs opacity-50 uppercase">Sorted by Nap Score</span>
-          </div>
-          {isLoading ? (
-            <div className="space-y-4">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="h-32 bg-retro-card/50 animate-pulse border border-retro-muted/20" />
-              ))}
+            <h1 className="text-4xl md:text-5xl font-bold tracking-[0.2em] uppercase opacity-90">
+              Nap <span className="text-retro-accent/80">Movies</span>
+            </h1>
+            <p className="text-retro-muted text-sm md:text-base max-w-lg mx-auto border-l border-retro-muted/30 pl-4 italic opacity-80 leading-relaxed">
+              "A quiet collection of low-stress cinema for late-night drifting."
+            </p>
+          </header>
+          <section className="max-w-4xl mx-auto space-y-8">
+            <div className="flex items-center justify-between border-b border-retro-muted/10 pb-4">
+              <h2 className="text-sm font-bold tracking-widest flex items-center gap-3 opacity-60">
+                <Star className="w-4 h-4" /> CURRENT RANKINGS
+              </h2>
+              <span className="text-[10px] opacity-40 uppercase">Index.v2.0</span>
             </div>
-          ) : movies?.length === 0 ? (
-            <div className="text-center py-20 border border-dashed border-retro-muted/30">
-              NO MOVIES FOUND. SUBMIT ONE?
-            </div>
-          ) : (
-            <div className="grid gap-6">
-              {movies?.map((movie, idx) => (
-                <MovieCard 
-                  key={movie.id} 
-                  movie={movie} 
-                  rank={idx + 1}
-                  onVote={(type) => voteMutation.mutate({ id: movie.id, type })}
-                  isVoting={voteMutation.isPending}
-                />
-              ))}
-            </div>
-          )}
-        </section>
-      </main>
-      <footer className="py-20 text-center opacity-30 text-xs">
-        <p>SYSTEM.NAP_MOVIES_v1.0.0</p>
-        <p>© {new Date().getFullYear()} NO RIGHTS RESERVED. JUST SLEEP.</p>
+            {isLoading ? (
+              <div className="space-y-6">
+                {[1, 2, 3, 4].map(i => (
+                  <div key={i} className="h-32 bg-retro-card/30 border border-retro-muted/5 animate-pulse" />
+                ))}
+              </div>
+            ) : movies?.length === 0 ? (
+              <div className="text-center py-24 border border-dashed border-retro-muted/10 opacity-40 text-xs tracking-widest uppercase">
+                Zero entries in database.
+              </div>
+            ) : (
+              <div className="grid gap-6">
+                {movies?.map((movie, idx) => (
+                  <MovieCard
+                    key={movie.id}
+                    movie={movie}
+                    rank={idx + 1}
+                    onVote={(type) => voteMutation.mutate({ id: movie.id, type })}
+                    isVoting={voteMutation.isPending}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
+      </div>
+      <footer className="py-16 text-center opacity-20 text-[10px] tracking-[0.3em] uppercase">
+        <p>System.Nap_Movies_Archive_v2.0</p>
+        <p className="mt-2">© {new Date().getFullYear()} Minimalist Sleep Foundation</p>
       </footer>
       <Toaster theme="dark" position="bottom-center" />
     </div>
