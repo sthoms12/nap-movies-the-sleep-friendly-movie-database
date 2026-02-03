@@ -39,15 +39,15 @@ export function SubmitPage() {
     onError: () => toast.error('Transmission failed.')
   });
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="py-8 md:py-10 lg:py-12">
-        <div className="min-h-screen bg-retro-bg text-retro-text font-mono">
-          <div className="crt-overlay" />
-          <Navbar />
+    <div className="min-h-screen bg-retro-bg text-retro-text relative">
+      <div className="crt-overlay" />
+      <Navbar />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="py-8 md:py-10 lg:py-12">
           <div className="max-w-2xl mx-auto pt-8">
             <button
               onClick={() => navigate('/')}
-              className="flex items-center gap-2 text-[10px] opacity-30 hover:opacity-60 transition-opacity mb-10 tracking-widest"
+              className="flex items-center gap-2 text-[10px] opacity-30 hover:opacity-60 transition-opacity mb-10 tracking-widest uppercase"
             >
               <ArrowLeft className="w-3 h-3" /> ESCAPE_TO_LIST
             </button>
@@ -95,9 +95,9 @@ export function SubmitPage() {
               </Button>
             </form>
           </div>
-          <Toaster theme="dark" position="bottom-center" />
         </div>
       </div>
+      <Toaster theme="dark" position="bottom-center" />
     </div>
   );
 }
