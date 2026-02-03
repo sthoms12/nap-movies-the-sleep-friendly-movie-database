@@ -11,10 +11,10 @@ export function HomePage() {
   useEffect(() => {
     document.title = 'NapMovies 🌙 | Index';
   }, []);
-  const { data: movies, isLoading, isFetching } = useQuery({
+  const { data: movies, isLoading, isFetching, error } = useQuery({
     queryKey: ['movies'],
     queryFn: () => api<Movie[]>('/api/movies'),
-    staleTime: 30000, 
+    staleTime: 30000,
     refetchInterval: 60000,
   });
   const voteMutation = useMutation({
@@ -29,8 +29,23 @@ export function HomePage() {
     },
     onError: () => toast.error('Transmission error.')
   });
-  // Limit display to top 50
   const topFifty = movies?.slice(0, 50) ?? [];
+  if (error) {
+    return (
+      <div className="min-h-screen bg-retro-bg text-retro-text flex items-center justify-center p-4">
+        <div className="text-center space-y-4 border border-retro-danger/30 p-12 bg-retro-danger/5">
+          <h2 className="text-retro-danger font-black tracking-[0.3em] uppercase">Connection_Lost</h2>
+          <p className="text-xs opacity-60">Unable to synchronize with the Index.</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="text-[10px] font-bold underline tracking-widest uppercase hover:text-white transition-colors"
+          >
+            Retry_Uplink
+          </button>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-retro-bg text-retro-text relative overflow-x-hidden selection:bg-retro-accent/30 selection:text-white">
       <div className="crt-overlay opacity-[0.015]" />
@@ -72,9 +87,11 @@ export function HomePage() {
                 </div>
               </div>
               {isLoading ? (
-                <div className="space-y-6">
+                <div className="space-y-8">
                   {[1, 2, 3, 4].map(i => (
-                    <div key={i} className="h-32 bg-retro-card/40 border border-retro-muted/10 animate-pulse" />
+                    <div key={i} className="h-48 bg-retro-card/40 border border-retro-muted/10 animate-pulse relative">
+                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent shimmer-effect" />
+                    </div>
                   ))}
                 </div>
               ) : topFifty.length === 0 ? (
