@@ -1,0 +1,95 @@
+import React from 'react';
+import type { Movie } from '@shared/types';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { ThumbsUp, ThumbsDown, Hash } from 'lucide-react';
+import { cn } from '@/lib/utils';
+interface MovieCardProps {
+  movie: Movie;
+  rank: number;
+  onVote: (type: 'nap' | 'engaging') => void;
+  isVoting: boolean;
+}
+export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
+  const totalVotes = movie.votesNap + movie.votesEngaging;
+  const score = totalVotes > 0
+    ? Math.round((movie.votesNap / totalVotes) * 100)
+    : 50;
+  return (
+    <div className="group relative border border-retro-muted/20 bg-retro-card p-6 md:p-8 transition-all duration-slow hover:border-retro-accent/40 hover:bg-retro-card/90 hover:shadow-2xl hover:shadow-black/40">
+      {/* Rank Indicator */}
+      <div className="absolute -top-3 -left-2 md:-left-4 bg-retro-muted text-retro-text px-3 py-1.5 text-[11px] font-black flex items-center gap-1 border border-retro-muted/40 z-10 group-hover:bg-retro-accent group-hover:text-retro-bg transition-all shadow-lg group-hover:scale-110">
+        <Hash className="w-3.5 h-3.5" /> {rank.toString().padStart(2, '0')}
+      </div>
+      <div className="flex flex-col md:flex-row justify-between gap-8">
+        <div className="space-y-5 flex-1">
+          <div>
+            <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-white group-hover:text-retro-accent transition-colors leading-none mb-2">
+              {movie.title}
+            </h3>
+            <p className="text-retro-text/40 text-xs font-bold tracking-[0.1em] group-hover:text-retro-text/60 transition-colors">
+              RELEASE_DATELINE: {movie.year}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2 min-h-[24px]">
+            {movie.tags.map(tag => (
+              <Badge
+                key={tag}
+                variant="outline"
+                className="rounded-none border-retro-muted/40 text-[9px] uppercase text-retro-text/60 font-black px-2.5 py-0.5 group-hover:border-retro-accent/30 group-hover:text-retro-accent transition-all"
+              >
+                {tag}
+              </Badge>
+            ))}
+          </div>
+          <div className="w-full max-w-sm space-y-3 pt-2">
+            <div className="h-1 w-full bg-black/40 overflow-hidden relative">
+              <div
+                className={cn(
+                  "h-full transition-all duration-[1500ms] ease-out relative z-10",
+                  score >= 70 ? "bg-retro-accent shadow-[0_0_10px_rgba(96,165,250,0.5)]" : 
+                  score >= 50 ? "bg-retro-accent/60" : "bg-retro-danger"
+                )}
+                style={{ width: `${score}%` }}
+              />
+              <div className="absolute inset-0 bg-retro-muted/10 z-0" />
+            </div>
+            <div className="flex justify-between items-center text-[9px] uppercase tracking-[0.3em] font-bold opacity-30 group-hover:opacity-60 transition-opacity">
+              <span>Low-Stress_Threshold</span>
+              <span>Metric_Verified</span>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-8 md:border-l border-retro-muted/20 md:pl-10">
+          <div className="text-center min-w-[100px] border-r border-retro-muted/10 md:border-r-0 pr-8 md:pr-0">
+            <div className={cn(
+              "text-4xl md:text-5xl font-black transition-all group-hover:scale-105 duration-slow",
+              score >= 70 ? "text-retro-accent" : "text-retro-danger"
+            )}>
+              {score}<span className="text-[14px] opacity-40 ml-1 font-bold">%</span>
+            </div>
+            <div className="text-[10px] uppercase opacity-40 font-black tracking-widest mt-1">NAP_INDEX</div>
+          </div>
+          <div className="flex flex-col gap-3 w-full sm:w-auto">
+            <Button
+              size="sm"
+              disabled={isVoting}
+              onClick={() => onVote('nap')}
+              className="bg-retro-accent/10 text-retro-accent hover:bg-retro-accent hover:text-retro-bg rounded-none border border-retro-accent/30 text-[10px] font-black uppercase transition-all h-10 px-6 tracking-widest active:scale-95 shadow-lg shadow-retro-accent/5"
+            >
+              <ThumbsUp className="w-3.5 h-3.5 mr-2" /> Nap-Approved
+            </Button>
+            <Button
+              size="sm"
+              disabled={isVoting}
+              onClick={() => onVote('engaging')}
+              className="bg-retro-danger/10 text-retro-danger hover:bg-retro-danger hover:text-retro-bg rounded-none border border-retro-danger/30 text-[10px] font-black uppercase transition-all h-10 px-6 tracking-widest active:scale-95 shadow-lg shadow-retro-danger/5"
+            >
+              <ThumbsDown className="w-3.5 h-3.5 mr-2" /> Too Engaging
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
