@@ -32,7 +32,7 @@ export function AdminPage() {
   });
   if (!isAuthorized) {
     return (
-      <div className="min-h-screen bg-retro-bg text-retro-text flex items-center justify-center font-mono p-4">
+      <div className="min-h-screen bg-retro-bg text-retro-text flex items-center justify-center p-4">
         <div className="max-w-sm w-full border border-retro-muted/20 bg-retro-card p-10 space-y-8">
           <div className="flex justify-center opacity-40"><ShieldAlert className="w-10 h-10" /></div>
           <div className="space-y-2">
@@ -62,11 +62,11 @@ export function AdminPage() {
     );
   }
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="py-8 md:py-10 lg:py-12">
-        <div className="min-h-screen bg-retro-bg text-retro-text font-mono">
-          <div className="crt-overlay" />
-          <Navbar />
+    <div className="min-h-screen bg-retro-bg text-retro-text relative">
+      <div className="crt-overlay" />
+      <Navbar />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="py-8 md:py-10 lg:py-12">
           <div className="max-w-4xl mx-auto pt-8">
             <header className="mb-14 border-b border-retro-muted/10 pb-8 flex justify-between items-end">
               <div>
@@ -110,9 +110,9 @@ export function AdminPage() {
               </div>
             )}
           </div>
-          <Toaster theme="dark" position="bottom-center" />
         </div>
       </div>
+      <Toaster theme="dark" position="bottom-center" />
     </div>
   );
 }

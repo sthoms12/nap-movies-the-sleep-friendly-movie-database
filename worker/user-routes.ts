@@ -1,16 +1,34 @@
 import { Hono } from "hono";
 import type { Env } from './core-utils';
 import { MovieEntity, SubmissionEntity } from "./entities";
-import { ok, bad, isStr } from './core-utils';
+import { ok, bad } from './core-utils';
 export function userRoutes(app: Hono<{ Bindings: Env }>) {
   // MOVIES
   app.get('/api/movies', async (c) => {
     await MovieEntity.ensureSeed(c.env);
     const { items } = await MovieEntity.list(c.env, null, 100);
-    // Sort by net nap score descending
+    // Sort by Nap Score percentage (votesNap / total)
+    // Secondary tie-breaker: Total engagement (total votes)
+    // Tertiary tie-breaker: Net score (nap - engaging)
     const sorted = items
       .filter(m => m.status === 'active')
-      .sort((a, b) => (b.votesNap - b.votesEngaging) - (a.votesNap - a.votesEngaging));
+      .sort((a, b) => {
+        const totalA = a.votesNap + a.votesEngaging;
+        const totalB = b.votesNap + b.votesEngaging;
+        const scoreA = totalA > 0 ? (a.votesNap / totalA) : 0.5;
+        const scoreB = totalB > 0 ? (b.votesNap / totalB) : 0.5;
+        if (scoreB !== scoreA) {
+          return scoreB - scoreA;
+        }
+        // Tie-breaker 1: More votes = higher rank for high scores
+        if (totalB !== totalA) {
+          return totalB - totalA;
+        }
+        // Tie-breaker 2: Net votes
+        const netA = a.votesNap - a.votesEngaging;
+        const netB = b.votesNap - b.votesEngaging;
+        return netB - netA;
+      });
     return ok(c, sorted);
   });
   app.post('/api/movies/:id/vote', async (c) => {
@@ -54,7 +72,7 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
         title: data.title,
         year: data.year,
         status: 'active',
-        votesNap: 1, // Submitter gets first vote
+        votesNap: 1,
         votesEngaging: 0,
         tags: ['User Submitted']
       });

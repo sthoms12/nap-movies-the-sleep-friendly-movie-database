@@ -9,7 +9,7 @@ import { Moon, Star } from 'lucide-react';
 export function HomePage() {
   const queryClient = useQueryClient();
   useEffect(() => {
-    document.title = 'NapMovies 🌙';
+    document.title = 'NapMovies ����';
   }, []);
   const { data: movies, isLoading } = useQuery({
     queryKey: ['movies'],
@@ -28,11 +28,11 @@ export function HomePage() {
     onError: () => toast.error('Transmission error.')
   });
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="py-8 md:py-10 lg:py-12">
-        <div className="min-h-screen bg-retro-bg text-retro-text selection:bg-retro-accent/20 font-mono">
-          <div className="crt-overlay" />
-          <Navbar />
+    <div className="min-h-screen bg-retro-bg text-retro-text relative">
+      <div className="crt-overlay" />
+      <Navbar />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="py-8 md:py-10 lg:py-12">
           <div className="max-w-5xl mx-auto">
             <header className="mb-20 space-y-6 text-center pt-8">
               <div className="flex justify-center mb-6">
@@ -83,9 +83,9 @@ export function HomePage() {
             <p>System.Nap_Movies_Archive_v3.0</p>
             <p className="mt-2">© {new Date().getFullYear()} Minimalist Sleep Foundation</p>
           </footer>
-          <Toaster theme="dark" position="bottom-center" />
         </div>
       </div>
+      <Toaster theme="dark" position="bottom-center" />
     </div>
   );
 }
