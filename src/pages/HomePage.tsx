@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 import { MovieCard } from '@/components/MovieCard';
 import { Navbar } from '@/components/layout/Navbar';
-import { Toaster, toast } from 'sonner';
+import { toast } from 'sonner';
 import type { Movie } from '@shared/types';
 import { Moon, Star, RefreshCw, Award } from 'lucide-react';
 export function HomePage() {
@@ -126,7 +126,6 @@ export function HomePage() {
           </footer>
         </div>
       </div>
-      <Toaster theme="dark" position="bottom-center" />
     </div>
   );
 }
