@@ -11,7 +11,7 @@ export function HomePage() {
   useEffect(() => {
     document.title = 'NapMovies 🌙 | Index';
   }, []);
-  const { data: movies, isLoading, isFetching, error } = useQuery({
+  const { data: movies, isLoading, isFetching, error, refetch } = useQuery({
     queryKey: ['movies'],
     queryFn: () => api<Movie[]>('/api/movies'),
     staleTime: 30000,
@@ -30,22 +30,6 @@ export function HomePage() {
     onError: () => toast.error('Transmission error.')
   });
   const topFifty = movies?.slice(0, 50) ?? [];
-  if (error) {
-    return (
-      <div className="min-h-screen bg-retro-bg text-retro-text flex items-center justify-center p-4">
-        <div className="text-center space-y-4 border border-retro-danger/30 p-12 bg-retro-danger/5">
-          <h2 className="text-retro-danger font-black tracking-[0.3em] uppercase">Connection_Lost</h2>
-          <p className="text-xs opacity-60">Unable to synchronize with the Index.</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="text-[10px] font-bold underline tracking-widest uppercase hover:text-white transition-colors"
-          >
-            Retry_Uplink
-          </button>
-        </div>
-      </div>
-    );
-  }
   return (
     <div className="min-h-screen bg-retro-bg text-retro-text relative overflow-x-hidden selection:bg-retro-accent/30 selection:text-white">
       <div className="crt-overlay" />
@@ -86,6 +70,20 @@ export function HomePage() {
                   <span className="text-[9px] opacity-30 uppercase tracking-[0.2em] hidden sm:inline">Build_4.1_Stable</span>
                 </div>
               </div>
+              {error && (
+                <div className="flex items-center justify-center py-4 bg-retro-danger/10 border border-retro-danger/20 rounded-md mb-6">
+                  <p className="text-xs text-retro-danger/80 uppercase tracking-wider mr-4">Uplink Sync Failed: Cached Index Active</p>
+                  <button 
+                    onClick={() => { 
+                      refetch(); 
+                      toast.success('Re-syncing...'); 
+                    }} 
+                    className="text-xs font-bold text-retro-accent hover:text-white underline px-2 py-1 border border-retro-accent/30 rounded hover:bg-retro-accent/20 transition-all"
+                  >
+                    Retry Uplink
+                  </button>
+                </div>
+              )}
               {isLoading ? (
                 <div className="space-y-8">
                   {[1, 2, 3, 4].map(i => (
@@ -93,6 +91,10 @@ export function HomePage() {
                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent shimmer-effect" />
                     </div>
                   ))}
+                </div>
+              ) : error && !movies?.length ? (
+                <div className="text-center py-40 border border-dashed border-retro-muted/20 opacity-40 text-xs tracking-[0.4em] uppercase">
+                  Connection_Lost
                 </div>
               ) : topFifty.length === 0 ? (
                 <div className="text-center py-40 border border-dashed border-retro-muted/20 opacity-40 text-xs tracking-[0.4em] uppercase">
