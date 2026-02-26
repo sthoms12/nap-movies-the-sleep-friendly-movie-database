@@ -16,8 +16,10 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
     ? Math.round((movie.votesNap / totalVotes) * 100)
     : 50;
   const userVote = useMemo(() => {
+    // We include movie.votesNap and movie.votesEngaging to re-run this when the parent 
+    // updates the state after a successful vote, ensuring the UI reflects the locked state.
     return localStorage.getItem(`user_voted_${movie.id}`);
-  }, [movie.votesNap, movie.votesEngaging]);
+  }, [movie.id, movie.votesNap, movie.votesEngaging]);
   return (
     <div className="group relative border border-retro-muted/20 bg-retro-card p-6 md:p-8 transition-all duration-slow hover:border-retro-accent/40 hover:bg-retro-card/90">
       <div className="absolute -top-3 -left-2 md:-left-4 bg-retro-muted text-retro-text px-3 py-1.5 text-[11px] font-black flex items-center gap-1 border border-retro-muted/40 z-10 group-hover:bg-retro-accent group-hover:text-retro-bg transition-all shadow-lg">
@@ -74,8 +76,8 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
               onClick={() => onVote('nap')}
               className={cn(
                 "rounded-none border text-[10px] font-black uppercase transition-all h-10 px-6 tracking-widest",
-                userVote === 'nap' 
-                  ? "bg-retro-accent text-retro-bg border-retro-accent" 
+                userVote === 'nap'
+                  ? "bg-retro-accent text-retro-bg border-retro-accent"
                   : "bg-retro-accent/10 text-retro-accent border-retro-accent/30 hover:bg-retro-accent hover:text-retro-bg"
               )}
             >

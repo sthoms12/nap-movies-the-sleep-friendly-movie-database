@@ -6,19 +6,24 @@ import { toast } from 'sonner';
 import type { Movie } from '@shared/types';
 import { Moon, Star, RefreshCw, Award } from 'lucide-react';
 export function HomePage() {
-  const [offsets, setOffsets] = useState<Record<string, { nap: number; engaging: number }>>({});
-  useEffect(() => {
-    document.title = 'NapMovies 🌙 | Index';
+  // Use a lazy initializer for state to prevent Layout Shift during hydration
+  const [offsets, setOffsets] = useState<Record<string, { nap: number; engaging: number }>>(() => {
+    if (typeof window === 'undefined') return {};
     const saved = localStorage.getItem('nap_votes_offsets');
     if (saved) {
       try {
-        setOffsets(JSON.parse(saved));
+        return JSON.parse(saved);
       } catch (e) {
         console.error("Failed to parse offsets", e);
+        return {};
       }
     }
+    return {};
+  });
+  useEffect(() => {
+    document.title = 'NapMovies 🌙 | Index';
   }, []);
-  const { data: baseMovies, isLoading, isFetching, error, refetch } = useQuery({
+  const { data: baseMovies, isLoading, isFetching, error } = useQuery({
     queryKey: ['static-movies'],
     queryFn: async () => {
       const res = await fetch('/movies.json');
@@ -41,11 +46,13 @@ export function HomePage() {
       .sort((a, b) => {
         const totalA = a.votesNap + a.votesEngaging;
         const totalB = b.votesNap + b.votesEngaging;
+        // Bayesian-lite ranking logic: adjust for small sample sizes with a prior
         const priorVotes = 10;
         const priorNapRate = 0.7;
         const scoreA = (a.votesNap + priorVotes * priorNapRate) / (totalA + priorVotes);
         const scoreB = (b.votesNap + priorVotes * priorNapRate) / (totalB + priorVotes);
-        if (scoreB !== scoreA) return scoreB - scoreA;
+        if (Math.abs(scoreB - scoreA) > 0.0001) return scoreB - scoreA;
+        // Tie-breaker: pure difference
         return (b.votesNap - b.votesEngaging) - (a.votesNap - a.votesEngaging);
       })
       .slice(0, 50);
