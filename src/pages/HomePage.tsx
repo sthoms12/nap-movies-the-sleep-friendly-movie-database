@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
+import { INITIAL_MOVIES } from '@shared/mock-data';
+import { Button } from '@/components/ui/button';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { MovieCard } from '@/components/MovieCard';
 import { Navbar } from '@/components/layout/Navbar';
@@ -8,6 +10,19 @@ import type { Movie, VoteType } from '@shared/types';
 import { Moon, Star, RefreshCw, Award } from 'lucide-react';
 export function HomePage() {
   const queryClient = useQueryClient();
+
+  function computeNapScore(nap: number, engaging: number): number {
+    const total = nap + engaging;
+    return total > 0 ? Math.round((nap / total) * 100) : 0;
+  }
+
+  const fallbackMovies = useMemo(() => 
+    INITIAL_MOVIES.map((movie: Movie) => ({
+      ...movie, 
+      napScore: computeNapScore(movie.votesNap, movie.votesEngaging)
+    })), 
+  []);
+
   useEffect(() => {
     document.title = 'NapMovies �� | Index';
   }, []);
@@ -16,6 +31,8 @@ export function HomePage() {
     queryFn: () => api<Movie[]>('/api/movies'),
     staleTime: 60000,
   });
+
+  const displayMovies: Movie[] = movies ?? fallbackMovies;
   const voteMutation = useMutation({
     mutationFn: (vars: { movieId: string; type: VoteType }) =>
       api('/api/vote', { method: 'POST', body: JSON.stringify(vars) }),
@@ -75,29 +92,42 @@ export function HomePage() {
                   <span className="text-[10px] opacity-30 uppercase tracking-[0.3em] font-bold">Protocol_v7.2_Stable</span>
                 </div>
               </div>
-              {isLoading ? (
-                <div className="space-y-10">
-                  {[1, 2, 3, 4].map(i => (
-                    <div key={i} className="h-56 bg-retro-card/40 border border-retro-muted/10 animate-pulse" />
-                  ))}
-                </div>
-              ) : error ? (
-                <div className="text-center py-48 border border-dashed border-retro-muted/20 bg-retro-card/10 opacity-40 text-xs tracking-[0.5em] uppercase font-black">
-                  INDEX_LOAD_FAILURE_RETRYING
-                </div>
-              ) : (
-                <div className="grid gap-10">
-                  {movies?.map((movie, idx) => (
-                    <MovieCard
-                      key={movie.id}
-                      movie={movie}
-                      rank={idx + 1}
-                      onVote={(type) => handleLocalVote(movie.id, type)}
-                      isVoting={voteMutation.isPending}
-                    />
-                  ))}
+              {(error || isLoading || isFetching) && (
+                <div className="mb-8 p-4 bg-retro-accent/20 border border-retro-accent/30 rounded-xl backdrop-blur-sm text-center text-xs uppercase tracking-[0.4em] font-black flex flex-col items-center gap-4">
+                  {error ? (
+                    <div className="flex flex-col sm:flex-row items-center gap-4 text-retro-text/80">
+                      <span>CONNECTION_LOST</span>
+                      <span className="tracking-normal lowercase text-retro-text/60 font-normal">using cached index</span>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="border-retro-accent/50 bg-retro-accent/10 hover:bg-retro-accent/20 text-xs px-4 py-1.5 font-black tracking-wider h-auto" 
+                        onClick={() => queryClient.refetchQueries({ queryKey: ['movies-index'], exact: true })} 
+                        disabled={voteMutation.isPending}
+                      >
+                        <RefreshCw className={`w-4 h-4 mr-1 ${isFetching ? 'animate-spin' : ''}`} />
+                        Retry Sync
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3 text-retro-accent/80">
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      <span className="tracking-normal lowercase font-normal">syncing community votes</span>
+                    </div>
+                  )}
                 </div>
               )}
+              <div className="grid gap-10">
+                {displayMovies.map((movie, idx) => (
+                  <MovieCard
+                    key={movie.id}
+                    movie={movie}
+                    rank={idx + 1}
+                    onVote={(type) => handleLocalVote(movie.id, type)}
+                    isVoting={voteMutation.isPending}
+                  />
+                ))}
+              </div>
             </section>
           </div>
         </div>
