@@ -1,49 +1,40 @@
-import React, { useEffect, useMemo } from 'react';
-import { INITIAL_MOVIES } from '@shared/mock-data';
-import { Button } from '@/components/ui/button';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { MovieCard } from '@/components/MovieCard';
+import React, { useState, useEffect, useMemo } from 'react';
+import staticMovies from '@/data/movies.json';
 import { Navbar } from '@/components/layout/Navbar';
+import { MovieCard } from '@/components/MovieCard';
+import { Moon, Star, Award, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { api } from '@/lib/api-client';
 import type { Movie, VoteType } from '@shared/types';
-import { Moon, Star, RefreshCw, Award } from 'lucide-react';
 export function HomePage() {
-  const queryClient = useQueryClient();
-
-  function computeNapScore(nap: number, engaging: number): number {
+  const [movies, setMovies] = useState<Movie[]>([]);
+  // Bayesian-lite Parameters (Prior: 10 votes at 70% nap-rate)
+  const priorVotes = 10;
+  const priorNapRate = 0.7;
+  const computeNapScore = (nap: number, engaging: number): number => {
     const total = nap + engaging;
-    return total > 0 ? Math.round((nap / total) * 100) : 0;
-  }
-
-  const fallbackMovies = useMemo(() => 
-    INITIAL_MOVIES.map((movie: Movie) => ({
-      ...movie, 
-      napScore: computeNapScore(movie.votesNap, movie.votesEngaging)
-    })), 
-  []);
-
+    const bayesianScore = (nap + priorVotes * priorNapRate) / (total + priorVotes);
+    return Math.round(bayesianScore * 100);
+  };
   useEffect(() => {
-    document.title = 'NapMovies �� | Index';
+    document.title = 'NapMovies 🌙 | Pure Index';
+    // Process movies with local votes
+    const processed = (staticMovies as Movie[]).map(m => {
+      const userVote = localStorage.getItem(`user_voted_${m.id}`);
+      let vNap = m.votesNap;
+      let vEng = m.votesEngaging;
+      if (userVote === 'nap') vNap += 1;
+      else if (userVote === 'engaging') vEng += 1;
+      return {
+        ...m,
+        votesNap: vNap,
+        votesEngaging: vEng,
+        napScore: computeNapScore(vNap, vEng)
+      };
+    });
+    // Sort strictly by the calculated Bayesian score
+    const sorted = processed.sort((a, b) => (b.napScore || 0) - (a.napScore || 0));
+    setMovies(sorted);
   }, []);
-  const { data: movies, isLoading, isFetching, error } = useQuery({
-    queryKey: ['movies-index'],
-    queryFn: () => api<Movie[]>('/api/movies'),
-    staleTime: 60000,
-  });
-
-  const displayMovies: Movie[] = movies ?? fallbackMovies;
-  const voteMutation = useMutation({
-    mutationFn: (vars: { movieId: string; type: VoteType }) =>
-      api('/api/vote', { method: 'POST', body: JSON.stringify(vars) }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['movies-index'] });
-      toast.success('Signal received. Sleep well.');
-    },
-    onError: () => {
-      toast.error('Transmission failure.');
-    }
-  });
   const handleLocalVote = (id: string, type: VoteType) => {
     const userVotedKey = `user_voted_${id}`;
     if (localStorage.getItem(userVotedKey)) {
@@ -51,7 +42,22 @@ export function HomePage() {
       return;
     }
     localStorage.setItem(userVotedKey, type);
-    voteMutation.mutate({ movieId: id, type });
+    toast.success('Signal received. Sleep well.');
+    // Update local state optimistically
+    setMovies(prev => {
+      const updated = prev.map(m => {
+        if (m.id !== id) return m;
+        const vNap = type === 'nap' ? m.votesNap + 1 : m.votesNap;
+        const vEng = type === 'engaging' ? m.votesEngaging + 1 : m.votesEngaging;
+        return {
+          ...m,
+          votesNap: vNap,
+          votesEngaging: vEng,
+          napScore: computeNapScore(vNap, vEng)
+        };
+      });
+      return [...updated].sort((a, b) => (b.napScore || 0) - (a.napScore || 0));
+    });
   };
   return (
     <div className="min-h-screen bg-retro-bg text-retro-text relative overflow-x-hidden selection:bg-retro-accent/30 selection:text-white">
@@ -73,58 +79,32 @@ export function HomePage() {
                 <div className="h-px w-32 bg-retro-accent/40 mx-auto" />
               </div>
               <p className="text-retro-text/70 text-base md:text-xl max-w-2xl mx-auto italic font-light leading-relaxed">
-                "Synchronized with Bayesian-weighted community signals. A rolling 30-day index of films optimized for deep rest."
+                "Pure Static Architecture. Synchronized with Bayesian-weighted local signals. The world's most reliable rest-optimized index."
               </p>
             </header>
             <section className="space-y-12">
               <div className="flex flex-col sm:flex-row items-center justify-between border-b border-retro-muted/30 pb-8 gap-4">
                 <div className="flex items-center gap-5">
                   <h2 className="text-xs font-black tracking-[0.4em] flex items-center gap-3 text-retro-accent/80 uppercase">
-                    <Star className="w-4 h-4" /> INDEX_RANKINGS
+                    <Star className="w-4 h-4" /> STATIC_INDEX
                   </h2>
                   <div className="flex items-center gap-2 bg-retro-accent/10 text-retro-accent border border-retro-accent/20 px-3 py-1.5 text-[10px] font-bold tracking-widest uppercase">
                     <Award className="w-3 h-3" />
-                    Consensus Verified
+                    Immutable Core
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  {(isFetching || voteMutation.isPending) && <RefreshCw className="w-3.5 h-3.5 text-retro-accent animate-spin opacity-50" />}
-                  <span className="text-[10px] opacity-30 uppercase tracking-[0.3em] font-bold">Protocol_v7.2_Stable</span>
+                  <span className="text-[10px] opacity-30 uppercase tracking-[0.3em] font-bold">Protocol_v8.0_PureStatic</span>
                 </div>
               </div>
-              {(error || isLoading || isFetching) && (
-                <div className="mb-8 p-4 bg-retro-accent/20 border border-retro-accent/30 rounded-xl backdrop-blur-sm text-center text-xs uppercase tracking-[0.4em] font-black flex flex-col items-center gap-4">
-                  {error ? (
-                    <div className="flex flex-col sm:flex-row items-center gap-4 text-retro-text/80">
-                      <span>CONNECTION_LOST</span>
-                      <span className="tracking-normal lowercase text-retro-text/60 font-normal">using cached index</span>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="border-retro-accent/50 bg-retro-accent/10 hover:bg-retro-accent/20 text-xs px-4 py-1.5 font-black tracking-wider h-auto" 
-                        onClick={() => queryClient.refetchQueries({ queryKey: ['movies-index'], exact: true })} 
-                        disabled={voteMutation.isPending}
-                      >
-                        <RefreshCw className={`w-4 h-4 mr-1 ${isFetching ? 'animate-spin' : ''}`} />
-                        Retry Sync
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-3 text-retro-accent/80">
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                      <span className="tracking-normal lowercase font-normal">syncing community votes</span>
-                    </div>
-                  )}
-                </div>
-              )}
               <div className="grid gap-10">
-                {displayMovies.map((movie, idx) => (
+                {movies.map((movie, idx) => (
                   <MovieCard
                     key={movie.id}
                     movie={movie}
                     rank={idx + 1}
                     onVote={(type) => handleLocalVote(movie.id, type)}
-                    isVoting={voteMutation.isPending}
+                    isVoting={false}
                   />
                 ))}
               </div>

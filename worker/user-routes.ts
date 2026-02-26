@@ -1,56 +1,8 @@
 import { Hono } from "hono";
 import type { Env } from './core-utils';
-import { SubmissionEntity, VoteEntity } from "./entities";
+import { SubmissionEntity } from "./entities";
 import { ok, bad, Index } from './core-utils';
-import { INITIAL_MOVIES } from "@shared/mock-data";
-import type { Movie, VoteType } from "@shared/types";
 export function userRoutes(app: Hono<{ Bindings: Env }>) {
-  // MOVIES INDEX (HYBRID WITH BAYESIAN RANKING)
-  app.get('/api/movies', async (c) => {
-    const { items: allVotes } = await VoteEntity.list(c.env, null, 1000);
-    const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
-    // Aggregate recent community signals
-    const voteMap: Record<string, { nap: number; engaging: number }> = {};
-    for (const v of allVotes) {
-      if (v.createdAt < thirtyDaysAgo) continue;
-      if (!voteMap[v.movieId]) voteMap[v.movieId] = { nap: 0, engaging: 0 };
-      if (v.type === 'nap') voteMap[v.movieId].nap++;
-      else voteMap[v.movieId].engaging++;
-    }
-    // Bayesian-lite Parameters (Prior: 10 votes at 70% nap-rate)
-    const priorVotes = 10;
-    const priorNapRate = 0.7;
-    const mergedMovies: Movie[] = INITIAL_MOVIES.map(m => {
-      const recent = voteMap[m.id] || { nap: 0, engaging: 0 };
-      const vNap = m.votesNap + recent.nap;
-      const vEng = m.votesEngaging + recent.engaging;
-      const total = vNap + vEng;
-      // Calculate probability based on prior and current data
-      const bayesianScore = (vNap + priorVotes * priorNapRate) / (total + priorVotes);
-      return {
-        ...m,
-        votesNap: vNap,
-        votesEngaging: vEng,
-        napScore: Math.round(bayesianScore * 100)
-      };
-    });
-    // Sort strictly by the calculated Bayesian score
-    const sorted = mergedMovies.sort((a, b) => (b.napScore || 0) - (a.napScore || 0));
-    return ok(c, sorted.slice(0, 50));
-  });
-  // VOTING TRANSMISSION
-  app.post('/api/vote', async (c) => {
-    const body = await c.req.json().catch(() => ({}));
-    const { movieId, type } = body as { movieId: string; type: VoteType };
-    if (!movieId || !type) return bad(c, 'movieId and type required');
-    const vote = await VoteEntity.create(c.env, {
-      id: crypto.randomUUID(),
-      movieId,
-      type,
-      createdAt: Date.now()
-    });
-    return ok(c, vote);
-  });
   // PROPOSAL SUBMISSION
   app.post('/api/submit', async (c) => {
     const body = await c.req.json().catch(() => ({}));
@@ -83,15 +35,6 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     if (!await sub.exists()) return bad(c, 'not found');
     await sub.mutate(s => ({ ...s, status: action === 'approve' ? 'approved' : 'rejected' }));
     return ok(c, { success: true });
-  });
-  app.post('/api/admin/prune-votes', async (c) => {
-    const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
-    const { items } = await VoteEntity.list(c.env, null, 5000);
-    const toDelete = items.filter(v => v.createdAt < thirtyDaysAgo).map(v => v.id);
-    if (toDelete.length > 0) {
-      await VoteEntity.deleteMany(c.env, toDelete);
-    }
-    return ok(c, { pruned: toDelete.length });
   });
   app.post('/api/admin/reset-seeds', async (c) => {
     const subIndex = new Index(c.env, SubmissionEntity.indexName);

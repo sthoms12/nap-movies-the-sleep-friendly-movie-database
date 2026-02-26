@@ -5,12 +5,12 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import type { Submission } from '@shared/types';
-import { Check, X, Database, AlertCircle, Info, Trash2 } from 'lucide-react';
+import { Check, X, Database, AlertCircle, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 export function AdminPage() {
   const queryClient = useQueryClient();
   useEffect(() => {
-    document.title = 'NapMovies 🌙 | Terminal';
+    document.title = 'NapMovies �� | Terminal';
   }, []);
   const { data: submissions, isLoading } = useQuery({
     queryKey: ['admin-submissions'],
@@ -28,14 +28,6 @@ export function AdminPage() {
     },
     onError: () => toast.error('Moderation signal lost.')
   });
-  const pruneMutation = useMutation({
-    mutationFn: () => api<{ pruned: number }>('/api/admin/prune-votes', { method: 'POST' }),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['movies-index'] });
-      toast.success(`Pruned ${data.pruned} stale votes.`);
-    },
-    onError: () => toast.error('Pruning failed.')
-  });
   const pendingSubmissions = submissions?.filter(s => s.status === 'pending') ?? [];
   return (
     <div className="min-h-screen bg-retro-bg text-retro-text relative">
@@ -48,19 +40,9 @@ export function AdminPage() {
               <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
                 <div>
                   <h1 className="text-4xl font-black uppercase tracking-[0.3em] text-white">ADMIN_TERMINAL</h1>
-                  <p className="text-retro-text/60 text-xs mt-4 tracking-[0.2em] font-medium">System Integrity & Index Maintenance.</p>
+                  <p className="text-retro-text/60 text-xs mt-4 tracking-[0.2em] font-medium">Proposal Queue & System Integrity.</p>
                 </div>
                 <div className="flex gap-4 items-center">
-                  <Button
-                    onClick={() => {
-                      if (window.confirm('PRUNE VOTES OLDER THAN 30 DAYS?')) pruneMutation.mutate();
-                    }}
-                    disabled={pruneMutation.isPending}
-                    variant="outline"
-                    className="border-retro-accent/40 text-retro-accent hover:bg-retro-accent hover:text-retro-bg rounded-none text-[10px] tracking-[0.2em] font-black uppercase"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" /> PRUNE_STALE_VOTES
-                  </Button>
                   <Button
                     onClick={() => {
                       if (window.confirm('PURGE PENDING SUBMISSIONS?')) api('/api/admin/reset-seeds', { method: 'POST' });
@@ -75,7 +57,7 @@ export function AdminPage() {
               <div className="bg-retro-accent/5 border border-retro-accent/20 p-4 flex gap-4 items-center">
                 <Info className="w-5 h-5 text-retro-accent shrink-0" />
                 <p className="text-[10px] tracking-widest font-bold uppercase text-retro-accent/80 leading-relaxed">
-                  Maintenance Note: The Nap Index follows a 30-day rolling window for community signals. Stale votes are automatically ignored in the live score but remain in storage until manual pruning.
+                  System Architecture: The Movie Index is now PURE STATIC. Approved submissions will be archived here but require a manual JSON update and deployment (Edit src/data/movies.json -> Push) to appear on the Index.
                 </p>
               </div>
             </header>

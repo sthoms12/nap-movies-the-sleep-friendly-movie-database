@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import type { Movie } from '@shared/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,14 +11,17 @@ interface MovieCardProps {
   isVoting: boolean;
 }
 export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
-  const score = useMemo(() => {
-    if (typeof movie.napScore === 'number') return movie.napScore;
-    const totalVotes = movie.votesNap + movie.votesEngaging;
-    return totalVotes > 0 ? Math.round((movie.votesNap / totalVotes) * 100) : 50;
-  }, [movie.napScore, movie.votesNap, movie.votesEngaging]);
-  const userVote = useMemo(() => {
-    return localStorage.getItem(`user_voted_${movie.id}`);
+  const [userVote, setUserVote] = useState<string | null>(null);
+  useEffect(() => {
+    setUserVote(localStorage.getItem(`user_voted_${movie.id}`));
   }, [movie.id]);
+  const score = useMemo(() => {
+    return movie.napScore ?? 50;
+  }, [movie.napScore]);
+  const handleVote = (type: 'nap' | 'engaging') => {
+    onVote(type);
+    setUserVote(type);
+  };
   return (
     <div className="group relative border border-retro-muted/20 bg-retro-card p-6 md:p-8 transition-all duration-slow hover:border-retro-accent/40 hover:bg-retro-card/90">
       <div className="absolute -top-3 -left-2 md:-left-4 bg-retro-muted text-retro-text px-3 py-1.5 text-[11px] font-black flex items-center gap-1 border border-retro-muted/40 z-10 group-hover:bg-retro-accent group-hover:text-retro-bg transition-all shadow-lg">
@@ -58,7 +61,7 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
                 <span className="mx-1">|</span>
                 <ThumbsDown className="w-2.5 h-2.5" /> {movie.votesEngaging}
               </div>
-              <span className="flex items-center gap-1"><Zap className="w-2 h-2" /> Bayesian_Verified</span>
+              <span className="flex items-center gap-1"><Zap className="w-2 h-2" /> Local_Signals_Applied</span>
             </div>
           </div>
         </div>
@@ -76,7 +79,7 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
             <Button
               size="sm"
               disabled={!!userVote || isVoting}
-              onClick={() => onVote('nap')}
+              onClick={() => handleVote('nap')}
               className={cn(
                 "rounded-none border text-[10px] font-black uppercase transition-all h-10 px-6 tracking-widest",
                 userVote === 'nap'
@@ -90,7 +93,7 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
             <Button
               size="sm"
               disabled={!!userVote || isVoting}
-              onClick={() => onVote('engaging')}
+              onClick={() => handleVote('engaging')}
               className={cn(
                 "rounded-none border text-[10px] font-black uppercase transition-all h-10 px-6 tracking-widest",
                 userVote === 'engaging'
