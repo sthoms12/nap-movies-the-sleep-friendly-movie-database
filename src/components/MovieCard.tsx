@@ -11,10 +11,11 @@ interface MovieCardProps {
   isVoting: boolean;
 }
 export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
-  const totalVotes = movie.votesNap + movie.votesEngaging;
-  const score = totalVotes > 0
-    ? Math.round((movie.votesNap / totalVotes) * 100)
-    : 50;
+  const score = useMemo(() => {
+    if (typeof movie.napScore === 'number') return movie.napScore;
+    const totalVotes = movie.votesNap + movie.votesEngaging;
+    return totalVotes > 0 ? Math.round((movie.votesNap / totalVotes) * 100) : 50;
+  }, [movie.napScore, movie.votesNap, movie.votesEngaging]);
   const userVote = useMemo(() => {
     return localStorage.getItem(`user_voted_${movie.id}`);
   }, [movie.id]);
@@ -53,11 +54,11 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
             </div>
             <div className="flex justify-between items-center text-[9px] uppercase tracking-[0.3em] font-bold opacity-30">
               <div className="flex items-center gap-2">
-                <ThumbsUp className="w-2.5 h-2.5" /> {movie.votesNap} 
-                <span className="mx-1">|</span> 
+                <ThumbsUp className="w-2.5 h-2.5" /> {movie.votesNap}
+                <span className="mx-1">|</span>
                 <ThumbsDown className="w-2.5 h-2.5" /> {movie.votesEngaging}
               </div>
-              <span className="flex items-center gap-1"><Zap className="w-2 h-2" /> Verified_Signal</span>
+              <span className="flex items-center gap-1"><Zap className="w-2 h-2" /> Bayesian_Verified</span>
             </div>
           </div>
         </div>

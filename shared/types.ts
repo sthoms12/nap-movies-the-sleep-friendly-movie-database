@@ -12,6 +12,7 @@ export interface Movie {
   votesNap: number;
   votesEngaging: number;
   tags: string[];
+  napScore?: number;
 }
 export type VoteType = 'nap' | 'engaging';
 export interface Vote {

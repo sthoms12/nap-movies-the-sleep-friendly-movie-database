@@ -5,11 +5,11 @@ import { ok, bad, Index } from './core-utils';
 import { INITIAL_MOVIES } from "@shared/mock-data";
 import type { Movie, VoteType } from "@shared/types";
 export function userRoutes(app: Hono<{ Bindings: Env }>) {
-  // MOVIES INDEX (HYBRID)
+  // MOVIES INDEX (HYBRID WITH BAYESIAN RANKING)
   app.get('/api/movies', async (c) => {
     const { items: allVotes } = await VoteEntity.list(c.env, null, 1000);
     const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
-    // Aggregate recent votes
+    // Aggregate recent community signals
     const voteMap: Record<string, { nap: number; engaging: number }> = {};
     for (const v of allVotes) {
       if (v.createdAt < thirtyDaysAgo) continue;
@@ -17,28 +17,28 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
       if (v.type === 'nap') voteMap[v.movieId].nap++;
       else voteMap[v.movieId].engaging++;
     }
-    // Merge with static baseline
-    const mergedMovies: Movie[] = INITIAL_MOVIES.map(m => {
-      const recent = voteMap[m.id] || { nap: 0, engaging: 0 };
-      return {
-        ...m,
-        votesNap: m.votesNap + recent.nap,
-        votesEngaging: m.votesEngaging + recent.engaging
-      };
-    });
-    // Bayesian-lite sorting (Prior: 10 votes at 70% nap-rate)
+    // Bayesian-lite Parameters (Prior: 10 votes at 70% nap-rate)
     const priorVotes = 10;
     const priorNapRate = 0.7;
-    const sorted = mergedMovies.sort((a, b) => {
-      const totalA = a.votesNap + a.votesEngaging;
-      const totalB = b.votesNap + b.votesEngaging;
-      const scoreA = (a.votesNap + priorVotes * priorNapRate) / (totalA + priorVotes);
-      const scoreB = (b.votesNap + priorVotes * priorNapRate) / (totalB + priorVotes);
-      return scoreB - scoreA;
+    const mergedMovies: Movie[] = INITIAL_MOVIES.map(m => {
+      const recent = voteMap[m.id] || { nap: 0, engaging: 0 };
+      const vNap = m.votesNap + recent.nap;
+      const vEng = m.votesEngaging + recent.engaging;
+      const total = vNap + vEng;
+      // Calculate probability based on prior and current data
+      const bayesianScore = (vNap + priorVotes * priorNapRate) / (total + priorVotes);
+      return {
+        ...m,
+        votesNap: vNap,
+        votesEngaging: vEng,
+        napScore: Math.round(bayesianScore * 100)
+      };
     });
+    // Sort strictly by the calculated Bayesian score
+    const sorted = mergedMovies.sort((a, b) => (b.napScore || 0) - (a.napScore || 0));
     return ok(c, sorted.slice(0, 50));
   });
-  // VOTING
+  // VOTING TRANSMISSION
   app.post('/api/vote', async (c) => {
     const body = await c.req.json().catch(() => ({}));
     const { movieId, type } = body as { movieId: string; type: VoteType };
@@ -51,7 +51,7 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     });
     return ok(c, vote);
   });
-  // SUBMISSIONS
+  // PROPOSAL SUBMISSION
   app.post('/api/submit', async (c) => {
     const body = await c.req.json().catch(() => ({}));
     const { title, year, reason } = body as { title: string; year: number; reason: string };
@@ -68,7 +68,7 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     });
     return ok(c, submission);
   });
-  // ADMIN
+  // ADMIN TERMINAL ROUTES
   app.get('/api/admin/submissions', async (c) => {
     const email = c.req.header('cf-access-authenticated-user-email')?.toLowerCase();
     const allowedEmails = ((c.env as any).ADMIN_EMAILS ?? '').split(',').map((e: string) => e.toLowerCase().trim()).filter(Boolean);
@@ -97,6 +97,6 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     const subIndex = new Index(c.env, SubmissionEntity.indexName);
     const subIds = await subIndex.list();
     for (const id of subIds) await SubmissionEntity.delete(c.env, id);
-    return ok(c, { message: 'Cleared' });
+    return ok(c, { message: 'Submission queue cleared' });
   });
 }

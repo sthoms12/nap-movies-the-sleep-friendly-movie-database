@@ -9,7 +9,7 @@ import { Moon, Star, RefreshCw, Award } from 'lucide-react';
 export function HomePage() {
   const queryClient = useQueryClient();
   useEffect(() => {
-    document.title = 'NapMovies 🌙 | Index';
+    document.title = 'NapMovies �� | Index';
   }, []);
   const { data: movies, isLoading, isFetching, error } = useQuery({
     queryKey: ['movies-index'],
@@ -17,7 +17,7 @@ export function HomePage() {
     staleTime: 60000,
   });
   const voteMutation = useMutation({
-    mutationFn: (vars: { movieId: string; type: VoteType }) => 
+    mutationFn: (vars: { movieId: string; type: VoteType }) =>
       api('/api/vote', { method: 'POST', body: JSON.stringify(vars) }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['movies-index'] });
@@ -41,52 +41,52 @@ export function HomePage() {
       <div className="crt-overlay" />
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-8 md:py-10 lg:py-16">
+        <div className="py-12 md:py-16 lg:py-24">
           <div className="max-w-5xl mx-auto">
-            <header className="mb-20 space-y-8 text-center pt-8">
-              <div className="flex justify-center mb-6">
+            <header className="mb-24 space-y-10 text-center">
+              <div className="flex justify-center mb-8">
                 <div className="p-6 border border-retro-accent/10 bg-retro-accent/5 relative group">
-                  <Moon className="w-12 h-12 text-retro-accent group-hover:scale-110 transition-transform duration-slow" />
+                  <Moon className="w-14 h-14 text-retro-accent group-hover:scale-110 transition-transform duration-slow" />
                 </div>
               </div>
-              <div className="space-y-4">
-                <h1 className="text-5xl md:text-7xl font-black tracking-[0.2em] uppercase text-white">
+              <div className="space-y-6">
+                <h1 className="text-6xl md:text-8xl font-black tracking-[0.25em] uppercase text-white leading-none">
                   NAP <span className="text-retro-accent">MOVIES</span>
                 </h1>
-                <div className="h-px w-24 bg-retro-accent/40 mx-auto" />
+                <div className="h-px w-32 bg-retro-accent/40 mx-auto" />
               </div>
-              <p className="text-retro-text/70 text-base md:text-lg max-w-xl mx-auto italic font-light leading-relaxed">
-                "Browse the official Hybrid Nap Index — synchronized with real-time community signals."
+              <p className="text-retro-text/70 text-base md:text-xl max-w-2xl mx-auto italic font-light leading-relaxed">
+                "Synchronized with Bayesian-weighted community signals. A rolling 30-day index of films optimized for deep rest."
               </p>
             </header>
-            <section className="space-y-10">
-              <div className="flex items-center justify-between border-b border-retro-muted/30 pb-6">
-                <div className="flex items-center gap-4">
+            <section className="space-y-12">
+              <div className="flex flex-col sm:flex-row items-center justify-between border-b border-retro-muted/30 pb-8 gap-4">
+                <div className="flex items-center gap-5">
                   <h2 className="text-xs font-black tracking-[0.4em] flex items-center gap-3 text-retro-accent/80 uppercase">
                     <Star className="w-4 h-4" /> INDEX_RANKINGS
                   </h2>
-                  <div className="flex items-center gap-2 bg-retro-accent/10 text-retro-accent border border-retro-accent/20 px-3 py-1 text-[10px] font-bold tracking-widest uppercase">
+                  <div className="flex items-center gap-2 bg-retro-accent/10 text-retro-accent border border-retro-accent/20 px-3 py-1.5 text-[10px] font-bold tracking-widest uppercase">
                     <Award className="w-3 h-3" />
-                    Community Verified
+                    Consensus Verified
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  {(isFetching || voteMutation.isPending) && <RefreshCw className="w-3 h-3 text-retro-accent animate-spin opacity-50" />}
-                  <span className="text-[9px] opacity-30 uppercase tracking-[0.2em]">Build_6.0_Hybrid_DO</span>
+                  {(isFetching || voteMutation.isPending) && <RefreshCw className="w-3.5 h-3.5 text-retro-accent animate-spin opacity-50" />}
+                  <span className="text-[10px] opacity-30 uppercase tracking-[0.3em] font-bold">Protocol_v7.2_Stable</span>
                 </div>
               </div>
               {isLoading ? (
-                <div className="space-y-8">
-                  {[1, 2, 3].map(i => (
-                    <div key={i} className="h-48 bg-retro-card/40 border border-retro-muted/10 animate-pulse" />
+                <div className="space-y-10">
+                  {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="h-56 bg-retro-card/40 border border-retro-muted/10 animate-pulse" />
                   ))}
                 </div>
               ) : error ? (
-                <div className="text-center py-40 border border-dashed border-retro-muted/20 opacity-40 text-xs tracking-[0.4em] uppercase">
+                <div className="text-center py-48 border border-dashed border-retro-muted/20 bg-retro-card/10 opacity-40 text-xs tracking-[0.5em] uppercase font-black">
                   INDEX_LOAD_FAILURE_RETRYING
                 </div>
               ) : (
-                <div className="grid gap-8">
+                <div className="grid gap-10">
                   {movies?.map((movie, idx) => (
                     <MovieCard
                       key={movie.id}

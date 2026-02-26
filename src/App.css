@@ -5,7 +5,7 @@
   padding: 0;
   text-align: left;
 }
-/* Subtler CRT Flicker Effect */
+/* Subtle CRT Flicker Effect */
 @keyframes flicker {
   0% { opacity: 0.98; }
   5% { opacity: 0.95; }
@@ -44,6 +44,9 @@
 }
 input, textarea {
   outline: none !important;
+}
+.crt-overlay {
+  animation: flicker 0.15s infinite;
 }
 .crt-scanlines {
   position: relative;
