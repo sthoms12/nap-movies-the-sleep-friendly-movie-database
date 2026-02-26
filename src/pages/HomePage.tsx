@@ -1,35 +1,76 @@
-import React, { useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/lib/api-client';
+import React, { useEffect, useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { MovieCard } from '@/components/MovieCard';
 import { Navbar } from '@/components/layout/Navbar';
 import { toast } from 'sonner';
 import type { Movie } from '@shared/types';
 import { Moon, Star, RefreshCw, Award } from 'lucide-react';
 export function HomePage() {
-  const queryClient = useQueryClient();
+  const [offsets, setOffsets] = useState<Record<string, { nap: number; engaging: number }>>({});
   useEffect(() => {
     document.title = 'NapMovies 🌙 | Index';
+    const saved = localStorage.getItem('nap_votes_offsets');
+    if (saved) {
+      try {
+        setOffsets(JSON.parse(saved));
+      } catch (e) {
+        console.error("Failed to parse offsets", e);
+      }
+    }
   }, []);
-  const { data: movies, isLoading, isFetching, error, refetch } = useQuery({
-    queryKey: ['movies'],
-    queryFn: () => api<Movie[]>('/api/movies'),
-    staleTime: 30000,
-    refetchInterval: 60000,
-  });
-  const voteMutation = useMutation({
-    mutationFn: ({ id, type }: { id: string; type: 'nap' | 'engaging' }) =>
-      api<{ success: boolean }>(`/api/movies/${id}/vote`, {
-        method: 'POST',
-        body: JSON.stringify({ type })
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['movies'] });
-      toast.success('Signal received. Sleep well.');
+  const { data: baseMovies, isLoading, isFetching, error, refetch } = useQuery({
+    queryKey: ['static-movies'],
+    queryFn: async () => {
+      const res = await fetch('/movies.json');
+      if (!res.ok) throw new Error("Failed to load index");
+      return (await res.json()) as Movie[];
     },
-    onError: () => toast.error('Transmission error.')
+    staleTime: Infinity,
   });
-  const topFifty = movies?.slice(0, 50) ?? [];
+  const sortedMovies = useMemo(() => {
+    if (!baseMovies) return [];
+    return baseMovies
+      .map(m => {
+        const offset = offsets[m.id] || { nap: 0, engaging: 0 };
+        return {
+          ...m,
+          votesNap: m.votesNap + offset.nap,
+          votesEngaging: m.votesEngaging + offset.engaging
+        };
+      })
+      .sort((a, b) => {
+        const totalA = a.votesNap + a.votesEngaging;
+        const totalB = b.votesNap + b.votesEngaging;
+        const priorVotes = 10;
+        const priorNapRate = 0.7;
+        const scoreA = (a.votesNap + priorVotes * priorNapRate) / (totalA + priorVotes);
+        const scoreB = (b.votesNap + priorVotes * priorNapRate) / (totalB + priorVotes);
+        if (scoreB !== scoreA) return scoreB - scoreA;
+        return (b.votesNap - b.votesEngaging) - (a.votesNap - a.votesEngaging);
+      })
+      .slice(0, 50);
+  }, [baseMovies, offsets]);
+  const handleLocalVote = (id: string, type: 'nap' | 'engaging') => {
+    const userVotedKey = `user_voted_${id}`;
+    if (localStorage.getItem(userVotedKey)) {
+      toast.error("Vocal signature already recorded for this entry.");
+      return;
+    }
+    setOffsets(prev => {
+      const current = prev[id] || { nap: 0, engaging: 0 };
+      const next = {
+        ...prev,
+        [id]: {
+          nap: type === 'nap' ? current.nap + 1 : current.nap,
+          engaging: type === 'engaging' ? current.engaging + 1 : current.engaging
+        }
+      };
+      localStorage.setItem('nap_votes_offsets', JSON.stringify(next));
+      localStorage.setItem(userVotedKey, type);
+      return next;
+    });
+    toast.success('Signal received. Sleep well.');
+  };
   return (
     <div className="min-h-screen bg-retro-bg text-retro-text relative overflow-x-hidden selection:bg-retro-accent/30 selection:text-white">
       <div className="crt-overlay" />
@@ -41,17 +82,16 @@ export function HomePage() {
               <div className="flex justify-center mb-6">
                 <div className="p-6 border border-retro-accent/10 bg-retro-accent/5 relative group">
                   <Moon className="w-12 h-12 text-retro-accent group-hover:scale-110 transition-transform duration-slow" />
-                  <div className="absolute inset-0 bg-retro-accent/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
               </div>
               <div className="space-y-4">
-                <h1 className="text-5xl md:text-7xl font-black tracking-[0.2em] uppercase text-white drop-shadow-[0_0_15px_rgba(96,165,250,0.2)]">
+                <h1 className="text-5xl md:text-7xl font-black tracking-[0.2em] uppercase text-white">
                   NAP <span className="text-retro-accent">MOVIES</span>
                 </h1>
                 <div className="h-px w-24 bg-retro-accent/40 mx-auto" />
               </div>
               <p className="text-retro-text/70 text-base md:text-lg max-w-xl mx-auto italic font-light leading-relaxed">
-                "Browse the official Top 50 Nap Index — an opinionated collection optimized for the drift into sleep."
+                "Browse the official Static Top 50 Nap Index — optimized for the drift into sleep."
               </p>
             </header>
             <section className="space-y-10">
@@ -62,70 +102,39 @@ export function HomePage() {
                   </h2>
                   <div className="flex items-center gap-2 bg-retro-accent/10 text-retro-accent border border-retro-accent/20 px-3 py-1 text-[10px] font-bold tracking-widest uppercase">
                     <Award className="w-3 h-3" />
-                    Top 50 Curated
+                    Top 50 Verified
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
                   {isFetching && <RefreshCw className="w-3 h-3 text-retro-accent animate-spin opacity-50" />}
-                  <span className="text-[9px] opacity-30 uppercase tracking-[0.2em] hidden sm:inline">Build_4.1_Stable</span>
+                  <span className="text-[9px] opacity-30 uppercase tracking-[0.2em]">Build_5.0_Static_Core</span>
                 </div>
               </div>
-              {error && (
-                <div className="flex items-center justify-center py-4 bg-retro-danger/10 border border-retro-danger/20 rounded-md mb-6">
-                  <p className="text-xs text-retro-danger/80 uppercase tracking-wider mr-4">Uplink Sync Failed: Cached Index Active</p>
-                  <button 
-                    onClick={() => { 
-                      refetch(); 
-                      toast.success('Re-syncing...'); 
-                    }} 
-                    className="text-xs font-bold text-retro-accent hover:text-white underline px-2 py-1 border border-retro-accent/30 rounded hover:bg-retro-accent/20 transition-all"
-                  >
-                    Retry Uplink
-                  </button>
-                </div>
-              )}
               {isLoading ? (
                 <div className="space-y-8">
-                  {[1, 2, 3, 4].map(i => (
-                    <div key={i} className="h-48 bg-retro-card/40 border border-retro-muted/10 animate-pulse relative">
-                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent shimmer-effect" />
-                    </div>
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="h-48 bg-retro-card/40 border border-retro-muted/10 animate-pulse" />
                   ))}
                 </div>
-              ) : error && !movies?.length ? (
+              ) : error ? (
                 <div className="text-center py-40 border border-dashed border-retro-muted/20 opacity-40 text-xs tracking-[0.4em] uppercase">
-                  Connection_Lost
-                </div>
-              ) : topFifty.length === 0 ? (
-                <div className="text-center py-40 border border-dashed border-retro-muted/20 opacity-40 text-xs tracking-[0.4em] uppercase">
-                  INDEX_EMPTY_WAITING_FOR_UPLINK
+                  INDEX_LOAD_FAILURE_RETRYING
                 </div>
               ) : (
                 <div className="grid gap-8">
-                  {topFifty.map((movie, idx) => (
+                  {sortedMovies.map((movie, idx) => (
                     <MovieCard
                       key={movie.id}
                       movie={movie}
                       rank={idx + 1}
-                      onVote={(type) => voteMutation.mutate({ id: movie.id, type })}
-                      isVoting={voteMutation.isPending}
+                      onVote={(type) => handleLocalVote(movie.id, type)}
+                      isVoting={false}
                     />
                   ))}
                 </div>
               )}
             </section>
           </div>
-          <footer className="py-32 text-center border-t border-retro-muted/10 mt-24">
-            <div className="opacity-40 text-[10px] tracking-[0.5em] uppercase space-y-4">
-              <p className="font-bold">Minimalist_Sleep_Foundation // Index_Terminal_004</p>
-              <div className="flex justify-center gap-8 text-[8px] opacity-50">
-                <span>LATENCY: LOW</span>
-                <span>STATUS: SECURE</span>
-                <span>UPLINK: ACTIVE</span>
-              </div>
-              <p>© {new Date().getFullYear()} NAP_MOVIES_INTERNATIONAL</p>
-            </div>
-          </footer>
         </div>
       </div>
     </div>

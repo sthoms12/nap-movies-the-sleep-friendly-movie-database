@@ -1,26 +1,7 @@
 import { IndexedEntity } from "./core-utils";
-import type { Movie, Submission } from "@shared/types";
-import { INITIAL_MOVIES } from "@shared/mock-data";
-export class MovieEntity extends IndexedEntity<Movie> {
-  static readonly entityName = "movie";
-  static readonly indexName = "movies";
-  static readonly initialState: Movie = {
-    id: "",
-    title: "",
-    year: 0,
-    status: "active",
-    votesNap: 0,
-    votesEngaging: 0,
-    tags: []
-  };
-  static seedData = INITIAL_MOVIES;
-  async addVote(type: 'nap' | 'engaging'): Promise<Movie> {
-    return this.mutate(s => {
-      if (type === 'nap') return { ...s, votesNap: s.votesNap + 1 };
-      return { ...s, votesEngaging: s.votesEngaging + 1 };
-    });
-  }
-}
+import type { Submission } from "@shared/types";
+// NOTE: Movie Index is now driven by static /public/movies.json
+// MovieEntity is retired to ensure 100% reliability of the Top 50 list.
 export class SubmissionEntity extends IndexedEntity<Submission> {
   static readonly entityName = "submission";
   static readonly indexName = "submissions";
