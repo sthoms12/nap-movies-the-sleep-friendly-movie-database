@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 export function AdminPage() {
   const queryClient = useQueryClient();
   useEffect(() => {
-    document.title = 'NapMovies �� | Terminal';
+    document.title = 'NapMovies 🌙 | Terminal';
   }, []);
   const { data: submissions, isLoading } = useQuery({
     queryKey: ['admin-submissions'],
@@ -57,7 +57,7 @@ export function AdminPage() {
               <div className="bg-retro-accent/5 border border-retro-accent/20 p-4 flex gap-4 items-center">
                 <Info className="w-5 h-5 text-retro-accent shrink-0" />
                 <p className="text-[10px] tracking-widest font-bold uppercase text-retro-accent/80 leading-relaxed">
-                  System Architecture: The Movie Index is now PURE STATIC. Approved submissions will be archived here but require a manual JSON update and deployment (Edit src/data/movies.json -> Push) to appear on the Index.
+                  System Architecture: The Movie Index is now PURE STATIC. Approved submissions will be archived here but require a manual JSON update and deployment (Edit src/data/movies.json &rarr; Push) to appear on the Index.
                 </p>
               </div>
             </header>

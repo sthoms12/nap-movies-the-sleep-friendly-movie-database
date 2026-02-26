@@ -1,24 +1,24 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import staticMovies from '@/data/movies.json';
+import React, { useState, useEffect, useCallback } from 'react';
+import staticMoviesData from '@/data/movies.json';
 import { Navbar } from '@/components/layout/Navbar';
 import { MovieCard } from '@/components/MovieCard';
-import { Moon, Star, Award, RefreshCw } from 'lucide-react';
+import { Moon, Star, Award } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Movie, VoteType } from '@shared/types';
 export function HomePage() {
   const [movies, setMovies] = useState<Movie[]>([]);
-  // Bayesian-lite Parameters (Prior: 10 votes at 70% nap-rate)
-  const priorVotes = 10;
-  const priorNapRate = 0.7;
-  const computeNapScore = (nap: number, engaging: number): number => {
+  // Bayesian Parameters (Prior: 10 votes at 70% nap-rate)
+  const PRIOR_VOTES = 10;
+  const PRIOR_NAP_RATE = 0.7;
+  const computeNapScore = useCallback((nap: number, engaging: number): number => {
     const total = nap + engaging;
-    const bayesianScore = (nap + priorVotes * priorNapRate) / (total + priorVotes);
+    const bayesianScore = (nap + PRIOR_VOTES * PRIOR_NAP_RATE) / (total + PRIOR_VOTES);
     return Math.round(bayesianScore * 100);
-  };
+  }, []);
   useEffect(() => {
-    document.title = 'NapMovies 🌙 | Pure Index';
-    // Process movies with local votes
-    const processed = (staticMovies as Movie[]).map(m => {
+    document.title = 'NapMovies 🌙 | Index';
+    // Process movies with local signals
+    const processed = (staticMoviesData as Movie[]).map(m => {
       const userVote = localStorage.getItem(`user_voted_${m.id}`);
       let vNap = m.votesNap;
       let vEng = m.votesEngaging;
@@ -31,10 +31,9 @@ export function HomePage() {
         napScore: computeNapScore(vNap, vEng)
       };
     });
-    // Sort strictly by the calculated Bayesian score
     const sorted = processed.sort((a, b) => (b.napScore || 0) - (a.napScore || 0));
     setMovies(sorted);
-  }, []);
+  }, [computeNapScore]);
   const handleLocalVote = (id: string, type: VoteType) => {
     const userVotedKey = `user_voted_${id}`;
     if (localStorage.getItem(userVotedKey)) {
@@ -43,7 +42,6 @@ export function HomePage() {
     }
     localStorage.setItem(userVotedKey, type);
     toast.success('Signal received. Sleep well.');
-    // Update local state optimistically
     setMovies(prev => {
       const updated = prev.map(m => {
         if (m.id !== id) return m;
@@ -79,7 +77,7 @@ export function HomePage() {
                 <div className="h-px w-32 bg-retro-accent/40 mx-auto" />
               </div>
               <p className="text-retro-text/70 text-base md:text-xl max-w-2xl mx-auto italic font-light leading-relaxed">
-                "Pure Static Architecture. Synchronized with Bayesian-weighted local signals. The world's most reliable rest-optimized index."
+                "The world's most reliable rest-optimized index. Pure static architecture synchronized with Bayesian-weighted local signals."
               </p>
             </header>
             <section className="space-y-12">
@@ -94,7 +92,7 @@ export function HomePage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="text-[10px] opacity-30 uppercase tracking-[0.3em] font-bold">Protocol_v8.0_PureStatic</span>
+                  <span className="text-[10px] opacity-30 uppercase tracking-[0.3em] font-bold">Protocol_v9.0_Final</span>
                 </div>
               </div>
               <div className="grid gap-10">

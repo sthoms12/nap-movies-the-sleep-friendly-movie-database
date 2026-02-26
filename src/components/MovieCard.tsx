@@ -13,12 +13,15 @@ interface MovieCardProps {
 export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
   const [userVote, setUserVote] = useState<string | null>(null);
   useEffect(() => {
-    setUserVote(localStorage.getItem(`user_voted_${movie.id}`));
+    // Synchronize local state with film ID
+    const stored = localStorage.getItem(`user_voted_${movie.id}`);
+    setUserVote(stored);
   }, [movie.id]);
   const score = useMemo(() => {
     return movie.napScore ?? 50;
   }, [movie.napScore]);
   const handleVote = (type: 'nap' | 'engaging') => {
+    if (userVote) return;
     onVote(type);
     setUserVote(type);
   };
@@ -61,7 +64,7 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
                 <span className="mx-1">|</span>
                 <ThumbsDown className="w-2.5 h-2.5" /> {movie.votesEngaging}
               </div>
-              <span className="flex items-center gap-1"><Zap className="w-2 h-2" /> Local_Signals_Applied</span>
+              <span className="flex items-center gap-1"><Zap className="w-2 h-2" /> Signals_Synced</span>
             </div>
           </div>
         </div>
