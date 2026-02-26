@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import type { Movie } from '@shared/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ThumbsUp, ThumbsDown, Hash, Check } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Hash, Check, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 interface MovieCardProps {
   movie: Movie;
@@ -16,10 +16,8 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
     ? Math.round((movie.votesNap / totalVotes) * 100)
     : 50;
   const userVote = useMemo(() => {
-    // We include movie.votesNap and movie.votesEngaging to re-run this when the parent 
-    // updates the state after a successful vote, ensuring the UI reflects the locked state.
     return localStorage.getItem(`user_voted_${movie.id}`);
-  }, [movie.id, movie.votesNap, movie.votesEngaging]);
+  }, [movie.id]);
   return (
     <div className="group relative border border-retro-muted/20 bg-retro-card p-6 md:p-8 transition-all duration-slow hover:border-retro-accent/40 hover:bg-retro-card/90">
       <div className="absolute -top-3 -left-2 md:-left-4 bg-retro-muted text-retro-text px-3 py-1.5 text-[11px] font-black flex items-center gap-1 border border-retro-muted/40 z-10 group-hover:bg-retro-accent group-hover:text-retro-bg transition-all shadow-lg">
@@ -54,8 +52,12 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
               />
             </div>
             <div className="flex justify-between items-center text-[9px] uppercase tracking-[0.3em] font-bold opacity-30">
-              <span>Low-Stress_Threshold</span>
-              <span>Metric_Verified</span>
+              <div className="flex items-center gap-2">
+                <ThumbsUp className="w-2.5 h-2.5" /> {movie.votesNap} 
+                <span className="mx-1">|</span> 
+                <ThumbsDown className="w-2.5 h-2.5" /> {movie.votesEngaging}
+              </div>
+              <span className="flex items-center gap-1"><Zap className="w-2 h-2" /> Verified_Signal</span>
             </div>
           </div>
         </div>

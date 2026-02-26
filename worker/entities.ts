@@ -1,7 +1,5 @@
 import { IndexedEntity } from "./core-utils";
-import type { Submission } from "@shared/types";
-// NOTE: Movie Index is now driven by static /public/movies.json
-// MovieEntity is retired to ensure 100% reliability of the Top 50 list.
+import type { Submission, Vote } from "@shared/types";
 export class SubmissionEntity extends IndexedEntity<Submission> {
   static readonly entityName = "submission";
   static readonly indexName = "submissions";
@@ -11,6 +9,16 @@ export class SubmissionEntity extends IndexedEntity<Submission> {
     year: 0,
     reason: "",
     status: "pending",
+    createdAt: 0
+  };
+}
+export class VoteEntity extends IndexedEntity<Vote> {
+  static readonly entityName = "vote";
+  static readonly indexName = "votes";
+  static readonly initialState: Vote = {
+    id: "",
+    movieId: "",
+    type: "nap",
     createdAt: 0
   };
 }

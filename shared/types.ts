@@ -13,6 +13,13 @@ export interface Movie {
   votesEngaging: number;
   tags: string[];
 }
+export type VoteType = 'nap' | 'engaging';
+export interface Vote {
+  id: string;
+  movieId: string;
+  type: VoteType;
+  createdAt: number;
+}
 export type SubmissionStatus = 'pending' | 'approved' | 'rejected';
 export interface Submission {
   id: string;
@@ -22,8 +29,6 @@ export interface Submission {
   status: SubmissionStatus;
   createdAt: number;
 }
-// Keep existing User/Chat types for template compatibility if needed,
-// though we'll focus on the Nap Movies entities.
 export interface User {
   id: string;
   name: string;
