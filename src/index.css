@@ -3,7 +3,6 @@
 @tailwind utilities;
 @layer base {
   :root {
-    /* Refined Retro Palette - Slate Blue / Gray */
     --background: 222 47% 11%;
     --foreground: 228 94% 89%;
     --primary: 214 95% 68%;
@@ -12,7 +11,6 @@
     --muted-foreground: 215 20% 75%;
     --border: 215 19% 26%;
     --ring: 214 95% 68%;
-    /* #1f2937 = 215 28% 17% */
     --card: 215 28% 17%;
     --card-foreground: 228 94% 89%;
     --popover: 215 28% 17%;
@@ -26,27 +24,6 @@
     --input: 215 19% 26%;
     --radius: 0;
   }
-  .dark {
-    --background: 222 47% 11%;
-    --foreground: 228 94% 89%;
-    --primary: 214 95% 68%;
-    --primary-foreground: 222 47% 11%;
-    --muted: 215 25% 27%;
-    --muted-foreground: 215 20% 75%;
-    --border: 215 19% 26%;
-    --ring: 214 95% 68%;
-    --card: 215 28% 17%;
-    --card-foreground: 228 94% 89%;
-    --popover: 215 28% 17%;
-    --popover-foreground: 228 94% 89%;
-    --secondary: 215 28% 17%;
-    --secondary-foreground: 228 94% 89%;
-    --accent: 217 33% 25%;
-    --accent-foreground: 228 94% 89%;
-    --destructive: 0 91% 71%;
-    --destructive-foreground: 222 47% 11%;
-    --input: 215 19% 26%;
-  }
   * {
     @apply border-border;
   }
@@ -59,6 +36,21 @@
     @apply bg-background text-foreground;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  /* Custom Retro Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0a0e17;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1f2937;
+    border: 2px solid #0a0e17;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #374151;
   }
   ::selection {
     background: rgba(96, 165, 250, 0.3);
@@ -67,8 +59,34 @@
 }
 @layer components {
   .crt-overlay {
-    @apply pointer-events-none fixed inset-0 z-50 opacity-[0.015];
-    background: linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,0.2) 50%),linear-gradient(90deg,rgba(255,0,0,0.04),rgba(0,255,0,0.02),rgba(0,0,255,0.04));
-    background-size: 100% 2px, 3px 100%;
+    @apply pointer-events-none fixed inset-0 z-50;
+    background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.1) 50%),
+                linear-gradient(90deg, rgba(255,0,0,0.03), rgba(0,255,0,0.01), rgba(0,0,255,0.03));
+    background-size: 100% 3px, 3px 100%;
+    animation: flicker 0.15s infinite;
+    opacity: 0.03;
   }
+}
+@keyframes flicker {
+  0% { opacity: 0.027; }
+  5% { opacity: 0.032; }
+  10% { opacity: 0.025; }
+  15% { opacity: 0.035; }
+  20% { opacity: 0.028; }
+  25% { opacity: 0.031; }
+  30% { opacity: 0.026; }
+  35% { opacity: 0.034; }
+  40% { opacity: 0.029; }
+  45% { opacity: 0.033; }
+  50% { opacity: 0.027; }
+  55% { opacity: 0.032; }
+  60% { opacity: 0.025; }
+  65% { opacity: 0.035; }
+  70% { opacity: 0.028; }
+  75% { opacity: 0.031; }
+  80% { opacity: 0.026; }
+  85% { opacity: 0.034; }
+  90% { opacity: 0.029; }
+  95% { opacity: 0.033; }
+  100% { opacity: 0.027; }
 }

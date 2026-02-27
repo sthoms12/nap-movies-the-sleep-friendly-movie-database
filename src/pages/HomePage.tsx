@@ -5,8 +5,8 @@ import { MovieCard } from '@/components/MovieCard';
 import { Moon, Star, Award } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Movie, VoteType } from '@shared/types';
-const PRIOR_VOTES = 10;
-const PRIOR_NAP_RATE = 0.7;
+const PRIOR_VOTES = 15;
+const PRIOR_NAP_RATE = 0.8;
 export function HomePage() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const computeNapScore = useCallback((nap: number, engaging: number): number => {
@@ -15,7 +15,7 @@ export function HomePage() {
     return Math.round(bayesianScore * 100);
   }, []);
   useEffect(() => {
-    document.title = 'NapMovies 🌙 | The Archive';
+    document.title = 'NapMovies �� | The Archive';
     const processed = (staticMoviesData as Movie[]).map(m => {
       const userVote = localStorage.getItem(`user_voted_${m.id}`);
       let vNap = m.votesNap ?? 0;
@@ -56,41 +56,41 @@ export function HomePage() {
     });
   };
   return (
-    <div className="min-h-screen bg-retro-bg text-retro-text relative overflow-x-hidden selection:bg-retro-accent/30 selection:text-white flex flex-col">
+    <div className="min-h-screen bg-background text-foreground relative overflow-x-hidden selection:bg-primary/30 selection:text-white flex flex-col font-mono">
       <div className="crt-overlay" />
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex-1">
         <div className="py-8 md:py-10 lg:py-12">
-          <div className="max-w-5xl mx-auto">
-            <header className="mb-16 space-y-10 text-center">
+          <div className="max-w-3xl mx-auto">
+            <header className="mb-16 space-y-8 text-center">
               <div className="flex justify-center mb-6">
-                <div className="p-6 border border-retro-accent/10 bg-retro-accent/5 relative group">
-                  <Moon className="w-14 h-14 text-retro-accent group-hover:scale-110 transition-transform duration-500" />
+                <div className="p-5 border border-primary/10 bg-primary/5 relative group">
+                  <Moon className="w-12 h-12 text-primary group-hover:scale-110 transition-transform duration-500" />
                 </div>
               </div>
-              <div className="space-y-6">
-                <h1 className="text-5xl md:text-8xl font-black tracking-[0.2em] md:tracking-[0.25em] uppercase text-white leading-none">
-                  NAP <span className="text-retro-accent">MOVIES</span>
+              <div className="space-y-4">
+                <h1 className="text-4xl md:text-7xl font-black tracking-widest uppercase text-white leading-none">
+                  NAP <span className="text-primary">MOVIES</span>
                 </h1>
-                <div className="h-px w-32 bg-retro-accent/40 mx-auto" />
+                <div className="h-0.5 w-24 bg-primary/40 mx-auto" />
               </div>
-              <p className="text-retro-text/70 text-sm md:text-xl max-w-2xl mx-auto italic font-light leading-relaxed px-4">
+              <p className="text-muted-foreground text-sm md:text-lg max-w-xl mx-auto italic font-light leading-relaxed">
                 "A permanent, immutable archive of low-stress cinema. Preserved for quiet nights and deep rest."
               </p>
             </header>
-            <section className="space-y-12">
-              <div className="flex flex-col sm:flex-row items-center justify-between border-b border-retro-muted/30 pb-8 gap-4">
-                <div className="flex items-center gap-5">
-                  <h2 className="text-[10px] md:text-xs font-black tracking-[0.4em] flex items-center gap-3 text-retro-accent/80 uppercase">
-                    <Star className="w-4 h-4" /> PERMANENT_INDEX
+            <section className="space-y-8">
+              <div className="flex flex-col sm:flex-row items-center justify-between border-b border-border pb-6 gap-4">
+                <div className="flex items-center gap-4">
+                  <h2 className="text-[10px] font-black tracking-[0.4em] flex items-center gap-2 text-primary/80 uppercase">
+                    <Star className="w-3.5 h-3.5" /> ARCHIVE_INDEX
                   </h2>
-                  <div className="flex items-center gap-2 bg-retro-accent/10 text-retro-accent border border-retro-accent/20 px-3 py-1.5 text-[10px] font-bold tracking-widest uppercase shrink-0">
+                  <div className="flex items-center gap-2 bg-primary/10 text-primary border border-primary/20 px-2.5 py-1 text-[9px] font-bold tracking-widest uppercase">
                     <Award className="w-3 h-3" />
-                    Archive_Core_v1
+                    v1.0.0_STABLE
                   </div>
                 </div>
               </div>
-              <div className="grid gap-10">
+              <div className="grid gap-8">
                 {movies.map((movie, idx) => (
                   <MovieCard
                     key={movie.id}
@@ -105,11 +105,11 @@ export function HomePage() {
           </div>
         </div>
       </main>
-      <footer className="border-t border-retro-muted/20 py-12 mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <footer className="border-t border-border py-10 mt-16 bg-card/30">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="text-[10px] font-bold tracking-[0.3em] uppercase opacity-40">
-              © {new Date().getFullYear()} NAP_MOVIES_ARCHIVE_SYSTEM // ESTABLISHED_2025 // NO_REVISIONS_PENDING
+            <div className="text-[9px] font-bold tracking-[0.3em] uppercase opacity-30">
+              © {new Date().getFullYear()} NAP_MOVIES_ARCHIVE // DATA_SET: CURATED_50 // NO_CHANGES_EXPECTED
             </div>
           </div>
         </div>
