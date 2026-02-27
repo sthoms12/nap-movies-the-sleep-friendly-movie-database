@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import staticMoviesData from '@/data/movies.json';
 import { Navbar } from '@/components/layout/Navbar';
 import { MovieCard } from '@/components/MovieCard';
-import { Moon, Star, Award, BarChart3, Tag } from 'lucide-react';
+import { Moon, Star, Award, BarChart3, Tag, Database } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import type { Movie, VoteType } from '@shared/types';
@@ -85,8 +85,8 @@ export function HomePage() {
                 <h1 className="text-4xl md:text-7xl font-black tracking-widest uppercase text-white leading-none">
                   NAP <span className="text-primary">MOVIES</span>
                 </h1>
-                <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto italic font-light leading-relaxed">
-                  "A permanent, immutable archive of low-stress cinema. Weighted by community consensus."
+                <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto italic font-bold leading-relaxed">
+                  "The 10-Point Optimal Index. A permanent documentation of neuro-regulatory cinema."
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -95,9 +95,9 @@ export function HomePage() {
                     <BarChart3 className="w-3.5 h-3.5" /> Bayesian_System_Summary
                   </div>
                   <div className="text-[11px] leading-relaxed text-retro-text/60">
-                    Baseline established with <span className="text-white">15 virtual votes</span> at 
-                    <span className="text-white mx-1">80% nap-approval</span>. Final Index percentage shifts 
-                    dynamically as new signatures are recorded.
+                    Integration of <span className="text-white">duration weighting</span> and 
+                    <span className="text-white mx-1">audio-profile stability</span> into the final rank. 
+                    Baseline established at 80% consensus.
                   </div>
                 </div>
                 <div className="border border-border bg-black/20 p-5 space-y-3">
@@ -118,11 +118,11 @@ export function HomePage() {
               <div className="flex items-center justify-between border-b border-border pb-4">
                 <div className="flex items-center gap-4">
                   <h2 className="text-[10px] font-black tracking-[0.4em] flex items-center gap-2 text-primary/80 uppercase">
-                    <Star className="w-3.5 h-3.5" /> ARCHIVE_INDEX
+                    <Database className="w-3.5 h-3.5" /> ARCHIVE_INDEX_STABLE
                   </h2>
                   <div className="hidden sm:flex items-center gap-2 bg-primary/10 text-primary border border-primary/20 px-2.5 py-1 text-[9px] font-bold tracking-widest uppercase">
                     <Award className="w-3 h-3" />
-                    v1.0.0_STABLE
+                    v1.0.1_ENRICHED
                   </div>
                 </div>
               </div>
@@ -145,7 +145,7 @@ export function HomePage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="text-[9px] font-bold tracking-[0.3em] uppercase opacity-30">
-              © {new Date().getFullYear()} NAP_MOVIES_ARCHIVE // DATA_SET: CURATED_50 // FINAL_STATE
+              © {new Date().getFullYear()} NAP_MOVIES_ARCHIVE // DATA_SET: ENRICHED_50 // FINAL_STATE
             </div>
           </div>
         </div>

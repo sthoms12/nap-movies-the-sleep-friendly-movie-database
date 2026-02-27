@@ -8,6 +8,7 @@ export interface Movie {
   id: string;
   title: string;
   year: number;
+  duration?: number;
   status: MovieStatus;
   votesNap: number;
   votesEngaging: number;

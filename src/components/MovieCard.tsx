@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import type { Movie } from '@shared/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ThumbsUp, ThumbsDown, Hash, Check, Info } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Hash, Check, Info, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 interface MovieCardProps {
   movie: Movie;
@@ -24,6 +24,7 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
     onVote(type);
     setUserVote(type);
   };
+  const isOptimalLength = (movie.duration ?? 0) >= 120;
   return (
     <div className="group relative border border-retro-muted/20 bg-retro-card p-6 md:p-8 transition-all duration-slow hover:border-retro-accent/40 hover:bg-retro-card/90">
       <div className="absolute -top-[14px] -left-2 md:-left-4 bg-retro-muted text-retro-text px-3 py-1.5 text-[11px] font-black flex items-center gap-1 border border-retro-muted/40 z-10 group-hover:bg-retro-accent group-hover:text-retro-bg transition-all shadow-xl">
@@ -32,14 +33,25 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
       <div className="flex flex-col md:flex-row justify-between gap-8">
         <div className="space-y-5 flex-1">
           <div>
-            <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-white group-hover:text-retro-accent transition-colors leading-none mb-3">
-              {movie.title}
-            </h3>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap items-center gap-3 mb-3">
+              <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-white group-hover:text-retro-accent transition-colors leading-none">
+                {movie.title}
+              </h3>
+              {isOptimalLength && (
+                <Badge variant="outline" className="rounded-none border-retro-accent/30 text-retro-accent text-[8px] font-black tracking-widest uppercase bg-retro-accent/5 px-2 py-0 h-4">
+                  NAP_OPTIMAL_LENGTH
+                </Badge>
+              )}
+            </div>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <p className="text-retro-text/40 text-[10px] font-black tracking-[0.2em] uppercase">
-                RELEASE_DATELINE: {movie.year}
+                RELEASE: {movie.year}
               </p>
-              <div className="h-1 w-1 rounded-full bg-retro-muted/40" />
+              <div className="h-1 w-1 rounded-full bg-retro-muted/40 hidden sm:block" />
+              <p className="text-retro-text/40 text-[10px] font-black tracking-[0.2em] uppercase flex items-center gap-1.5">
+                <Clock className="w-3 h-3" /> RUNTIME: {movie.duration}m
+              </p>
+              <div className="h-1 w-1 rounded-full bg-retro-muted/40 hidden sm:block" />
               <p className="text-retro-text/40 text-[10px] font-black tracking-[0.2em] uppercase">
                 STATUS: PERMANENT_RECORD
               </p>
