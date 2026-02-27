@@ -24,10 +24,23 @@ export function AdminPage() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-submissions'] });
-      toast.success('Queue updated.');
+      toast.success('Staging queue updated successfully.');
     },
-    onError: () => toast.error('Moderation signal lost.')
+    onError: (err: any) => toast.error(err.message || 'Moderation signal lost.')
   });
+  const purgeMutation = useMutation({
+    mutationFn: () => api<{ message: string }>('/api/admin/reset-seeds', { method: 'POST' }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-submissions'] });
+      toast.success(data.message || 'Queue purged.');
+    },
+    onError: (err: any) => toast.error(err.message || 'Purge protocol failed.')
+  });
+  const handlePurge = () => {
+    if (window.confirm('CRITICAL: PURGE ALL PENDING SUBMISSIONS? THIS ACTION IS IRREVERSIBLE.')) {
+      purgeMutation.mutate();
+    }
+  };
   const pendingSubmissions = submissions?.filter(s => s.status === 'pending') ?? [];
   return (
     <div className="min-h-screen bg-retro-bg text-retro-text relative">
@@ -40,17 +53,17 @@ export function AdminPage() {
               <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
                 <div>
                   <h1 className="text-4xl font-black uppercase tracking-[0.3em] text-white">ADMIN_TERMINAL</h1>
-                  <p className="text-retro-text/60 text-xs mt-4 tracking-[0.2em] font-medium">Proposal Queue & Staging Control.</p>
+                  <p className="text-retro-text/60 text-xs mt-4 tracking-[0.2em] font-medium">Staging Control & Submission Moderation.</p>
                 </div>
                 <div className="flex gap-4 items-center">
                   <Button
-                    onClick={() => {
-                      if (window.confirm('PURGE PENDING SUBMISSIONS?')) api('/api/admin/reset-seeds', { method: 'POST' });
-                    }}
+                    onClick={handlePurge}
+                    disabled={purgeMutation.isPending}
                     variant="outline"
-                    className="border-retro-danger/40 text-retro-danger hover:bg-retro-danger hover:text-retro-bg rounded-none text-[10px] tracking-[0.2em] font-black uppercase"
+                    className="border-retro-danger/40 text-retro-danger hover:bg-retro-danger hover:text-retro-bg rounded-none text-[10px] tracking-[0.2em] font-black uppercase h-10 px-6"
                   >
-                    <Database className="w-4 h-4 mr-2" /> PURGE_QUEUE
+                    <Database className="w-4 h-4 mr-2" /> 
+                    {purgeMutation.isPending ? 'PURGING...' : 'PURGE_QUEUE'}
                   </Button>
                 </div>
               </div>
@@ -58,17 +71,20 @@ export function AdminPage() {
                 <Info className="w-6 h-6 text-retro-accent shrink-0 mt-1" />
                 <div className="space-y-3">
                   <p className="text-[11px] tracking-widest font-bold uppercase text-retro-accent leading-relaxed">
-                    CRITICAL: IMMUTABLE_STATIC_ARCHIVE
+                    SYSTEM NOTICE: ARCHIVE_MODE_ACTIVE
                   </p>
                   <p className="text-[10px] tracking-wider text-retro-text/80 leading-relaxed">
-                    The public Index is now an Immutable Static Asset for maximum reliability. Approvals in this terminal are for <span className="text-white font-bold">Staging Purposes Only</span>. 
-                    To update the live Index, you must manually edit the source file: <code className="bg-black/40 px-1 font-mono text-retro-accent">src/data/movies.json</code> and push a new deployment.
+                    This terminal manages the <strong>Dynamic Staging Queue</strong>. The public facing Index is currently an <strong>Immutable Static Bundle</strong>. 
+                    Approving a proposal here stages it for the next system deployment. To permanently update the archive, you must modify the <code className="bg-black/40 px-1 font-mono text-retro-accent">src/data/movies.json</code> source file.
                   </p>
                 </div>
               </div>
             </header>
             <section className="space-y-10">
-              <h2 className="text-xs font-black tracking-[0.4em] text-white uppercase mb-8">Staging_Proposals ({pendingSubmissions.length})</h2>
+              <div className="flex items-center justify-between">
+                <h2 className="text-xs font-black tracking-[0.4em] text-white uppercase">Staging_Proposals ({pendingSubmissions.length})</h2>
+                {pendingSubmissions.length > 0 && <span className="animate-pulse h-2 w-2 rounded-full bg-retro-accent" />}
+              </div>
               {isLoading ? (
                 <div className="text-center py-32 space-y-6">
                   <div className="w-12 h-12 border-4 border-retro-accent border-t-transparent animate-spin mx-auto" />
@@ -89,14 +105,17 @@ export function AdminPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95 }}
-                        className="border border-retro-muted/30 p-10 bg-retro-card/80 flex flex-col md:flex-row gap-10 justify-between items-start md:items-center hover:border-retro-accent/50 transition-all"
+                        className="border border-retro-muted/30 p-10 bg-retro-card/80 flex flex-col md:flex-row gap-10 justify-between items-start md:items-center hover:border-retro-accent/50 transition-all group"
                       >
                         <div className="space-y-6 flex-1">
                           <div className="flex items-center gap-4">
-                            <h3 className="text-2xl font-black uppercase tracking-widest text-white">{sub.title}</h3>
+                            <h3 className="text-2xl font-black uppercase tracking-widest text-white group-hover:text-retro-accent transition-colors">{sub.title}</h3>
                             <span className="text-retro-accent/50 font-black text-sm">[{sub.year}]</span>
                           </div>
                           <p className="text-base italic text-retro-text/90 leading-relaxed font-light">"{sub.reason}"</p>
+                          <div className="text-[9px] uppercase tracking-widest text-retro-text/30 font-bold">
+                            Submission_ID: {sub.id.slice(0, 8)}... | Received: {new Date(sub.createdAt).toLocaleDateString()}
+                          </div>
                         </div>
                         <div className="flex gap-4 w-full md:w-auto">
                           <Button

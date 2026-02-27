@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import staticMoviesData from '@/data/movies.json';
 import { Navbar } from '@/components/layout/Navbar';
 import { MovieCard } from '@/components/MovieCard';
-import { Moon, Star, Award } from 'lucide-react';
+import { Moon, Star, Award, ShieldAlert } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Movie, VoteType } from '@shared/types';
+// Bayesian Parameters (Prior: 10 votes at 70% nap-rate)
+const PRIOR_VOTES = 10;
+const PRIOR_NAP_RATE = 0.7;
 export function HomePage() {
   const [movies, setMovies] = useState<Movie[]>([]);
-  // Bayesian Parameters (Prior: 10 votes at 70% nap-rate)
-  const PRIOR_VOTES = 10;
-  const PRIOR_NAP_RATE = 0.7;
   const computeNapScore = useCallback((nap: number, engaging: number): number => {
     const total = nap + engaging;
     const bayesianScore = (nap + PRIOR_VOTES * PRIOR_NAP_RATE) / (total + PRIOR_VOTES);
@@ -58,10 +59,10 @@ export function HomePage() {
     });
   };
   return (
-    <div className="min-h-screen bg-retro-bg text-retro-text relative overflow-x-hidden selection:bg-retro-accent/30 selection:text-white">
+    <div className="min-h-screen bg-retro-bg text-retro-text relative overflow-x-hidden selection:bg-retro-accent/30 selection:text-white flex flex-col">
       <div className="crt-overlay" />
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1">
         <div className="py-12 md:py-10 lg:py-12">
           <div className="max-w-5xl mx-auto">
             <header className="mb-24 space-y-10 text-center">
@@ -106,7 +107,24 @@ export function HomePage() {
             </section>
           </div>
         </div>
-      </div>
+      </main>
+      <footer className="border-t border-retro-muted/20 py-12 mt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="text-[10px] font-bold tracking-[0.3em] uppercase opacity-40">
+              © {new Date().getFullYear()} NAP_MOVIES_ARCHIVE_SYSTEM // ALL_RIGHTS_RESERVED
+            </div>
+            <div className="flex items-center gap-8">
+              <Link 
+                to="/admin" 
+                className="flex items-center gap-2 text-[9px] font-black tracking-[0.4em] uppercase text-retro-text/30 hover:text-retro-accent transition-colors"
+              >
+                <ShieldAlert className="w-3 h-3" /> ADMIN_TERMINAL
+              </Link>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
