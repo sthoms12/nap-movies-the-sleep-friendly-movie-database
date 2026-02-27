@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import type { Movie } from '@shared/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ThumbsUp, ThumbsDown, Hash, Check, Zap } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, Hash, Check, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 interface MovieCardProps {
   movie: Movie;
@@ -13,7 +13,6 @@ interface MovieCardProps {
 export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
   const [userVote, setUserVote] = useState<string | null>(null);
   useEffect(() => {
-    // Synchronize local state with film ID
     const stored = localStorage.getItem(`user_voted_${movie.id}`);
     setUserVote(stored);
   }, [movie.id]);
@@ -48,11 +47,11 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
             ))}
           </div>
           <div className="w-full max-w-sm space-y-3 pt-2">
-            <div className="h-1 w-full bg-black/40 overflow-hidden relative">
+            <div className="h-1.5 w-full bg-black/40 overflow-hidden relative">
               <div
                 className={cn(
                   "h-full transition-all duration-[1000ms] ease-out relative z-10",
-                  score >= 70 ? "bg-retro-accent shadow-[0_0_10px_rgba(96,165,250,0.5)]" :
+                  score >= 70 ? "bg-retro-accent" :
                   score >= 50 ? "bg-retro-accent/60" : "bg-retro-danger"
                 )}
                 style={{ width: `${score}%` }}
@@ -64,7 +63,7 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
                 <span className="mx-1">|</span>
                 <ThumbsDown className="w-2.5 h-2.5" /> {movie.votesEngaging}
               </div>
-              <span className="flex items-center gap-1"><Zap className="w-2 h-2" /> Signals_Synced</span>
+              <span className="flex items-center gap-1"><Info className="w-2.5 h-2.5" /> Locally_Balanced</span>
             </div>
           </div>
         </div>

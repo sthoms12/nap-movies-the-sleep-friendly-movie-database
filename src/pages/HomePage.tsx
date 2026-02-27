@@ -17,7 +17,7 @@ export function HomePage() {
   }, []);
   useEffect(() => {
     document.title = 'NapMovies 🌙 | Index';
-    // Process movies with local signals
+    // Process movies with local signals - Direct from static JSON
     const processed = (staticMoviesData as Movie[]).map(m => {
       const userVote = localStorage.getItem(`user_voted_${m.id}`);
       let vNap = m.votesNap;
@@ -62,7 +62,7 @@ export function HomePage() {
       <div className="crt-overlay" />
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-12 md:py-16 lg:py-24">
+        <div className="py-12 md:py-10 lg:py-12">
           <div className="max-w-5xl mx-auto">
             <header className="mb-24 space-y-10 text-center">
               <div className="flex justify-center mb-8">
@@ -77,22 +77,19 @@ export function HomePage() {
                 <div className="h-px w-32 bg-retro-accent/40 mx-auto" />
               </div>
               <p className="text-retro-text/70 text-base md:text-xl max-w-2xl mx-auto italic font-light leading-relaxed">
-                "The world's most reliable rest-optimized index. Pure static architecture synchronized with Bayesian-weighted local signals."
+                "The world's most reliable rest-optimized index. A permanent static archive preserved for low-stress viewing."
               </p>
             </header>
             <section className="space-y-12">
               <div className="flex flex-col sm:flex-row items-center justify-between border-b border-retro-muted/30 pb-8 gap-4">
                 <div className="flex items-center gap-5">
                   <h2 className="text-xs font-black tracking-[0.4em] flex items-center gap-3 text-retro-accent/80 uppercase">
-                    <Star className="w-4 h-4" /> STATIC_INDEX
+                    <Star className="w-4 h-4" /> PERMANENT_INDEX
                   </h2>
                   <div className="flex items-center gap-2 bg-retro-accent/10 text-retro-accent border border-retro-accent/20 px-3 py-1.5 text-[10px] font-bold tracking-widest uppercase">
                     <Award className="w-3 h-3" />
-                    Immutable Core
+                    Static_Core_v1
                   </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span className="text-[10px] opacity-30 uppercase tracking-[0.3em] font-bold">Protocol_v9.0_Final</span>
                 </div>
               </div>
               <div className="grid gap-10">

@@ -34,13 +34,13 @@ export function AdminPage() {
       <div className="crt-overlay" />
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-8 md:py-10 lg:py-16">
-          <div className="max-w-4xl mx-auto pt-8">
+        <div className="py-12 md:py-10 lg:py-12">
+          <div className="max-w-4xl mx-auto">
             <header className="mb-16 border-b border-retro-muted/30 pb-12">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
                 <div>
                   <h1 className="text-4xl font-black uppercase tracking-[0.3em] text-white">ADMIN_TERMINAL</h1>
-                  <p className="text-retro-text/60 text-xs mt-4 tracking-[0.2em] font-medium">Proposal Queue & System Integrity.</p>
+                  <p className="text-retro-text/60 text-xs mt-4 tracking-[0.2em] font-medium">Proposal Queue & Staging Control.</p>
                 </div>
                 <div className="flex gap-4 items-center">
                   <Button
@@ -54,24 +54,30 @@ export function AdminPage() {
                   </Button>
                 </div>
               </div>
-              <div className="bg-retro-accent/5 border border-retro-accent/20 p-4 flex gap-4 items-center">
-                <Info className="w-5 h-5 text-retro-accent shrink-0" />
-                <p className="text-[10px] tracking-widest font-bold uppercase text-retro-accent/80 leading-relaxed">
-                  System Architecture: The Movie Index is now PURE STATIC. Approved submissions will be archived here but require a manual JSON update and deployment (Edit src/data/movies.json &rarr; Push) to appear on the Index.
-                </p>
+              <div className="bg-retro-accent/5 border border-retro-accent/20 p-6 flex gap-4 items-start">
+                <Info className="w-6 h-6 text-retro-accent shrink-0 mt-1" />
+                <div className="space-y-3">
+                  <p className="text-[11px] tracking-widest font-bold uppercase text-retro-accent leading-relaxed">
+                    CRITICAL: IMMUTABLE_STATIC_ARCHIVE
+                  </p>
+                  <p className="text-[10px] tracking-wider text-retro-text/80 leading-relaxed">
+                    The public Index is now an Immutable Static Asset for maximum reliability. Approvals in this terminal are for <span className="text-white font-bold">Staging Purposes Only</span>. 
+                    To update the live Index, you must manually edit the source file: <code className="bg-black/40 px-1 font-mono text-retro-accent">src/data/movies.json</code> and push a new deployment.
+                  </p>
+                </div>
               </div>
             </header>
             <section className="space-y-10">
-              <h2 className="text-xs font-black tracking-[0.4em] text-white uppercase mb-8">Pending_Proposals ({pendingSubmissions.length})</h2>
+              <h2 className="text-xs font-black tracking-[0.4em] text-white uppercase mb-8">Staging_Proposals ({pendingSubmissions.length})</h2>
               {isLoading ? (
                 <div className="text-center py-32 space-y-6">
                   <div className="w-12 h-12 border-4 border-retro-accent border-t-transparent animate-spin mx-auto" />
-                  <p className="text-[11px] opacity-40 tracking-[0.5em] uppercase font-bold">Synchronizing_Queue...</p>
+                  <p className="text-[11px] opacity-40 tracking-[0.5em] uppercase font-bold">Connecting_Terminal...</p>
                 </div>
               ) : pendingSubmissions.length === 0 ? (
                 <div className="py-48 text-center border border-dashed border-retro-muted/20 bg-retro-card/20">
                   <AlertCircle className="w-12 h-12 text-retro-muted/40 mx-auto mb-6" />
-                  <p className="text-[11px] tracking-[0.5em] uppercase font-black opacity-30">NO_PENDING_PROPOSALS_IDLE_STATE</p>
+                  <p className="text-[11px] tracking-[0.5em] uppercase font-black opacity-30">TERMINAL_IDLE_STAGING_EMPTY</p>
                 </div>
               ) : (
                 <div className="space-y-10">
@@ -99,7 +105,7 @@ export function AdminPage() {
                             className="flex-1 md:flex-none border-retro-accent/40 text-retro-accent font-black hover:bg-retro-accent hover:text-retro-bg rounded-none text-[11px] h-14 px-10 transition-all"
                             onClick={() => moderateMutation.mutate({ id: sub.id, action: 'approve' })}
                           >
-                            <Check className="w-5 h-5 mr-2" /> APPROVE
+                            <Check className="w-5 h-5 mr-2" /> STAGE
                           </Button>
                           <Button
                             variant="outline"
@@ -107,7 +113,7 @@ export function AdminPage() {
                             className="flex-1 md:flex-none border-retro-danger/40 text-retro-danger font-black hover:bg-retro-danger hover:text-retro-bg rounded-none text-[11px] h-14 px-10 transition-all"
                             onClick={() => moderateMutation.mutate({ id: sub.id, action: 'reject' })}
                           >
-                            <X className="w-5 h-5 mr-2" /> REJECT
+                            <X className="w-5 h-5 mr-2" /> DROP
                           </Button>
                         </div>
                       </motion.div>
