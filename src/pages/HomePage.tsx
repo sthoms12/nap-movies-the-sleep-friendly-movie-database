@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
 import staticMoviesData from '@/data/movies.json';
 import { Navbar } from '@/components/layout/Navbar';
 import { MovieCard } from '@/components/MovieCard';
-import { Moon, Star, Award, ShieldAlert } from 'lucide-react';
+import { Moon, Star, Award } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Movie, VoteType } from '@shared/types';
-// Bayesian Parameters (Prior: 10 votes at 70% nap-rate)
 const PRIOR_VOTES = 10;
 const PRIOR_NAP_RATE = 0.7;
 export function HomePage() {
@@ -17,8 +15,7 @@ export function HomePage() {
     return Math.round(bayesianScore * 100);
   }, []);
   useEffect(() => {
-    document.title = 'NapMovies 🌙 | Index';
-    // Process movies with local signals - Direct from static JSON
+    document.title = 'NapMovies 🌙 | The Archive';
     const processed = (staticMoviesData as Movie[]).map(m => {
       const userVote = localStorage.getItem(`user_voted_${m.id}`);
       let vNap = m.votesNap;
@@ -78,7 +75,7 @@ export function HomePage() {
                 <div className="h-px w-32 bg-retro-accent/40 mx-auto" />
               </div>
               <p className="text-retro-text/70 text-base md:text-xl max-w-2xl mx-auto italic font-light leading-relaxed">
-                "The world's most reliable rest-optimized index. A permanent static archive preserved for low-stress viewing."
+                "A permanent, immutable archive of low-stress cinema. Preserved for quiet nights and deep rest."
               </p>
             </header>
             <section className="space-y-12">
@@ -89,7 +86,7 @@ export function HomePage() {
                   </h2>
                   <div className="flex items-center gap-2 bg-retro-accent/10 text-retro-accent border border-retro-accent/20 px-3 py-1.5 text-[10px] font-bold tracking-widest uppercase">
                     <Award className="w-3 h-3" />
-                    Static_Core_v1
+                    Archive_Core_v1
                   </div>
                 </div>
               </div>
@@ -110,17 +107,9 @@ export function HomePage() {
       </main>
       <footer className="border-t border-retro-muted/20 py-12 mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-center">
             <div className="text-[10px] font-bold tracking-[0.3em] uppercase opacity-40">
-              © {new Date().getFullYear()} NAP_MOVIES_ARCHIVE_SYSTEM // ALL_RIGHTS_RESERVED
-            </div>
-            <div className="flex items-center gap-8">
-              <Link 
-                to="/admin" 
-                className="flex items-center gap-2 text-[9px] font-black tracking-[0.4em] uppercase text-retro-text/30 hover:text-retro-accent transition-colors"
-              >
-                <ShieldAlert className="w-3 h-3" /> ADMIN_TERMINAL
-              </Link>
+              © {new Date().getFullYear()} NAP_MOVIES_ARCHIVE_SYSTEM // ESTABLISHED_2025 // NO_REVISIONS_PENDING
             </div>
           </div>
         </div>

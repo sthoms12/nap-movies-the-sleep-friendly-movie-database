@@ -41,15 +41,15 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
               </p>
               <div className="h-1 w-1 rounded-full bg-retro-muted/40" />
               <p className="text-retro-text/40 text-[10px] font-black tracking-[0.2em] uppercase">
-                STATUS: ACTIVE_STAGING
+                STATUS: PERMANENT_RECORD
               </p>
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
             {movie.tags.map(tag => (
-              <Badge 
-                key={tag} 
-                variant="outline" 
+              <Badge
+                key={tag}
+                variant="outline"
                 className="rounded-none border-retro-muted/40 text-[9px] uppercase text-retro-text/60 font-black px-2.5 py-0.5 tracking-wider"
               >
                 {tag}
