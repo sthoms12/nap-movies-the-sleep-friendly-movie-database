@@ -1,6 +1,6 @@
 # Cloudflare Workers Full-Stack Chat App
 
-[![[cloudflarebutton]]](https://deploy.workers.cloudflare.com/)
+[![[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/sthoms12/nap-movies-the-sleep-friendly-movie-database)]](https://deploy.workers.cloudflare.com/)
 
 A production-ready full-stack chat application powered by Cloudflare Workers. This template demonstrates a real-time chat system using Durable Objects for scalable, stateful storage, paired with a modern React frontend built with Vite, shadcn/ui, and Tailwind CSS.
 
@@ -122,7 +122,7 @@ bun run deploy
 - Automatic Durable Object migrations.
 - Custom domain support via Wrangler.
 
-**[cloudflarebutton]**
+**[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/sthoms12/nap-movies-the-sleep-friendly-movie-database)**
 
 Configure via `wrangler.jsonc`:
 - Rename project: `"name": "your-project-name"`
