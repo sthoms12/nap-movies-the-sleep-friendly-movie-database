@@ -8,12 +8,18 @@ import { Badge } from '@/components/ui/badge';
 import type { Movie, VoteType } from '@shared/types';
 const PRIOR_VOTES = 15;
 const PRIOR_NAP_RATE = 0.8;
+const STABILITY_BONUS = 2; // 2% bonus for optimal length
 export function HomePage() {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const computeNapScore = useCallback((nap: number, engaging: number): number => {
+  const computeNapScore = useCallback((nap: number, engaging: number, duration?: number): number => {
     const total = (nap ?? 0) + (engaging ?? 0);
-    const bayesianScore = ((nap ?? 0) + PRIOR_VOTES * PRIOR_NAP_RATE) / (total + PRIOR_VOTES);
-    return Math.round(bayesianScore * 100);
+    const bayesianBase = ((nap ?? 0) + PRIOR_VOTES * PRIOR_NAP_RATE) / (total + PRIOR_VOTES);
+    let score = Math.round(bayesianBase * 100);
+    // Apply Duration Weighting: Films >= 120m receive a stability bonus
+    if (duration && duration >= 120) {
+      score += STABILITY_BONUS;
+    }
+    return Math.min(100, score);
   }, []);
   useEffect(() => {
     document.title = 'NapMovies 🌙 | The Archive';
@@ -27,7 +33,7 @@ export function HomePage() {
         ...m,
         votesNap: vNap,
         votesEngaging: vEng,
-        napScore: computeNapScore(vNap, vEng)
+        napScore: computeNapScore(vNap, vEng, m.duration)
       };
     });
     const sorted = processed.sort((a, b) => (b.napScore || 0) - (a.napScore || 0));
@@ -62,7 +68,7 @@ export function HomePage() {
           ...m,
           votesNap: vNap,
           votesEngaging: vEng,
-          napScore: computeNapScore(vNap, vEng)
+          napScore: computeNapScore(vNap, vEng, m.duration)
         };
       });
       return [...updated].sort((a, b) => (b.napScore || 0) - (a.napScore || 0));
@@ -95,8 +101,8 @@ export function HomePage() {
                     <BarChart3 className="w-3.5 h-3.5" /> Bayesian_System_Summary
                   </div>
                   <div className="text-[11px] leading-relaxed text-retro-text/60">
-                    Integration of <span className="text-white">duration weighting</span> and 
-                    <span className="text-white mx-1">audio-profile stability</span> into the final rank. 
+                    Integration of <span className="text-white font-bold">duration weighting (+2%)</span> and
+                    <span className="text-white mx-1 font-bold">audio-profile stability</span> into the final rank.
                     Baseline established at 80% consensus.
                   </div>
                 </div>
