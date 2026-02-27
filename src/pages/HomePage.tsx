@@ -153,6 +153,9 @@ export function HomePage() {
             <div className="text-[9px] font-bold tracking-[0.3em] uppercase opacity-30">
               © {new Date().getFullYear()} NAP_MOVIES_ARCHIVE // DATA_SET: ENRICHED_50 // FINAL_STATE
             </div>
+            <div className="text-[8px] font-mono mt-2 opacity-10 tracking-widest uppercase pointer-events-none">
+              BUILD_ID: 1.0.1_STATIC_ARCHIVE
+            </div>
           </div>
         </div>
       </footer>

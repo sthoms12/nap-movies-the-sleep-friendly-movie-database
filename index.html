@@ -5,22 +5,38 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="A calm, curated archive of movies for falling asleep. 100% low-stress cinema preserved for quiet nights." />
+    <!-- Aggressive Cache Control -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Clear-Site-Data" content="cache">
     <title>NapMovies 🌙 | The Archive</title>
-  </head>
-  <body>
-    <div id="root"></div>
     <script>
+      /**
+       * PURE STATIC TRANSITION GUARD
+       * Immediately deregister all legacy service workers and clear cache storage
+       * before any other assets (JS/CSS) are requested.
+       */
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(registrations) {
-          for(let registration of registrations) {
+          for (let registration of registrations) {
             registration.unregister();
+            console.log('[NAP_ARCHIVE] Legacy ServiceWorker Unregistered');
+          }
+        });
+      }
+      if ('caches' in window) {
+        caches.keys().then(function(names) {
+          for (let name of names) {
+            caches.delete(name);
+            console.log('[NAP_ARCHIVE] Cache Storage Purged:', name);
           }
         });
       }
     </script>
+  </head>
+  <body data-build-version="1.0.1_STATIC">
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
