@@ -12,6 +12,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { RouteErrorBoundary } from '@/components/RouteErrorBoundary';
 import '@/index.css'
 import { HomePage } from '@/pages/HomePage'
+import { CriteriaPage } from '@/pages/CriteriaPage'
 import { Toaster } from 'sonner';
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,6 +26,11 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <HomePage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: "/criteria",
+    element: <CriteriaPage />,
     errorElement: <RouteErrorBoundary />,
   },
 ]);
