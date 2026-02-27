@@ -1,6 +1,9 @@
 import { Hono } from "hono";
 import type { Env } from './core-utils';
+/**
+ * NapMovies Archive - Permanent Static State
+ * All dynamic API endpoints have been decommissioned.
+ */
 export function userRoutes(app: Hono<{ Bindings: Env }>) {
-  // Application has transitioned to a static maintenance-free archive.
-  // Dynamic submission and administrative routes have been decommissioned.
+  // No active routes in the permanent archive.
 }
