@@ -11,11 +11,12 @@ const PRIOR_NAP_RATE = 0.8;
 const STABILITY_BONUS = 2; // 2% bonus for optimal length
 export function HomePage() {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [isReady, setIsReady] = useState(false);
   const computeNapScore = useCallback((nap: number, engaging: number, duration?: number): number => {
     const total = (nap ?? 0) + (engaging ?? 0);
     const bayesianBase = ((nap ?? 0) + PRIOR_VOTES * PRIOR_NAP_RATE) / (total + PRIOR_VOTES);
     let score = Math.round(bayesianBase * 100);
-    // Apply Duration Weighting: Films >= 120m receive a stability bonus
+    // Explicitly apply and bound Duration Weighting
     if (duration && duration >= 120) {
       score += STABILITY_BONUS;
     }
@@ -38,6 +39,7 @@ export function HomePage() {
     });
     const sorted = processed.sort((a, b) => (b.napScore || 0) - (a.napScore || 0));
     setMovies(sorted);
+    setIsReady(true);
   }, [computeNapScore]);
   const topTags = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -80,71 +82,79 @@ export function HomePage() {
       <Navbar />
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex-1">
         <div className="py-8 md:py-10 lg:py-12">
-          <div className="max-w-3xl mx-auto">
-            <header className="mb-16 space-y-10">
-              <div className="text-center space-y-6">
-                <div className="flex justify-center">
-                  <div className="p-4 border border-primary/10 bg-primary/5 relative group">
-                    <Moon className="w-10 h-10 text-primary group-hover:scale-110 transition-transform duration-500" />
+          {isReady ? (
+            <div className="w-full">
+              <header className="mb-16 space-y-10">
+                <div className="text-center space-y-6">
+                  <div className="flex justify-center">
+                    <div className="p-4 border border-primary/10 bg-primary/5 relative group">
+                      <Moon className="w-10 h-10 text-primary group-hover:scale-110 transition-transform duration-500" />
+                    </div>
+                  </div>
+                  <h1 className="text-4xl md:text-7xl font-black tracking-widest uppercase text-white leading-none">
+                    NAP <span className="text-primary">MOVIES</span>
+                  </h1>
+                  <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto italic font-bold leading-relaxed">
+                    "The 10-Point Optimal Index. A permanent documentation of neuro-regulatory cinema."
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="border border-border bg-black/20 p-5 space-y-3">
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-retro-accent tracking-[0.2em] uppercase">
+                      <BarChart3 className="w-3.5 h-3.5" /> Bayesian_System_Summary
+                    </div>
+                    <div className="text-[11px] leading-relaxed text-retro-text/80">
+                      Integration of <span className="text-white font-bold">duration weighting (+2%)</span> and
+                      <span className="text-white mx-1 font-bold">audio-profile stability</span> into the final rank.
+                      Baseline established at 80% consensus.
+                    </div>
+                  </div>
+                  <div className="border border-border bg-black/20 p-5 space-y-3">
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-retro-accent tracking-[0.2em] uppercase">
+                      <Tag className="w-3.5 h-3.5" /> High_Frequency_Tags
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {topTags.map(tag => (
+                        <Badge key={tag} variant="outline" className="text-[9px] rounded-none px-2 py-0 h-4 border-white/10 uppercase opacity-60">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
                 </div>
-                <h1 className="text-4xl md:text-7xl font-black tracking-widest uppercase text-white leading-none">
-                  NAP <span className="text-primary">MOVIES</span>
-                </h1>
-                <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto italic font-bold leading-relaxed">
-                  "The 10-Point Optimal Index. A permanent documentation of neuro-regulatory cinema."
-                </p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="border border-border bg-black/20 p-5 space-y-3">
-                  <div className="flex items-center gap-2 text-[10px] font-bold text-retro-accent tracking-[0.2em] uppercase">
-                    <BarChart3 className="w-3.5 h-3.5" /> Bayesian_System_Summary
-                  </div>
-                  <div className="text-[11px] leading-relaxed text-retro-text/60">
-                    Integration of <span className="text-white font-bold">duration weighting (+2%)</span> and
-                    <span className="text-white mx-1 font-bold">audio-profile stability</span> into the final rank.
-                    Baseline established at 80% consensus.
+              </header>
+              <section className="space-y-8">
+                <div className="flex items-center justify-between border-b border-border pb-4">
+                  <div className="flex items-center gap-4">
+                    <h2 className="text-[10px] font-black tracking-[0.4em] flex items-center gap-2 text-primary/80 uppercase">
+                      <Database className="w-3.5 h-3.5" /> ARCHIVE_INDEX_STABLE
+                    </h2>
+                    <div className="hidden sm:flex items-center gap-2 bg-primary/10 text-primary border border-primary/20 px-2.5 py-1 text-[9px] font-bold tracking-widest uppercase">
+                      <Award className="w-3 h-3" />
+                      v1.0.1_ENRICHED
+                    </div>
                   </div>
                 </div>
-                <div className="border border-border bg-black/20 p-5 space-y-3">
-                  <div className="flex items-center gap-2 text-[10px] font-bold text-retro-accent tracking-[0.2em] uppercase">
-                    <Tag className="w-3.5 h-3.5" /> High_Frequency_Tags
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {topTags.map(tag => (
-                      <Badge key={tag} variant="outline" className="text-[9px] rounded-none px-2 py-0 h-4 border-white/10 uppercase opacity-60">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
+                <div className="grid gap-8">
+                  {movies.map((movie, idx) => (
+                    <MovieCard
+                      key={movie.id}
+                      movie={movie}
+                      rank={idx + 1}
+                      onVote={(type) => handleLocalVote(movie.id, type)}
+                      isVoting={false}
+                    />
+                  ))}
                 </div>
+              </section>
+            </div>
+          ) : (
+            <div className="h-[60vh] flex flex-col items-center justify-center space-y-4 opacity-20">
+              <div className="animate-pulse flex items-center gap-2 text-xs font-black uppercase tracking-[0.5em]">
+                <Database className="w-4 h-4" /> Synchronizing_Archive...
               </div>
-            </header>
-            <section className="space-y-8">
-              <div className="flex items-center justify-between border-b border-border pb-4">
-                <div className="flex items-center gap-4">
-                  <h2 className="text-[10px] font-black tracking-[0.4em] flex items-center gap-2 text-primary/80 uppercase">
-                    <Database className="w-3.5 h-3.5" /> ARCHIVE_INDEX_STABLE
-                  </h2>
-                  <div className="hidden sm:flex items-center gap-2 bg-primary/10 text-primary border border-primary/20 px-2.5 py-1 text-[9px] font-bold tracking-widest uppercase">
-                    <Award className="w-3 h-3" />
-                    v1.0.1_ENRICHED
-                  </div>
-                </div>
-              </div>
-              <div className="grid gap-8">
-                {movies.map((movie, idx) => (
-                  <MovieCard
-                    key={movie.id}
-                    movie={movie}
-                    rank={idx + 1}
-                    onVote={(type) => handleLocalVote(movie.id, type)}
-                    isVoting={false}
-                  />
-                ))}
-              </div>
-            </section>
-          </div>
+            </div>
+          )}
         </div>
       </main>
       <footer className="border-t border-border py-10 mt-16 bg-card/30">

@@ -17,7 +17,8 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
     setUserVote(stored);
   }, [movie.id]);
   const score = useMemo(() => {
-    return movie.napScore ?? 50;
+    // Rely strictly on parent-calculated napScore for single-source-of-truth accuracy
+    return movie.napScore ?? 0;
   }, [movie.napScore]);
   const handleVote = (type: 'nap' | 'engaging') => {
     if (userVote) return;
@@ -27,7 +28,7 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
   const isOptimalLength = (movie.duration ?? 0) >= 120;
   return (
     <div className="group relative border border-retro-muted/20 bg-retro-card p-6 md:p-8 transition-all duration-slow hover:border-retro-accent/40 hover:bg-retro-card/90">
-      <div className="absolute -top-[14px] -left-2 md:-left-4 bg-retro-muted text-retro-text px-3 py-1.5 text-[11px] font-black flex items-center gap-1 border border-retro-muted/40 z-10 group-hover:bg-retro-accent group-hover:text-retro-bg transition-all shadow-xl">
+      <div className="absolute -top-[14px] -left-2 md:-left-4 bg-retro-muted text-retro-text px-3 py-1.5 text-[11px] font-black flex items-center gap-1 border border-retro-muted/40 z-10 group-hover:bg-retro-accent group-hover:text-retro-bg group-hover:border-retro-accent transition-all shadow-xl">
         <Hash className="w-3.5 h-3.5" /> {rank.toString().padStart(2, '0')}
       </div>
       <div className="flex flex-col md:flex-row justify-between gap-8">
@@ -122,7 +123,7 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
                 "rounded-none border text-[10px] font-black uppercase transition-all h-10 px-6 tracking-[0.2em]",
                 userVote === 'engaging'
                   ? "bg-retro-danger text-retro-bg border-retro-danger"
-                  : "bg-retro-danger/10 text-retro-danger border-retro-danger/30 hover:bg-retro-danger hover:text-retro-bg"
+                  : "bg-retro-danger/10 text-retro-danger border-retro-danger/30 hover:bg-retro-danger/20 hover:text-retro-danger hover:border-retro-danger"
               )}
             >
               {userVote === 'engaging' ? <Check className="w-3.5 h-3.5 mr-2" /> : <ThumbsDown className="w-3.5 h-3.5 mr-2" />}
