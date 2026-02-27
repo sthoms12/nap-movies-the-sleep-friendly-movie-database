@@ -1,3 +1,5 @@
-export const MOCK_USERS = [];
-export const MOCK_CHATS = [];
-export const MOCK_CHAT_MESSAGES = [];
+/**
+ * NapMovies Archive - Permanent State
+ * All dynamic mock data has been decommissioned.
+ */
+export {};

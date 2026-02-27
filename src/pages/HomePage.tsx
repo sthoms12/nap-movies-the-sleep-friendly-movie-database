@@ -10,16 +10,16 @@ const PRIOR_NAP_RATE = 0.7;
 export function HomePage() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const computeNapScore = useCallback((nap: number, engaging: number): number => {
-    const total = nap + engaging;
-    const bayesianScore = (nap + PRIOR_VOTES * PRIOR_NAP_RATE) / (total + PRIOR_VOTES);
+    const total = (nap ?? 0) + (engaging ?? 0);
+    const bayesianScore = ((nap ?? 0) + PRIOR_VOTES * PRIOR_NAP_RATE) / (total + PRIOR_VOTES);
     return Math.round(bayesianScore * 100);
   }, []);
   useEffect(() => {
     document.title = 'NapMovies 🌙 | The Archive';
     const processed = (staticMoviesData as Movie[]).map(m => {
       const userVote = localStorage.getItem(`user_voted_${m.id}`);
-      let vNap = m.votesNap;
-      let vEng = m.votesEngaging;
+      let vNap = m.votesNap ?? 0;
+      let vEng = m.votesEngaging ?? 0;
       if (userVote === 'nap') vNap += 1;
       else if (userVote === 'engaging') vEng += 1;
       return {
@@ -43,8 +43,8 @@ export function HomePage() {
     setMovies(prev => {
       const updated = prev.map(m => {
         if (m.id !== id) return m;
-        const vNap = type === 'nap' ? m.votesNap + 1 : m.votesNap;
-        const vEng = type === 'engaging' ? m.votesEngaging + 1 : m.votesEngaging;
+        const vNap = type === 'nap' ? (m.votesNap ?? 0) + 1 : (m.votesNap ?? 0);
+        const vEng = type === 'engaging' ? (m.votesEngaging ?? 0) + 1 : (m.votesEngaging ?? 0);
         return {
           ...m,
           votesNap: vNap,
@@ -60,31 +60,31 @@ export function HomePage() {
       <div className="crt-overlay" />
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1">
-        <div className="py-12 md:py-10 lg:py-12">
+        <div className="py-8 md:py-10 lg:py-12">
           <div className="max-w-5xl mx-auto">
-            <header className="mb-24 space-y-10 text-center">
-              <div className="flex justify-center mb-8">
+            <header className="mb-16 space-y-10 text-center">
+              <div className="flex justify-center mb-6">
                 <div className="p-6 border border-retro-accent/10 bg-retro-accent/5 relative group">
-                  <Moon className="w-14 h-14 text-retro-accent group-hover:scale-110 transition-transform duration-slow" />
+                  <Moon className="w-14 h-14 text-retro-accent group-hover:scale-110 transition-transform duration-500" />
                 </div>
               </div>
               <div className="space-y-6">
-                <h1 className="text-6xl md:text-8xl font-black tracking-[0.25em] uppercase text-white leading-none">
+                <h1 className="text-5xl md:text-8xl font-black tracking-[0.2em] md:tracking-[0.25em] uppercase text-white leading-none">
                   NAP <span className="text-retro-accent">MOVIES</span>
                 </h1>
                 <div className="h-px w-32 bg-retro-accent/40 mx-auto" />
               </div>
-              <p className="text-retro-text/70 text-base md:text-xl max-w-2xl mx-auto italic font-light leading-relaxed">
+              <p className="text-retro-text/70 text-sm md:text-xl max-w-2xl mx-auto italic font-light leading-relaxed px-4">
                 "A permanent, immutable archive of low-stress cinema. Preserved for quiet nights and deep rest."
               </p>
             </header>
             <section className="space-y-12">
               <div className="flex flex-col sm:flex-row items-center justify-between border-b border-retro-muted/30 pb-8 gap-4">
                 <div className="flex items-center gap-5">
-                  <h2 className="text-xs font-black tracking-[0.4em] flex items-center gap-3 text-retro-accent/80 uppercase">
+                  <h2 className="text-[10px] md:text-xs font-black tracking-[0.4em] flex items-center gap-3 text-retro-accent/80 uppercase">
                     <Star className="w-4 h-4" /> PERMANENT_INDEX
                   </h2>
-                  <div className="flex items-center gap-2 bg-retro-accent/10 text-retro-accent border border-retro-accent/20 px-3 py-1.5 text-[10px] font-bold tracking-widest uppercase">
+                  <div className="flex items-center gap-2 bg-retro-accent/10 text-retro-accent border border-retro-accent/20 px-3 py-1.5 text-[10px] font-bold tracking-widest uppercase shrink-0">
                     <Award className="w-3 h-3" />
                     Archive_Core_v1
                   </div>
