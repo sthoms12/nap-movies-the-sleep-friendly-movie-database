@@ -21,7 +21,7 @@ export function HomePage() {
         const movieData = await loadMovieData();
         if (!isMounted) return;
 
-        const sorted = [...movieData].sort((a, b) => b.napScore - a.napScore);
+        const sorted = [...movieData].sort((a, b) => b.napIndex - a.napIndex);
         setMovies(sorted);
         setLoadError(null);
       } catch (error) {
@@ -85,7 +85,7 @@ export function HomePage() {
                       <BarChart3 className="w-3.5 h-3.5" /> Archive_Scoring
                     </div>
                     <div className="text-[11px] leading-relaxed text-retro-text/80">
-                      Each title carries a static catalog score stored directly in the movie data file for easy maintenance.
+                      Each title carries a manual 1-10 nap index stored directly in the movie data file for easy maintenance.
                     </div>
                   </div>
                   <div className="border border-border bg-black/20 p-5 space-y-3">

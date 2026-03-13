@@ -7,7 +7,7 @@ const movieSchema = z.object({
   year: z.number().int(),
   duration: z.number().int().positive().optional(),
   status: z.union([z.literal('active'), z.literal('archived')]),
-  napScore: z.number().int().min(0).max(100),
+  napIndex: z.number().int().min(1).max(10),
   tags: z.array(z.string()),
 });
 

@@ -127,7 +127,7 @@ export function CriteriaPage() {
                 </div>
                 <div className="flex-1 space-y-1">
                   <div className="text-retro-accent uppercase font-black tracking-widest mb-2">// DATA_FIELDS</div>
-                  <div>- napScore: 0-100</div>
+                  <div>- napIndex: 1-10</div>
                   <div>- status: active | archived</div>
                   <div className="text-white mt-2 font-black italic">SOURCE = public/movies.json</div>
                 </div>

@@ -10,7 +10,8 @@ interface MovieCardProps {
 }
 
 export function MovieCard({ movie, rank }: MovieCardProps) {
-  const score = movie.napScore;
+  const score = movie.napIndex;
+  const scorePercent = score * 10;
   const isOptimalLength = (movie.duration ?? 0) >= 120;
 
   return (
@@ -65,14 +66,14 @@ export function MovieCard({ movie, rank }: MovieCardProps) {
               <div
                 className={cn(
                   "h-full transition-all duration-[1200ms] ease-in-out relative z-10",
-                  score >= 70 ? "bg-retro-accent shadow-[0_0_8px_rgba(96,165,250,0.5)]" :
-                  score >= 50 ? "bg-retro-accent/60" : "bg-retro-danger"
+                  score >= 8 ? "bg-retro-accent shadow-[0_0_8px_rgba(96,165,250,0.5)]" :
+                  score >= 6 ? "bg-retro-accent/60" : "bg-retro-danger"
                 )}
-                style={{ width: `${score}%` }}
+                style={{ width: `${scorePercent}%` }}
               />
             </div>
             <div className="flex justify-end items-center text-[9px] uppercase tracking-[0.3em] font-bold opacity-30">
-              <span className="flex items-center gap-1.5"><Info className="w-2.5 h-2.5" /> Curated_Static_Score</span>
+              <span className="flex items-center gap-1.5"><Info className="w-2.5 h-2.5" /> Manual_10_Point_Index</span>
             </div>
           </div>
         </div>
@@ -80,9 +81,9 @@ export function MovieCard({ movie, rank }: MovieCardProps) {
           <div className="text-center min-w-[100px]">
             <div className={cn(
               "text-4xl md:text-5xl font-black transition-all tabular-nums",
-              score >= 70 ? "text-retro-accent" : "text-retro-danger"
+              score >= 8 ? "text-retro-accent" : "text-retro-danger"
             )}>
-              {score}<span className="text-[14px] opacity-40 ml-1 font-bold">%</span>
+              {score}<span className="text-[14px] opacity-40 ml-1 font-bold">/10</span>
             </div>
             <div className="text-[10px] uppercase opacity-40 font-black tracking-[0.4em] mt-2">NAP_INDEX</div>
           </div>

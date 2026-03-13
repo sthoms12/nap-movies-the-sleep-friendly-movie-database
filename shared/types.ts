@@ -6,6 +6,6 @@ export interface Movie {
   year: number;
   duration?: number;
   status: MovieStatus;
-  napScore: number;
+  napIndex: number;
   tags: string[];
 }

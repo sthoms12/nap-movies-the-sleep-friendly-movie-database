@@ -34,17 +34,17 @@ Each movie entry uses this shape:
   "year": 2001,
   "duration": 152,
   "status": "active",
-  "napScore": 84,
+  "napIndex": 9,
   "tags": ["Familiar", "Comfort Rewatch", "Low Stress", "Magic"]
 }
 ```
 
 Notes:
 
-- `id`, `title`, `year`, `status`, `napScore`, and `tags` are required.
+- `id`, `title`, `year`, `status`, `napIndex`, and `tags` are required.
 - `duration` is optional.
-- `napScore` must be an integer from `0` to `100`.
-- Titles are sorted by `napScore` descending on the homepage.
+- `napIndex` must be an integer from `1` to `10`.
+- Titles are sorted by `napIndex` descending on the homepage.
 
 Validate the JSON after edits:
 
