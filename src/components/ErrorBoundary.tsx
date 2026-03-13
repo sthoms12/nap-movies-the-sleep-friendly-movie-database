@@ -1,5 +1,4 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
-import { errorReporter } from "@/lib/errorReporter";
 import { ErrorFallback } from "./ErrorFallback";
 
 interface Props {
@@ -29,27 +28,12 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Update state with error info
     this.setState({ errorInfo });
-
-    // Report error to backend
-    errorReporter.report({
-      message: error.message,
-      stack: error.stack || "",
-      componentStack: errorInfo.componentStack,
-      errorBoundary: true,
-      errorBoundaryProps: {
-        componentName: this.constructor.name,
-      },
-      url: window.location.href,
-      timestamp: new Date().toISOString(),
-      level: "error",
-    });
+    console.error("Application error boundary caught an error.", error, errorInfo);
   }
 
   private retry = () => {
     this.setState({ hasError: false, error: null, errorInfo: null });
-    // Reload the page to ensure clean state
     window.location.reload();
   };
 
@@ -67,7 +51,6 @@ export class ErrorBoundary extends Component<Props, State> {
         );
       }
 
-      // Use shared ErrorFallback component
       return (
         <ErrorFallback
           error={this.state.error}

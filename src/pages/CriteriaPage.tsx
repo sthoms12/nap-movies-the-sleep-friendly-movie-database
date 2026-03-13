@@ -1,17 +1,19 @@
 import React, { useEffect } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
-import { 
-  Info, Calculator, Eye, ShieldCheck, Zap, 
+import {
+  Calculator, Eye, ShieldCheck, Zap,
   Clock, Volume2, UserCheck, Wind, LayoutPanelLeft,
   Search, BookOpen
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
 export function CriteriaPage() {
   useEffect(() => {
-    document.title = 'NapMovies 🌙 | Methodology';
+    document.title = 'NapMovies | Methodology';
     window.scrollTo(0, 0);
   }, []);
+
   const criteria = [
     {
       title: "Familiar Rewatch",
@@ -31,7 +33,7 @@ export function CriteriaPage() {
       title: "Low Dialogue Density",
       icon: <BookOpen className="w-5 h-5" />,
       desc: "Movies that rely on visual storytelling or ambient vocalizing rather than rapid-fire exposition minimize cognitive load.",
-      case: "WALL·E",
+      case: "WALL-E",
       tag: "Low-Cognitive-Load"
     },
     {
@@ -84,6 +86,7 @@ export function CriteriaPage() {
       tag: "2h+_Optimal"
     }
   ];
+
   return (
     <div className="min-h-screen bg-background text-foreground relative overflow-x-hidden flex flex-col font-mono">
       <div className="crt-overlay" />
@@ -110,23 +113,23 @@ export function CriteriaPage() {
             <div className="bg-card/30 border border-border p-8 mb-12">
               <div className="flex items-center gap-3 text-primary mb-6">
                 <Calculator className="w-6 h-6" />
-                <h2 className="text-xl font-black uppercase tracking-[0.2em]">The Bayesian Protocol</h2>
+                <h2 className="text-xl font-black uppercase tracking-[0.2em]">The Catalog Protocol</h2>
               </div>
               <p className="text-sm text-retro-text/70 leading-relaxed mb-6">
-                To prevent data volatility, every index entry begins with a baseline anchor of <span className="text-white font-bold">15 virtual votes</span> at <span className="text-white font-bold">80% approval</span>. This ensures that new additions to the archive require significant community confirmation to disrupt the leaderboard.
+                Each movie is assigned a <span className="text-white font-bold">static nap score</span> and curated tags directly in the site data file. That keeps the archive easy to maintain while preserving a consistent ranked list.
               </p>
               <div className="bg-black/60 p-5 border border-white/5 font-mono text-[10px] flex flex-col md:flex-row gap-6 opacity-80">
                 <div className="flex-1 space-y-1">
-                  <div className="text-retro-accent uppercase font-black tracking-widest mb-2">// KERNEL_WEIGHTS</div>
-                  <div>- Audio Transient Threshold: -18dBFS</div>
-                  <div>- Visual Motion Vector: &lt; 0.40</div>
-                  <div>- Dialogue-to-Silence Ratio: 1:4</div>
+                  <div className="text-retro-accent uppercase font-black tracking-widest mb-2">// CURATION_SIGNALS</div>
+                  <div>- Soft audio profile</div>
+                  <div>- Low visual intensity</div>
+                  <div>- Familiar or steady pacing</div>
                 </div>
                 <div className="flex-1 space-y-1">
-                  <div className="text-retro-accent uppercase font-black tracking-widest mb-2">// DATA_ANCHORS</div>
-                  <div>- PRIOR_V (C) = 15.0</div>
-                  <div>- PRIOR_M (m) = 0.80</div>
-                  <div className="text-white mt-2 font-black italic">INDEX = (v+Cm)/(n+C)</div>
+                  <div className="text-retro-accent uppercase font-black tracking-widest mb-2">// DATA_FIELDS</div>
+                  <div>- napScore: 0-100</div>
+                  <div>- status: active | archived</div>
+                  <div className="text-white mt-2 font-black italic">SOURCE = public/movies.json</div>
                 </div>
               </div>
             </div>

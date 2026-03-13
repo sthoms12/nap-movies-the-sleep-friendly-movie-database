@@ -1,31 +1,18 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React from 'react';
 import type { Movie } from '@shared/types';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ThumbsUp, ThumbsDown, Hash, Check, Info, Clock } from 'lucide-react';
+import { Hash, Info, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
 interface MovieCardProps {
   movie: Movie;
   rank: number;
-  onVote: (type: 'nap' | 'engaging') => void;
-  isVoting: boolean;
 }
-export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
-  const [userVote, setUserVote] = useState<string | null>(null);
-  useEffect(() => {
-    const stored = localStorage.getItem(`user_voted_${movie.id}`);
-    setUserVote(stored);
-  }, [movie.id]);
-  const score = useMemo(() => {
-    // Rely strictly on parent-calculated napScore for single-source-of-truth accuracy
-    return movie.napScore ?? 0;
-  }, [movie.napScore]);
-  const handleVote = (type: 'nap' | 'engaging') => {
-    if (userVote) return;
-    onVote(type);
-    setUserVote(type);
-  };
+
+export function MovieCard({ movie, rank }: MovieCardProps) {
+  const score = movie.napScore;
   const isOptimalLength = (movie.duration ?? 0) >= 120;
+
   return (
     <div className="group relative border border-retro-muted/20 bg-retro-card p-6 md:p-8 transition-all duration-slow hover:border-retro-accent/40 hover:bg-retro-card/90">
       <div className="absolute -top-[14px] -left-2 md:-left-4 bg-retro-muted text-retro-text px-3 py-1.5 text-[11px] font-black flex items-center gap-1 border border-retro-muted/40 z-10 group-hover:bg-retro-accent group-hover:text-retro-bg group-hover:border-retro-accent transition-all shadow-xl">
@@ -48,10 +35,14 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
               <p className="text-retro-text/40 text-[10px] font-black tracking-[0.2em] uppercase">
                 RELEASE: {movie.year}
               </p>
-              <div className="h-1 w-1 rounded-full bg-retro-muted/40 hidden sm:block" />
-              <p className="text-retro-text/40 text-[10px] font-black tracking-[0.2em] uppercase flex items-center gap-1.5">
-                <Clock className="w-3 h-3" /> RUNTIME: {movie.duration}m
-              </p>
+              {movie.duration ? (
+                <>
+                  <div className="h-1 w-1 rounded-full bg-retro-muted/40 hidden sm:block" />
+                  <p className="text-retro-text/40 text-[10px] font-black tracking-[0.2em] uppercase flex items-center gap-1.5">
+                    <Clock className="w-3 h-3" /> RUNTIME: {movie.duration}m
+                  </p>
+                </>
+              ) : null}
               <div className="h-1 w-1 rounded-full bg-retro-muted/40 hidden sm:block" />
               <p className="text-retro-text/40 text-[10px] font-black tracking-[0.2em] uppercase">
                 STATUS: PERMANENT_RECORD
@@ -59,7 +50,7 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            {movie.tags.map(tag => (
+            {movie.tags.map((tag) => (
               <Badge
                 key={tag}
                 variant="outline"
@@ -80,13 +71,8 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
                 style={{ width: `${score}%` }}
               />
             </div>
-            <div className="flex justify-between items-center text-[9px] uppercase tracking-[0.3em] font-bold opacity-30">
-              <div className="flex items-center gap-2">
-                <ThumbsUp className="w-2.5 h-2.5" /> {movie.votesNap}
-                <span className="mx-1 text-retro-text/20">|</span>
-                <ThumbsDown className="w-2.5 h-2.5" /> {movie.votesEngaging}
-              </div>
-              <span className="flex items-center gap-1.5"><Info className="w-2.5 h-2.5" /> Bayesian_Weighted</span>
+            <div className="flex justify-end items-center text-[9px] uppercase tracking-[0.3em] font-bold opacity-30">
+              <span className="flex items-center gap-1.5"><Info className="w-2.5 h-2.5" /> Curated_Static_Score</span>
             </div>
           </div>
         </div>
@@ -99,36 +85,6 @@ export function MovieCard({ movie, rank, onVote, isVoting }: MovieCardProps) {
               {score}<span className="text-[14px] opacity-40 ml-1 font-bold">%</span>
             </div>
             <div className="text-[10px] uppercase opacity-40 font-black tracking-[0.4em] mt-2">NAP_INDEX</div>
-          </div>
-          <div className="flex flex-col gap-3 w-full sm:w-auto">
-            <Button
-              size="sm"
-              disabled={!!userVote || isVoting}
-              onClick={() => handleVote('nap')}
-              className={cn(
-                "rounded-none border text-[10px] font-black uppercase transition-all h-10 px-6 tracking-[0.2em]",
-                userVote === 'nap'
-                  ? "bg-retro-accent text-retro-bg border-retro-accent"
-                  : "bg-retro-accent/10 text-retro-accent border-retro-accent/30 hover:bg-retro-accent hover:text-retro-bg"
-              )}
-            >
-              {userVote === 'nap' ? <Check className="w-3.5 h-3.5 mr-2" /> : <ThumbsUp className="w-3.5 h-3.5 mr-2" />}
-              Nap-Approved
-            </Button>
-            <Button
-              size="sm"
-              disabled={!!userVote || isVoting}
-              onClick={() => handleVote('engaging')}
-              className={cn(
-                "rounded-none border text-[10px] font-black uppercase transition-all h-10 px-6 tracking-[0.2em]",
-                userVote === 'engaging'
-                  ? "bg-retro-danger text-retro-bg border-retro-danger"
-                  : "bg-retro-danger/10 text-retro-danger border-retro-danger/30 hover:bg-retro-danger/20 hover:text-retro-danger hover:border-retro-danger"
-              )}
-            >
-              {userVote === 'engaging' ? <Check className="w-3.5 h-3.5 mr-2" /> : <ThumbsDown className="w-3.5 h-3.5 mr-2" />}
-              Too Engaging
-            </Button>
           </div>
         </div>
       </div>

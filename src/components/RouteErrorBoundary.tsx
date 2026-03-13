@@ -6,44 +6,13 @@ import {
   useRouteError,
 } from 'react-router-dom'
 
-import { errorReporter } from '@/lib/errorReporter'
 import { ErrorFallback } from './ErrorFallback'
 
 type RouteError = unknown
 
 function reportRouteError(error: RouteError) {
   if (!error) return
-
-  let errorMessage = 'Unknown route error'
-  let errorStack = ''
-
-  if (isRouteErrorResponse(error)) {
-    errorMessage = `Route Error ${error.status}: ${error.statusText}`
-    if (error.data) {
-      errorMessage += ` - ${JSON.stringify(error.data)}`
-    }
-  } else if (error instanceof Error) {
-    errorMessage = error.message
-    errorStack = error.stack || ''
-  } else if (typeof error === 'string') {
-    errorMessage = error
-  } else {
-    try {
-      errorMessage = JSON.stringify(error)
-    } catch {
-      errorMessage = String(error)
-    }
-  }
-
-  errorReporter.report({
-    message: errorMessage,
-    stack: errorStack,
-    url: window.location.href,
-    timestamp: new Date().toISOString(),
-    source: 'react-router',
-    error,
-    level: 'error',
-  })
+  console.error('Route error', error)
 }
 
 function RouteErrorBoundaryView({ error }: { error: RouteError }) {
@@ -88,17 +57,9 @@ export function RouteErrorBoundary() {
 
   useEffect(() => {
     if (!misconfigured) return
-    errorReporter.report({
-      message,
-      url: window.location.href,
-      timestamp: new Date().toISOString(),
-      source: 'react-router',
-      level: 'error',
-    })
+    console.error(message)
   }, [misconfigured, message])
 
-  // Guard: If this component is rendered outside of a data router (e.g. BrowserRouter)
-  // then useRouteError() would throw. Show a friendly fallback instead.
   if (misconfigured) {
     return (
       <ErrorFallback
