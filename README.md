@@ -1,6 +1,14 @@
 # NapMovies
 
-A simple static Vite site for a curated list of sleep-friendly movies.
+NapMovies is a static Vite + React site for a curated database of sleep-friendly movies. The site renders a ranked catalog from a single JSON data file and is intended to deploy as a plain static build on Cloudflare Pages.
+
+## Stack
+
+- Vite
+- React
+- TypeScript
+- Tailwind CSS
+- Static data in `public/movies.json`
 
 ## Local development
 
@@ -9,21 +17,27 @@ npm install
 npm run dev
 ```
 
-Build the site:
+## Verification
 
 ```bash
+npm run validate-movies
+npm run lint
+npm run typecheck
 npm run build
 ```
 
-Preview the production build:
+## Cloudflare deployment
 
-```bash
-npm run preview
-```
+This repo does not require a custom Worker entrypoint. Cloudflare Pages can deploy the generated static assets directly.
 
-## Updating the movie list
+- Build command: `npm run build`
+- Output directory: `dist`
 
-Edit [public/movies.json](./public/movies.json).
+If you are using the GitHub-connected Cloudflare Pages flow, that is enough. If you are deploying with Wrangler, point the project at the same `dist` directory after building.
+
+## Updating the movie catalog
+
+Edit `public/movies.json`.
 
 Each movie entry uses this shape:
 
@@ -39,15 +53,26 @@ Each movie entry uses this shape:
 }
 ```
 
-Notes:
+Rules:
 
-- `id`, `title`, `year`, `status`, `napIndex`, and `tags` are required.
-- `duration` is optional.
-- `napIndex` must be an integer from `1` to `10`.
-- Titles are sorted by `napIndex` descending on the homepage.
+- `id`, `title`, `year`, `status`, `napIndex`, and `tags` are required
+- `duration` is optional
+- `napIndex` must be an integer from `1` to `10`
+- `tags` must contain at least one value
+- Titles are sorted by `napIndex` descending on the homepage
 
-Validate the JSON after edits:
+After editing the catalog:
 
 ```bash
 npm run validate-movies
+```
+
+## Project structure
+
+```text
+public/movies.json   Source catalog
+scripts/             Data validation script
+shared/types.ts      Shared movie types
+src/pages/           App routes
+src/components/      UI and error boundaries
 ```

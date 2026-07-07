@@ -65,11 +65,11 @@ export function MovieCard({ movie, rank }: MovieCardProps) {
             <div className="h-1.5 w-full bg-black/40 overflow-hidden relative">
               <div
                 className={cn(
-                  "h-full transition-all duration-[1200ms] ease-in-out relative z-10",
+                  "h-full transition-all ease-in-out relative z-10",
                   score >= 8 ? "bg-retro-accent shadow-[0_0_8px_rgba(96,165,250,0.5)]" :
                   score >= 6 ? "bg-retro-accent/60" : "bg-retro-danger"
                 )}
-                style={{ width: `${scorePercent}%` }}
+                style={{ width: `${scorePercent}%`, transitionDuration: "1200ms" }}
               />
             </div>
             <div className="flex justify-end items-center text-[9px] uppercase tracking-[0.3em] font-bold opacity-30">

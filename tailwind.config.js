@@ -49,6 +49,5 @@ export default {
         'slow': '500ms',
       }
   	}
-  },
-  plugins: [require("tailwindcss-animate")]
+  }
 }
