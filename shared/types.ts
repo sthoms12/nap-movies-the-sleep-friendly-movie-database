@@ -8,4 +8,9 @@ export interface Movie {
   status: MovieStatus;
   napIndex: number;
   tags: string[];
+  community?: {
+    communityScore: number;
+    comfortPicks: number;
+    voteCount: number;
+  };
 }

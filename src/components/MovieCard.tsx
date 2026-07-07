@@ -1,18 +1,22 @@
 import React from 'react';
 import type { Movie } from '@shared/types';
 import { Badge } from '@/components/ui/badge';
-import { Hash, Info, Clock } from 'lucide-react';
+import { Hash, Info, Clock, ThumbsDown, ThumbsUp, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface MovieCardProps {
   movie: Movie;
   rank: number;
+  communityEnabled?: boolean;
+  voteState?: 'idle' | 'saving' | 'saved' | 'error';
+  onVote?: (movieId: string, voteType: 'sleepier' | 'less_sleepy' | 'comfort_pick') => void;
 }
 
-export function MovieCard({ movie, rank }: MovieCardProps) {
+export function MovieCard({ movie, rank, communityEnabled = false, voteState = 'idle', onVote }: MovieCardProps) {
   const score = movie.napIndex;
   const scorePercent = score * 10;
   const isOptimalLength = (movie.duration ?? 0) >= 120;
+  const community = movie.community ?? { communityScore: 0, comfortPicks: 0, voteCount: 0 };
 
   return (
     <div className="group relative border border-retro-muted/20 bg-retro-card p-6 md:p-8 transition-all duration-slow hover:border-retro-accent/40 hover:bg-retro-card/90">
@@ -76,6 +80,54 @@ export function MovieCard({ movie, rank }: MovieCardProps) {
               <span className="flex items-center gap-1.5"><Info className="w-2.5 h-2.5" /> Manual_10_Point_Index</span>
             </div>
           </div>
+          {communityEnabled && (
+            <div className="border-t border-retro-muted/20 pt-5 space-y-3">
+              <div className="flex flex-wrap items-center gap-3 text-[9px] uppercase tracking-[0.25em] font-black text-retro-text/40">
+                <span>Community_Signal: {community.communityScore >= 0 ? '+' : ''}{community.communityScore}</span>
+                <span>Votes: {community.voteCount}</span>
+                <span>Comfort: {community.comfortPicks}</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  disabled={voteState === 'saving'}
+                  onClick={() => onVote?.(movie.id, 'sleepier')}
+                  className="inline-flex h-8 items-center gap-2 border border-retro-accent/30 bg-retro-accent/5 px-3 text-[9px] font-black uppercase tracking-widest text-retro-accent transition-colors hover:bg-retro-accent/15 disabled:opacity-40"
+                  aria-label={`Vote ${movie.title} sleepier`}
+                >
+                  <ThumbsUp className="h-3 w-3" /> Sleepier
+                </button>
+                <button
+                  type="button"
+                  disabled={voteState === 'saving'}
+                  onClick={() => onVote?.(movie.id, 'less_sleepy')}
+                  className="inline-flex h-8 items-center gap-2 border border-retro-muted/40 bg-black/20 px-3 text-[9px] font-black uppercase tracking-widest text-retro-text/60 transition-colors hover:border-retro-danger/50 hover:text-retro-danger disabled:opacity-40"
+                  aria-label={`Vote ${movie.title} less sleepy`}
+                >
+                  <ThumbsDown className="h-3 w-3" /> Less Sleepy
+                </button>
+                <button
+                  type="button"
+                  disabled={voteState === 'saving'}
+                  onClick={() => onVote?.(movie.id, 'comfort_pick')}
+                  className="inline-flex h-8 items-center gap-2 border border-retro-muted/40 bg-black/20 px-3 text-[9px] font-black uppercase tracking-widest text-retro-text/60 transition-colors hover:border-retro-accent/50 hover:text-retro-accent disabled:opacity-40"
+                  aria-label={`Vote ${movie.title} as a comfort pick`}
+                >
+                  <Heart className="h-3 w-3" /> Comfort
+                </button>
+              </div>
+              {voteState === 'saved' && (
+                <div className="text-[9px] font-black uppercase tracking-[0.25em] text-retro-accent/70">
+                  Signal recorded for weekly review.
+                </div>
+              )}
+              {voteState === 'error' && (
+                <div className="text-[9px] font-black uppercase tracking-[0.25em] text-retro-danger">
+                  Could not save vote.
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-8 md:border-l border-retro-muted/20 md:pl-10">
           <div className="text-center min-w-[100px]">

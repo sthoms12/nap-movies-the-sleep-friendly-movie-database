@@ -1,15 +1,33 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { MovieCard } from '@/components/MovieCard';
-import { Moon, Award, BarChart3, Tag, Database } from 'lucide-react';
+import { Moon, Award, BarChart3, Tag, Database, Send } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { Movie } from '@shared/types';
-import { loadMovieData } from '@/lib/movie-data';
+import { isCommunityEnabled, loadMovieData, submitMovie, submitVote } from '@/lib/movie-data';
+
+type VoteState = 'idle' | 'saving' | 'saved' | 'error';
 
 export function HomePage() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const [voteStates, setVoteStates] = useState<Record<string, VoteState>>({});
+  const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [submission, setSubmission] = useState({
+    title: '',
+    year: '',
+    reason: '',
+    tags: '',
+  });
+  const communityEnabled = isCommunityEnabled();
+
+  const refreshMovies = async () => {
+    const movieData = await loadMovieData();
+    const sorted = [...movieData].sort((a, b) => b.napIndex - a.napIndex || a.title.localeCompare(b.title));
+    setMovies(sorted);
+    setLoadError(null);
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -21,7 +39,7 @@ export function HomePage() {
         const movieData = await loadMovieData();
         if (!isMounted) return;
 
-        const sorted = [...movieData].sort((a, b) => b.napIndex - a.napIndex);
+        const sorted = [...movieData].sort((a, b) => b.napIndex - a.napIndex || a.title.localeCompare(b.title));
         setMovies(sorted);
         setLoadError(null);
       } catch (error) {
@@ -42,6 +60,34 @@ export function HomePage() {
       isMounted = false;
     };
   }, []);
+
+  const handleVote = async (movieId: string, voteType: 'sleepier' | 'less_sleepy' | 'comfort_pick') => {
+    setVoteStates((current) => ({ ...current, [movieId]: 'saving' }));
+    try {
+      await submitVote(movieId, voteType);
+      await refreshMovies();
+      setVoteStates((current) => ({ ...current, [movieId]: 'saved' }));
+    } catch {
+      setVoteStates((current) => ({ ...current, [movieId]: 'error' }));
+    }
+  };
+
+  const handleSubmission = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubmissionStatus('saving');
+    try {
+      await submitMovie({
+        title: submission.title,
+        year: submission.year ? Number(submission.year) : undefined,
+        reason: submission.reason,
+        tags: submission.tags.split(',').map((tag) => tag.trim()).filter(Boolean),
+      });
+      setSubmission({ title: '', year: '', reason: '', tags: '' });
+      setSubmissionStatus('saved');
+    } catch {
+      setSubmissionStatus('error');
+    }
+  };
 
   const topTags = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -85,7 +131,7 @@ export function HomePage() {
                       <BarChart3 className="w-3.5 h-3.5" /> Archive_Scoring
                     </div>
                     <div className="text-[11px] leading-relaxed text-retro-text/80">
-                      Each title carries a manual 1-10 nap index stored directly in the movie data file for easy maintenance.
+                      Official scores stay Steve-approved. Community votes feed the weekly review queue.
                     </div>
                   </div>
                   <div className="border border-border bg-black/20 p-5 space-y-3">
@@ -102,6 +148,65 @@ export function HomePage() {
                   </div>
                 </div>
               </header>
+              {communityEnabled && (
+                <section className="mb-12 border border-border bg-black/20 p-5 md:p-6">
+                  <div className="mb-5 flex items-center gap-2 text-[10px] font-bold text-retro-accent tracking-[0.2em] uppercase">
+                    <Send className="h-3.5 w-3.5" /> Submit_A_Title
+                  </div>
+                  <form onSubmit={handleSubmission} className="grid gap-3">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_120px]">
+                      <input
+                        value={submission.title}
+                        onChange={(event) => setSubmission((current) => ({ ...current, title: event.target.value }))}
+                        className="h-10 border border-retro-muted/30 bg-retro-bg px-3 text-sm text-retro-text outline-none transition-colors placeholder:text-retro-text/30 focus:border-retro-accent"
+                        placeholder="Movie title"
+                        required
+                        maxLength={160}
+                      />
+                      <input
+                        value={submission.year}
+                        onChange={(event) => setSubmission((current) => ({ ...current, year: event.target.value }))}
+                        className="h-10 border border-retro-muted/30 bg-retro-bg px-3 text-sm text-retro-text outline-none transition-colors placeholder:text-retro-text/30 focus:border-retro-accent"
+                        placeholder="Year"
+                        inputMode="numeric"
+                      />
+                    </div>
+                    <textarea
+                      value={submission.reason}
+                      onChange={(event) => setSubmission((current) => ({ ...current, reason: event.target.value }))}
+                      className="min-h-24 resize-y border border-retro-muted/30 bg-retro-bg p-3 text-sm text-retro-text outline-none transition-colors placeholder:text-retro-text/30 focus:border-retro-accent"
+                      placeholder="Why is this sleep-friendly?"
+                      required
+                      maxLength={1000}
+                    />
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-[1fr_auto]">
+                      <input
+                        value={submission.tags}
+                        onChange={(event) => setSubmission((current) => ({ ...current, tags: event.target.value }))}
+                        className="h-10 border border-retro-muted/30 bg-retro-bg px-3 text-sm text-retro-text outline-none transition-colors placeholder:text-retro-text/30 focus:border-retro-accent"
+                        placeholder="Tags, comma separated"
+                      />
+                      <button
+                        type="submit"
+                        disabled={submissionStatus === 'saving'}
+                        className="inline-flex h-10 items-center justify-center gap-2 border border-retro-accent/40 bg-retro-accent/10 px-4 text-[10px] font-black uppercase tracking-widest text-retro-accent transition-colors hover:bg-retro-accent/20 disabled:opacity-40"
+                      >
+                        <Send className="h-3.5 w-3.5" /> Submit
+                      </button>
+                    </div>
+                    {submissionStatus === 'saved' && (
+                      <div className="text-[10px] font-black uppercase tracking-[0.25em] text-retro-accent/70">
+                        Submission queued for weekly review.
+                      </div>
+                    )}
+                    {submissionStatus === 'error' && (
+                      <div className="text-[10px] font-black uppercase tracking-[0.25em] text-retro-danger">
+                        Submission failed.
+                      </div>
+                    )}
+                  </form>
+                </section>
+              )}
               <section className="space-y-8">
                 <div className="flex items-center justify-between border-b border-border pb-4">
                   <div className="flex items-center gap-4">
@@ -125,6 +230,9 @@ export function HomePage() {
                         key={movie.id}
                         movie={movie}
                         rank={idx + 1}
+                        communityEnabled={communityEnabled}
+                        voteState={voteStates[movie.id] ?? 'idle'}
+                        onVote={handleVote}
                       />
                     ))
                   )}
