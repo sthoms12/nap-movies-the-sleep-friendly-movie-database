@@ -131,7 +131,7 @@ export function HomePage() {
                       <BarChart3 className="w-3.5 h-3.5" /> Archive_Scoring
                     </div>
                     <div className="text-[11px] leading-relaxed text-retro-text/80">
-                      Official scores stay Steve-approved. Community votes feed the weekly review queue.
+                      Official scores stay curator-approved. Community votes feed the weekly review queue.
                     </div>
                   </div>
                   <div className="border border-border bg-black/20 p-5 space-y-3">
