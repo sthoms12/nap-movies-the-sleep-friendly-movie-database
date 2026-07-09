@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3000",
-    "build": "vite build",
+    "build": "vite build && node scripts/generate-seo-assets.mjs",
     "preview": "npm run build && wrangler dev",
     "lint": "eslint --cache .",
     "typecheck": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json",
