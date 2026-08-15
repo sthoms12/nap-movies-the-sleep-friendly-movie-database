@@ -15,7 +15,7 @@ export function Navbar() {
               Nap<span className="text-retro-accent">Movies</span>
             </span>
           </Link>
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-5 sm:gap-8">
             <NavLink
               to="/"
               className={({ isActive }) => cn(
@@ -24,6 +24,15 @@ export function Navbar() {
               )}
             >
               HOME
+            </NavLink>
+            <NavLink
+              to="/movies-to-fall-asleep-to"
+              className={({ isActive }) => cn(
+                "text-[10px] font-black uppercase tracking-[0.2em] transition-colors hover:text-retro-accent",
+                isActive ? "text-retro-accent border-b border-retro-accent/50 pb-0.5" : "text-retro-text/60"
+              )}
+            >
+              GUIDES
             </NavLink>
             <NavLink
               to="/criteria"

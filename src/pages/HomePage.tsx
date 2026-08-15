@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Navbar } from '@/components/layout/Navbar';
 import { MovieCard } from '@/components/MovieCard';
 import { Moon, Award, BarChart3, Tag, Database, Send } from 'lucide-react';
@@ -32,7 +33,7 @@ export function HomePage() {
   useEffect(() => {
     let isMounted = true;
 
-    document.title = 'NapMovies | The Archive';
+    document.title = 'Movies to Fall Asleep To | NapMovies';
 
     const initialize = async () => {
       try {
@@ -118,11 +119,11 @@ export function HomePage() {
                       <Moon className="w-10 h-10 text-primary group-hover:scale-110 transition-transform duration-500" />
                     </div>
                   </div>
-                  <h1 className="text-4xl md:text-7xl font-black tracking-widest uppercase text-white leading-none">
-                    NAP <span className="text-primary">MOVIES</span>
+                  <h1 className="text-4xl md:text-6xl font-black tracking-tight uppercase text-white leading-none">
+                    Movies to <span className="text-primary">Fall Asleep To</span>
                   </h1>
-                  <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto italic font-bold leading-relaxed">
-                    "A permanent catalog of sleep-friendly movie picks."
+                  <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto font-bold leading-relaxed">
+                    A ranked archive of movies to fall asleep to, built around familiar rewatches, steady pacing, and quiet-night comfort.
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -131,7 +132,7 @@ export function HomePage() {
                       <BarChart3 className="w-3.5 h-3.5" /> Archive_Scoring
                     </div>
                     <div className="text-[11px] leading-relaxed text-retro-text/80">
-                      Official scores stay curator-approved. Community votes feed the weekly review queue.
+                      Official scores remain owner-approved. Community votes feed the weekly review queue without directly changing the ranking.
                     </div>
                   </div>
                   <div className="border border-border bg-black/20 p-5 space-y-3">
@@ -148,6 +149,19 @@ export function HomePage() {
                   </div>
                 </div>
               </header>
+              <section className="mb-12 border-y border-border py-8">
+                <div className="mb-6 max-w-2xl space-y-3">
+                  <h2 className="text-xl font-black uppercase tracking-tight text-white">Find a movie for a quiet night</h2>
+                  <p className="text-xs leading-6 text-muted-foreground">
+                    Start with a movie you already know. The Nap Index is a subjective editorial score based on familiarity, pacing, sound, visual stillness, atmosphere, and rewatch comfort—not a measure of movie quality or a promise that a title will make you sleep.
+                  </p>
+                </div>
+                <div className="grid gap-3 md:grid-cols-3">
+                  <Link to="/movies-to-fall-asleep-to" className="border border-retro-accent/30 bg-retro-accent/5 p-4 text-[10px] font-black uppercase tracking-widest text-retro-accent hover:bg-retro-accent/10">Movies to fall asleep to</Link>
+                  <Link to="/quiet-movies-for-bedtime" className="border border-border bg-black/20 p-4 text-[10px] font-black uppercase tracking-widest text-retro-text/70 hover:border-retro-accent/40 hover:text-retro-accent">Quiet bedtime movies</Link>
+                  <Link to="/comfort-movies-for-sleep" className="border border-border bg-black/20 p-4 text-[10px] font-black uppercase tracking-widest text-retro-text/70 hover:border-retro-accent/40 hover:text-retro-accent">Comfort rewatches</Link>
+                </div>
+              </section>
               {communityEnabled && (
                 <section className="mb-12 border border-border bg-black/20 p-5 md:p-6">
                   <div className="mb-5 flex items-center gap-2 text-[10px] font-bold text-retro-accent tracking-[0.2em] uppercase">
@@ -238,6 +252,9 @@ export function HomePage() {
                   )}
                 </div>
               </section>
+              <p className="mt-10 text-[10px] leading-5 text-retro-text/40">
+                NapMovies provides subjective entertainment recommendations for quiet-night viewing. It is not medical or sleep advice. <Link to="/criteria" className="text-retro-accent/70 hover:text-retro-accent">Read the methodology.</Link>
+              </p>
             </div>
           ) : (
             <div className="h-[60vh] flex flex-col items-center justify-center space-y-4 opacity-20">

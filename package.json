@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3000",
-    "build": "vite build && node scripts/generate-seo-assets.mjs",
+    "build": "vite build && node scripts/generate-seo-assets.mjs && node scripts/validate-seo-assets.mjs",
     "preview": "npm run build && wrangler dev",
     "lint": "eslint --cache .",
     "typecheck": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json",
     "validate-movies": "node scripts/validate-movies.mjs",
+    "validate-seo": "node scripts/validate-seo-assets.mjs",
     "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {

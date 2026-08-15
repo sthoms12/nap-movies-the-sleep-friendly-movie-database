@@ -18,72 +18,72 @@ export function CriteriaPage() {
     {
       title: "Familiar Rewatch",
       icon: <UserCheck className="w-5 h-5" />,
-      desc: "Priority given to films where the narrative is already internalized, allowing the brain to disengage from active plot tracking.",
+      desc: "Priority goes to films whose story, characters, and ending are already familiar to the viewer, making them easier to follow casually.",
       case: "Harry Potter Series",
-      tag: "Neuro-Disengagement"
+      tag: "Familiarity"
     },
     {
       title: "Calm Audio Profiles",
       icon: <Volume2 className="w-5 h-5" />,
-      desc: "Strict penalization for sharp audio transients (explosions, screams). We favor 'flat' wave patterns and sustained decibel levels.",
+      desc: "Titles with fewer abrupt volume changes and longer stretches of consistent sound are easier quiet-night choices.",
       case: "Arrival",
-      tag: "Transient-Suppression"
+      tag: "Steady-Sound"
     },
     {
       title: "Low Dialogue Density",
       icon: <BookOpen className="w-5 h-5" />,
-      desc: "Movies that rely on visual storytelling or ambient vocalizing rather than rapid-fire exposition minimize cognitive load.",
+      desc: "Movies with less rapid-fire exposition can be easier to follow when the viewer is not giving the screen full attention.",
       case: "WALL-E",
-      tag: "Low-Cognitive-Load"
+      tag: "Dialogue-Pace"
     },
     {
       title: "Rhythmic Pacing",
       icon: <LayoutPanelLeft className="w-5 h-5" />,
-      desc: "Consistency in scene length and transition speed creates a predictable temporal pulse that aids sleep cycles.",
+      desc: "Consistent scene lengths and measured transitions give a movie a predictable viewing rhythm.",
       case: "Moneyball",
-      tag: "Temporal-Pulse"
+      tag: "Steady-Pacing"
     },
     {
       title: "Atmospheric Mood",
       icon: <Wind className="w-5 h-5" />,
-      desc: "Preference for rain, snow, deep space, or night-time settings which act as a visual 'white noise' for the viewer.",
+      desc: "Rain, snow, deep space, and nighttime settings can create a consistent atmosphere that suits quiet viewing.",
       case: "Blade Runner 2049",
-      tag: "Visual-Cocoon"
+      tag: "Atmosphere"
     },
     {
       title: "Visual Stillness",
       icon: <Eye className="w-5 h-5" />,
-      desc: "Static camera work and long takes (no shaky cam) reduce eye-tracking fatigue and sensory stimulation.",
+      desc: "Static compositions, long takes, and restrained camera movement receive more weight than restless visual styles.",
       case: "Columbus",
-      tag: "Minimal-Motion"
+      tag: "Visual-Stillness"
     },
     {
-      title: "Cortisol-Free Plot",
+      title: "Known Intensity",
       icon: <ShieldCheck className="w-5 h-5" />,
-      desc: "Absence of high-stakes jumpscares or acute existential dread. Narrative comfort is the baseline requirement.",
+      desc: "A familiar title makes its intense moments predictable. NapMovies favors personal comfort over a universal definition of low stress.",
       case: "The Shawshank Redemption",
-      tag: "Cortisol-Control"
+      tag: "Personal-Comfort"
     },
     {
       title: "Taxonomic Comfort",
       icon: <Search className="w-5 h-5" />,
-      desc: "High density of approved tags (e.g., 'Snow', 'Synth', 'Quiet') indicates a strong statistical match for sleep-suitability.",
+      desc: "Tags such as Quiet, Stillness, Routine, and Ambient help explain why a title appears in a particular guide.",
       case: "Wind River",
-      tag: "Data-Signature"
+      tag: "Catalog-Tags"
     },
     {
       title: "Ambient Scoring",
       icon: <Zap className="w-5 h-5" />,
-      desc: "Films featuring drone-based or synthesizer-heavy soundtracks provide a continuous sonic texture that masks external noise.",
+      desc: "Sustained instrumental or synthesizer-led scores can give a movie a consistent sonic identity, although individual scenes still vary.",
       case: "Tron: Legacy",
-      tag: "Sonic-Texture"
+      tag: "Consistent-Score"
     },
     {
       title: "Extended Runtime",
       icon: <Clock className="w-5 h-5" />,
-      desc: "Optimal index rewards films over 120 minutes, ensuring the user is fully in deep sleep before the credits (and credits-silence) roll.",
+      desc: "Longer films can suit a quiet-night routine because the viewer is less likely to need another selection soon.",
       case: "Lord of the Rings",
-      tag: "2h+_Optimal"
+      tag: "Long-Runtime"
     }
   ];
 
@@ -102,10 +102,10 @@ export function CriteriaPage() {
             </h1>
             <div className="border-l-2 border-retro-accent/40 pl-6 py-4 space-y-3">
               <p className="text-retro-text/90 text-sm md:text-base leading-relaxed max-w-2xl font-bold">
-                "Low-Stress Cinema as a Neuro-Regulatory Tool."
+              "A practical framework for choosing a familiar quiet-night rewatch."
               </p>
               <p className="text-muted-foreground text-xs leading-relaxed max-w-xl italic">
-                The Nap Index is not a measure of cinematic quality, but of physiological compatibility with the transition to REM sleep.
+                The Nap Index is a subjective editorial score, not a measure of cinematic quality and not a medical assessment.
               </p>
             </div>
           </header>
@@ -115,6 +115,9 @@ export function CriteriaPage() {
                 <Calculator className="w-6 h-6" />
                 <h2 className="text-xl font-black uppercase tracking-[0.2em]">The Catalog Protocol</h2>
               </div>
+              <p className="mt-6 text-xs leading-6 text-retro-text/50">
+                Community votes and comfort picks inform the weekly review. Published scores change only after owner approval. NapMovies provides entertainment recommendations, not medical or sleep advice.
+              </p>
               <p className="text-sm text-retro-text/70 leading-relaxed mb-6">
                 Each movie is assigned a <span className="text-white font-bold">static nap score</span> and curated tags directly in the site data file. That keeps the archive easy to maintain while preserving a consistent ranked list.
               </p>
