@@ -123,7 +123,7 @@ export function HomePage() {
                     Movies to <span className="text-primary">Fall Asleep To</span>
                   </h1>
                   <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto font-bold leading-relaxed">
-                    A ranked archive of movies to fall asleep to, built around familiar rewatches, steady pacing, and quiet-night comfort.
+                    Find a nap movie for a quiet night. This ranked archive of movies to fall asleep to favors familiar rewatches, steady pacing, and predictable comfort.
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -151,13 +151,13 @@ export function HomePage() {
               </header>
               <section className="mb-12 border-y border-border py-8">
                 <div className="mb-6 max-w-2xl space-y-3">
-                  <h2 className="text-xl font-black uppercase tracking-tight text-white">Find a movie for a quiet night</h2>
+                  <h2 className="text-xl font-black uppercase tracking-tight text-white">How to choose a nap movie</h2>
                   <p className="text-xs leading-6 text-muted-foreground">
-                    Start with a movie you already know. The Nap Index is a subjective editorial score based on familiarity, pacing, sound, visual stillness, atmosphere, and rewatch comfort—not a measure of movie quality or a promise that a title will make you sleep.
+                    A good nap movie is usually one you already know, with steady pacing and few surprising shifts in sound or mood. The Nap Index is a subjective editorial score based on familiarity, pacing, sound, visual stillness, atmosphere, and rewatch comfort—not a measure of movie quality or a promise that a title will make you sleep.
                   </p>
                 </div>
                 <div className="grid gap-3 md:grid-cols-3">
-                  <Link to="/movies-to-fall-asleep-to" className="border border-retro-accent/30 bg-retro-accent/5 p-4 text-[10px] font-black uppercase tracking-widest text-retro-accent hover:bg-retro-accent/10">Movies to fall asleep to</Link>
+                  <Link to="/movies-to-fall-asleep-to" className="border border-retro-accent/30 bg-retro-accent/5 p-4 text-[10px] font-black uppercase tracking-widest text-retro-accent hover:bg-retro-accent/10">Nap movie rankings</Link>
                   <Link to="/quiet-movies-for-bedtime" className="border border-border bg-black/20 p-4 text-[10px] font-black uppercase tracking-widest text-retro-text/70 hover:border-retro-accent/40 hover:text-retro-accent">Quiet bedtime movies</Link>
                   <Link to="/comfort-movies-for-sleep" className="border border-border bg-black/20 p-4 text-[10px] font-black uppercase tracking-widest text-retro-text/70 hover:border-retro-accent/40 hover:text-retro-accent">Comfort rewatches</Link>
                 </div>
