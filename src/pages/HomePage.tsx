@@ -271,6 +271,7 @@ export function HomePage() {
             <div className="text-[9px] font-bold tracking-[0.3em] uppercase opacity-30">
               Copyright {new Date().getFullYear()} NAP_MOVIES_ARCHIVE // DATA_SET: STATIC_50 // FINAL_STATE
             </div>
+            <div className="mt-3 text-[9px] font-bold uppercase tracking-[0.2em] opacity-40">Created by <a className="underline hover:opacity-100" href="https://www.linkedin.com/in/steve-thoms-81381990" rel="me">Steve Thoms</a></div>
             <div className="text-[8px] font-mono mt-2 opacity-10 tracking-widest uppercase pointer-events-none">
               BUILD_ID: static_archive
             </div>

@@ -134,10 +134,19 @@ function routeJsonLd(route) {
   const entries = [
     {
       '@context': 'https://schema.org',
+      '@type': 'Person',
+      '@id': `${siteOrigin}/#creator`,
+      name: 'Steve Thoms',
+      url: 'https://www.linkedin.com/in/steve-thoms-81381990',
+      sameAs: ['https://www.linkedin.com/in/steve-thoms-81381990', 'https://x.com/thomstech12'],
+    },
+    {
+      '@context': 'https://schema.org',
       '@type': route.path === '/' ? 'WebSite' : 'WebPage',
       name: route.h1,
       url: canonical(route.path),
       description: route.description,
+      creator: { '@id': `${siteOrigin}/#creator` },
       isPartOf: route.path === '/' ? undefined : { '@type': 'WebSite', name: 'NapMovies', url: canonical('/') },
     },
   ];
