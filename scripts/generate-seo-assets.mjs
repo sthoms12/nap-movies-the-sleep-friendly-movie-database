@@ -207,7 +207,7 @@ function writeFile(filePath, content) {
 
 for (const route of [...routes, notFound]) writeFile(route.output, renderHtml(route));
 
-writeFile(path.join(distDir, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${siteOrigin}/sitemap.xml\n`);
+writeFile(path.join(distDir, 'robots.txt'), `User-agent: *\nContent-Signal: ai-train=no, search=yes, ai-input=yes\nAllow: /\n\nSitemap: ${siteOrigin}/sitemap.xml\n`);
 writeFile(path.join(distDir, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${routes.map((route) => `  <url>\n    <loc>${canonical(route.path)}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${route.path === '/' ? 'weekly' : 'monthly'}</changefreq>\n    <priority>${route.path === '/' ? '1.0' : '0.8'}</priority>\n  </url>`).join('\n')}\n</urlset>\n`);
 writeFile(path.join(distDir, 'llms.txt'), `# NapMovies\n\nNapMovies is an editorial archive of movies for quiet-night viewing. The official Nap Index ranks familiar rewatches using factors such as pacing, sound consistency, visual stillness, atmosphere, runtime, and personal comfort.\n\n## Canonical pages\n- ${canonical('/')} — complete owner-approved ranked archive\n- ${canonical('/movies-to-fall-asleep-to/')} — primary guide\n- ${canonical('/quiet-movies-for-bedtime/')} — lower-key selections\n- ${canonical('/comfort-movies-for-sleep/')} — familiar comfort rewatches\n- ${canonical('/criteria/')} — Nap Index methodology\n\n## Ranking governance\nCommunity votes and submissions are advisory signals. Official scores and rankings change only after owner approval. NapMovies provides entertainment recommendations, not medical or sleep advice.\n`);
 
