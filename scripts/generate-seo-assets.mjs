@@ -15,6 +15,11 @@ const routes = [
     h1: 'Movies to fall asleep to',
     answer: 'NapMovies is a ranked archive of familiar rewatches, steady pacing, and quiet-night comfort picks.',
     movieIds: movies.map((movie) => movie.id),
+    faq: [
+      ['What makes a good nap movie?', 'A useful nap movie is usually a familiar rewatch with steady pacing, predictable sound, and a mood you already know.'],
+      ['How does the Nap Index work?', 'The Nap Index weighs familiarity, pacing, sound, visual stillness, atmosphere, runtime, and rewatch comfort.'],
+      ['Can community votes change the official ranking?', 'Community votes inform weekly review, but the public ranking changes only after owner approval.'],
+    ],
   },
   {
     path: '/criteria/',
@@ -176,9 +181,14 @@ function headTags(route) {
     <meta property="og:title" content="${title}" />
     <meta property="og:description" content="${description}" />
     <meta property="og:url" content="${url}" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="${siteOrigin}/og-napmovies.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="NapMovies ranked archive for quiet-night viewing" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${title}" />
     <meta name="twitter:description" content="${description}" />
+    <meta name="twitter:image" content="${siteOrigin}/og-napmovies.png" />
     ${jsonLd}
     <!-- SEO_META_END -->`;
 }
@@ -188,7 +198,7 @@ function fallbackMarkup(route) {
   const faq = (route.faq ?? []).map(([question, answer]) => `<h2>${escapeHtml(question)}</h2><p>${escapeHtml(answer)}</p>`).join('');
   const homeGuide = route.path === '/' ? `<h2>What makes a good nap movie?</h2><p>A useful nap movie is usually a familiar rewatch with steady pacing, predictable sound, and a mood you already know. The Nap Index considers familiarity, pacing, sound, visual stillness, atmosphere, runtime, and rewatch comfort. It is an editorial guide, not medical advice or a promise that a movie will make you sleep.</p><h2>How to use the archive</h2><p>Start with the official ranking, then use your own familiarity as the deciding factor. Community votes inform a weekly review, but published scores change only after owner approval.</p>` : '';
   const criteriaLink = route.path === '/criteria/' ? `<p><a href="/">Return to the owner-approved NapMovies ranking.</a></p>` : '';
-  return `<noscript><main><h1>${escapeHtml(route.h1)}</h1><p>${escapeHtml(route.answer)}</p>${homeGuide}${movieList ? `<h2>Owner-approved nap movie rankings</h2><ol>${movieList}</ol>` : ''}${faq}${criteriaLink}<p><a href="/">Ranked archive</a> | <a href="/criteria/">Methodology</a> | <a href="/movies-to-fall-asleep-to/">Movies to fall asleep to</a></p></main></noscript>`;
+  return `<main class="seo-fallback"><h1>${escapeHtml(route.h1)}</h1><p>${escapeHtml(route.answer)}</p>${homeGuide}${movieList ? `<h2>Owner-approved nap movie rankings</h2><ol>${movieList}</ol>` : ''}${faq}${criteriaLink}<p><a href="/">Ranked archive</a> | <a href="/criteria/">Methodology</a> | <a href="/movies-to-fall-asleep-to/">Movies to fall asleep to</a></p></main>`;
 }
 
 function renderHtml(route) {
@@ -197,7 +207,7 @@ function renderHtml(route) {
     .replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/>/s, `<meta name="description" content="${escapeHtml(route.description)}" />`);
   html = html.replace(/\s*<!-- SEO_META_START -->[\s\S]*?<!-- SEO_META_END -->/s, '');
   html = html.replace('</head>', `    ${headTags(route)}\n  </head>`);
-  return html.replace('<div id="root"></div>', `<div id="root"></div>\n    ${fallbackMarkup(route)}`);
+  return html.replace('<div id="root"></div>', `<div id="root">${fallbackMarkup(route)}</div>`);
 }
 
 function writeFile(filePath, content) {
