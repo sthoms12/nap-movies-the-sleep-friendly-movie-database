@@ -194,7 +194,7 @@ function headTags(route) {
 }
 
 function fallbackMarkup(route) {
-  const movieList = selectedMovies(route).slice(0, 10).map((movie) => `<li>${escapeHtml(movie.title)} — Nap Index ${movie.napIndex}/10</li>`).join('');
+  const movieList = selectedMovies(route).map((movie) => `<li>${escapeHtml(movie.title)} — Nap Index ${movie.napIndex}/10</li>`).join('');
   const faq = (route.faq ?? []).map(([question, answer]) => `<h2>${escapeHtml(question)}</h2><p>${escapeHtml(answer)}</p>`).join('');
   const homeGuide = route.path === '/' ? `<h2>What makes a good nap movie?</h2><p>A useful nap movie is usually a familiar rewatch with steady pacing, predictable sound, and a mood you already know. The Nap Index considers familiarity, pacing, sound, visual stillness, atmosphere, runtime, and rewatch comfort. It is an editorial guide, not medical advice or a promise that a movie will make you sleep.</p><h2>How to use the archive</h2><p>Start with the official ranking, then use your own familiarity as the deciding factor. Community votes inform a weekly review, but published scores change only after owner approval.</p>` : '';
   const criteriaLink = route.path === '/criteria/' ? `<p><a href="/">Return to the owner-approved NapMovies ranking.</a></p>` : '';
