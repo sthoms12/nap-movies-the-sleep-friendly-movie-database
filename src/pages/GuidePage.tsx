@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { BookOpen, ChevronRight, Moon, ShieldCheck } from 'lucide-react';
 import { MovieCard } from '@/components/MovieCard';
 import { Navbar } from '@/components/layout/Navbar';
-import type { GuideDefinition } from '@/content/guides';
+import { guides, type GuideDefinition } from '@/content/guides';
 import { loadMovieData } from '@/lib/movie-data';
 import type { Movie } from '@shared/types';
 
@@ -61,6 +61,11 @@ export function GuidePage({ guide }: { guide: GuideDefinition }) {
         <section className="grid gap-4 border-t border-border pt-10 md:grid-cols-2">
           <Link to="/" className="border border-border bg-black/20 p-5 text-xs font-black uppercase tracking-widest hover:border-retro-accent/40 hover:text-retro-accent">View the full ranked archive</Link>
           <Link to="/criteria" className="border border-border bg-black/20 p-5 text-xs font-black uppercase tracking-widest hover:border-retro-accent/40 hover:text-retro-accent">How the Nap Index works</Link>
+        </section>
+        <section aria-label="More viewing guides" className="mt-4 grid gap-4 md:grid-cols-2">
+          {guides.filter((other) => other.slug !== guide.slug).map((other) => (
+            <Link key={other.slug} to={`/${other.slug}`} className="border border-border bg-black/20 p-5 text-xs font-black uppercase tracking-widest hover:border-retro-accent/40 hover:text-retro-accent">{other.title}</Link>
+          ))}
         </section>
         <p className="mt-10 text-[10px] leading-5 text-retro-text/40">NapMovies provides subjective entertainment recommendations for quiet-night viewing. It is not medical or sleep advice.</p>
       </main>

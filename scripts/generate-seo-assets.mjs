@@ -114,7 +114,6 @@ function itemListJsonLd(route) {
       item: {
         '@type': 'Movie',
         name: movie.title,
-        dateCreated: String(movie.year),
         duration: movie.duration ? `PT${movie.duration}M` : undefined,
         additionalProperty: [{ '@type': 'PropertyValue', name: 'Nap Index', value: `${movie.napIndex}/10` }],
         keywords: movie.tags.join(', '),
@@ -206,7 +205,7 @@ function fallbackMarkup(route) {
   const faq = (route.faq ?? []).map(([question, answer]) => `<h2>${escapeHtml(question)}</h2><p>${escapeHtml(answer)}</p>`).join('');
   const homeGuide = route.path === '/' ? `<h2>What makes a good nap movie?</h2><p>A useful nap movie is usually a familiar rewatch with steady pacing, predictable sound, and a mood you already know. The Nap Index considers familiarity, pacing, sound, visual stillness, atmosphere, runtime, and rewatch comfort. It is an editorial guide, not medical advice or a promise that a movie will make you sleep.</p><h2>How to use the archive</h2><p>Start with the official ranking, then use your own familiarity as the deciding factor. Community votes inform a weekly review, but published scores change only after owner approval.</p>` : '';
   const criteriaLink = route.path === '/criteria/' ? `<p><a href="/">Return to the owner-approved NapMovies ranking.</a></p>` : '';
-  return `<main class="seo-fallback"><h1>${escapeHtml(route.h1)}</h1><p>${escapeHtml(route.answer)}</p>${homeGuide}${movieArticles ? `<h2>Owner-approved nap movie rankings</h2><div class="movie-rankings">${movieArticles}</div>` : ''}${faq}${criteriaLink}<p><a href="/">Ranked archive</a> | <a href="/criteria/">Methodology</a> | <a href="/movies-to-fall-asleep-to/">Movies to fall asleep to</a></p></main>`;
+  return `<main class="seo-fallback"><h1>${escapeHtml(route.h1)}</h1><p>${escapeHtml(route.answer)}</p>${homeGuide}${movieArticles ? `<h2>Owner-approved nap movie rankings</h2><div class="movie-rankings">${movieArticles}</div>` : ''}${faq}${criteriaLink}<p><a href="/">Ranked archive</a> | <a href="/criteria/">Methodology</a> | <a href="/movies-to-fall-asleep-to/">Movies to fall asleep to</a> | <a href="/quiet-movies-for-bedtime/">Quiet movies for bedtime</a> | <a href="/comfort-movies-for-sleep/">Comfort movies for sleep</a></p></main>`;
 }
 
 function renderHtml(route) {
