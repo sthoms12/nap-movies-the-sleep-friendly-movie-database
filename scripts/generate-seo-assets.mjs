@@ -13,12 +13,13 @@ const routes = [
     title: 'Movies to Fall Asleep To | NapMovies Ranked Archive',
     description: 'Explore 50 owner-approved movies to fall asleep to, ranked by the Nap Index for familiarity, steady pacing, atmosphere, and quiet-night comfort.',
     h1: 'Movies to fall asleep to',
-    answer: 'NapMovies is a ranked archive of familiar rewatches, steady pacing, and quiet-night comfort picks.',
+    answer: 'NapMovies is a ranked archive of nap movies — familiar rewatches, steady pacing, and quiet-night comfort picks.',
     movieIds: movies.map((movie) => movie.id),
     faq: [
       ['What makes a good nap movie?', 'A useful nap movie is usually a familiar rewatch with steady pacing, predictable sound, and a mood you already know.'],
       ['How does the Nap Index work?', 'The Nap Index weighs familiarity, pacing, sound, visual stillness, atmosphere, runtime, and rewatch comfort.'],
       ['Can community votes change the official ranking?', 'Community votes inform weekly review, but the public ranking changes only after owner approval.'],
+      ['What are nap movies?', 'Nap movies are films people rewatch at night because steady pacing, predictable sound, and familiar stories make them easy movies to nap to. NapMovies ranks these titles with the owner-approved Nap Index, which weighs familiarity, pacing, sound, visual stillness, atmosphere, runtime, and rewatch comfort.'],
     ],
   },
   {
