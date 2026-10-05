@@ -20,6 +20,9 @@ const routes = [
       ['How does the Nap Index work?', 'The Nap Index weighs familiarity, pacing, sound, visual stillness, atmosphere, runtime, and rewatch comfort.'],
       ['Can community votes change the official ranking?', 'Community votes inform weekly review, but the public ranking changes only after owner approval.'],
       ['What are nap movies?', 'Nap movies are films people rewatch at night because steady pacing, predictable sound, and familiar stories make them easy movies to nap to. NapMovies ranks these titles with the owner-approved Nap Index, which weighs familiarity, pacing, sound, visual stillness, atmosphere, runtime, and rewatch comfort.'],
+      ['How many movies are in the NapMovies archive?', 'The archive currently ranks 50 owner-approved movies. Community votes and submissions inform a weekly review, but the public ranking changes only after owner approval.'],
+      ['Does NapMovies stream movies?', 'No. NapMovies is a ranked guide for quiet-night viewing; it does not host or stream any films.'],
+      ['What range does the Nap Index use?', 'Scores are shown on a 0–10 scale. Every movie currently in the archive scores 8 or 9, reflecting that only vetted comfort rewatches make the cut.'],
     ],
   },
   {
@@ -201,12 +204,25 @@ function movieArticle(movie, rank) {
   return `<article><h3>#${String(rank).padStart(2, '0')} ${escapeHtml(movie.title)}</h3><p>${escapeHtml(meta)}${tags ? ` — ${tags}` : ''}</p></article>`;
 }
 
+function topTenTable(route) {
+  const top = selectedMovies(route).slice(0, 10);
+  if (top.length === 0) return '';
+  const rows = top
+    .map(
+      (movie, index) =>
+        `<tr><td>${index + 1}</td><td>${escapeHtml(movie.title)}</td><td>${movie.year}</td><td>${movie.duration ? `${movie.duration} min` : '—'}</td><td>${movie.napIndex}/10</td></tr>`,
+    )
+    .join('');
+  return `<h2>Which movies top the Nap Index right now?</h2><table><caption>Top 10 nap movies by owner-approved Nap Index score</caption><thead><tr><th scope="col">Rank</th><th scope="col">Title</th><th scope="col">Year</th><th scope="col">Runtime</th><th scope="col">Nap Index</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
 function fallbackMarkup(route) {
   const movieArticles = selectedMovies(route).map((movie, index) => movieArticle(movie, index + 1)).join('');
   const faq = (route.faq ?? []).map(([question, answer]) => `<h2>${escapeHtml(question)}</h2><p>${escapeHtml(answer)}</p>`).join('');
-  const homeGuide = route.path === '/' ? `<h2>What makes a good nap movie?</h2><p>A useful nap movie is usually a familiar rewatch with steady pacing, predictable sound, and a mood you already know. The Nap Index considers familiarity, pacing, sound, visual stillness, atmosphere, runtime, and rewatch comfort. It is an editorial guide, not medical advice or a promise that a movie will make you sleep.</p><h2>How to use the archive</h2><p>Start with the official ranking, then use your own familiarity as the deciding factor. Community votes inform a weekly review, but published scores change only after owner approval.</p>` : '';
+  const homeGuide = route.path === '/' ? `<h2>What makes a good nap movie?</h2><p>A useful nap movie is usually a familiar rewatch with steady pacing, predictable sound, and a mood you already know. The Nap Index considers familiarity, pacing, sound, visual stillness, atmosphere, runtime, and rewatch comfort. It is an editorial guide, not medical advice or a promise that a movie will make you sleep.</p><h2>How should I use the NapMovies archive?</h2><p>Start with the official ranking, then use your own familiarity as the deciding factor. Community votes inform a weekly review, but published scores change only after owner approval.</p>` : '';
+  const homeTable = route.path === '/' ? topTenTable(route) : '';
   const criteriaLink = route.path === '/criteria/' ? `<p><a href="/">Return to the owner-approved NapMovies ranking.</a></p>` : '';
-  return `<main class="seo-fallback"><h1>${escapeHtml(route.h1)}</h1><p>${escapeHtml(route.answer)}</p>${homeGuide}${movieArticles ? `<h2>Owner-approved nap movie rankings</h2><div class="movie-rankings">${movieArticles}</div>` : ''}${faq}${criteriaLink}<p><a href="/">Ranked archive</a> | <a href="/criteria/">Methodology</a> | <a href="/movies-to-fall-asleep-to/">Movies to fall asleep to</a> | <a href="/quiet-movies-for-bedtime/">Quiet movies for bedtime</a> | <a href="/comfort-movies-for-sleep/">Comfort movies for sleep</a></p></main>`;
+  return `<main class="seo-fallback"><h1>${escapeHtml(route.h1)}</h1><p>${escapeHtml(route.answer)}</p>${homeGuide}${homeTable}${movieArticles ? `<h2>Owner-approved nap movie rankings</h2><div class="movie-rankings">${movieArticles}</div>` : ''}${faq}${criteriaLink}<p><a href="/">Ranked archive</a> | <a href="/criteria/">Methodology</a> | <a href="/movies-to-fall-asleep-to/">Movies to fall asleep to</a> | <a href="/quiet-movies-for-bedtime/">Quiet movies for bedtime</a> | <a href="/comfort-movies-for-sleep/">Comfort movies for sleep</a></p></main>`;
 }
 
 function renderHtml(route) {
