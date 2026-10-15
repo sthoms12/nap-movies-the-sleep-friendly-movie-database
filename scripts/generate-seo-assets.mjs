@@ -5,14 +5,25 @@ const siteOrigin = 'https://napmovies.app';
 const distDir = path.resolve('dist');
 const baseHtmlPath = path.join(distDir, 'index.html');
 const movies = JSON.parse(fs.readFileSync(path.resolve('public/movies.json'), 'utf8'));
+const organizationId = `${siteOrigin}/#organization`;
+const websiteId = `${siteOrigin}/#website`;
+const creatorId = `${siteOrigin}/#creator`;
+// Only profiles already referenced in the repo. Do not add accounts that are not in the source.
+const creatorProfiles = [
+  'https://www.linkedin.com/in/steve-thoms-81381990',
+  'https://x.com/thomstech12',
+];
+const logoFile = 'og-napmovies.png';
+const logoUrl = fs.existsSync(path.resolve('public', logoFile)) ? `${siteOrigin}/${logoFile}` : undefined;
 
 const routes = [
   {
     path: '/',
     output: path.join(distDir, 'index.html'),
-    title: 'Movies to Fall Asleep To | NapMovies Ranked Archive',
+    title: 'NapMovies | Nap Movies to Fall Asleep To',
     description: 'Explore 50 owner-approved movies to fall asleep to, ranked by the Nap Index for familiarity, steady pacing, atmosphere, and quiet-night comfort.',
-    h1: 'Movies to fall asleep to',
+    h1: 'NapMovies',
+    itemListName: 'Movies to fall asleep to',
     answer: 'NapMovies is a ranked archive of nap movies — familiar rewatches, steady pacing, and quiet-night comfort picks.',
     movieIds: movies.map((movie) => movie.id),
     faq: [
@@ -39,7 +50,8 @@ const routes = [
     title: 'Movies to Fall Asleep To: Owner-Approved Picks | NapMovies',
     description: 'Find movies to fall asleep to using owner-approved Nap Index rankings focused on familiar stories, steady pacing, predictable sound, and comfort.',
     h1: 'Movies to fall asleep to',
-    answer: 'The best movies to fall asleep to are usually familiar rewatches with steady pacing, predictable sound, and a mood you already know.',
+    answer: 'Movies to nap to are usually familiar rewatches with steady pacing, predictable sound, and a mood you already know.',
+    introduction: 'This owner-approved shortlist from the NapMovies catalog favors movies you can rejoin after drifting off. Familiar stories, longer runtimes, and consistent atmosphere carry more weight than conventional movie quality.',
     movieIds: ['01', '02', '03', '08', '24', '25', '26', '36'],
     faq: [
       ['What makes a movie good to fall asleep to?', 'NapMovies looks for familiar stories, steady pacing, manageable sound changes, visual calm, and enough runtime to avoid choosing another title quickly.'],
@@ -108,7 +120,7 @@ function itemListJsonLd(route) {
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: route.h1,
+    name: route.itemListName ?? route.h1,
     description: route.description,
     url: canonical(route.path),
     numberOfItems: selected.length,
@@ -138,26 +150,55 @@ function breadcrumbJsonLd(route) {
   };
 }
 
+function organizationJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': organizationId,
+    name: 'NapMovies',
+    alternateName: 'Nap Movies',
+    url: canonical('/'),
+    sameAs: creatorProfiles,
+    ...(logoUrl ? { logo: { '@type': 'ImageObject', url: logoUrl, width: 1200, height: 630 } } : {}),
+  };
+}
+
+function websiteJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': websiteId,
+    name: 'NapMovies',
+    alternateName: 'Nap Movies',
+    url: canonical('/'),
+    publisher: { '@id': organizationId },
+    creator: { '@id': creatorId },
+  };
+}
+
 function routeJsonLd(route) {
   const entries = [
     {
       '@context': 'https://schema.org',
       '@type': 'Person',
-      '@id': `${siteOrigin}/#creator`,
+      '@id': creatorId,
       name: 'Steve Thoms',
-      url: 'https://www.linkedin.com/in/steve-thoms-81381990',
-      sameAs: ['https://www.linkedin.com/in/steve-thoms-81381990', 'https://x.com/thomstech12'],
-    },
-    {
-      '@context': 'https://schema.org',
-      '@type': route.path === '/' ? 'WebSite' : 'WebPage',
-      name: route.h1,
-      url: canonical(route.path),
-      description: route.description,
-      creator: { '@id': `${siteOrigin}/#creator` },
-      isPartOf: route.path === '/' ? undefined : { '@type': 'WebSite', name: 'NapMovies', url: canonical('/') },
+      url: creatorProfiles[0],
+      sameAs: creatorProfiles,
     },
   ];
+  if (route.path !== '/404') {
+    entries.push(organizationJsonLd(), websiteJsonLd());
+  }
+  entries.push({
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: route.h1,
+    url: canonical(route.path),
+    description: route.description,
+    creator: { '@id': creatorId },
+    isPartOf: { '@id': websiteId },
+  });
   if (route.movieIds) entries.push(itemListJsonLd(route));
   if (route.faq) {
     entries.push({
@@ -222,7 +263,8 @@ function fallbackMarkup(route) {
   const homeGuide = route.path === '/' ? `<h2>What makes a good nap movie?</h2><p>A useful nap movie is usually a familiar rewatch with steady pacing, predictable sound, and a mood you already know. The Nap Index considers familiarity, pacing, sound, visual stillness, atmosphere, runtime, and rewatch comfort. It is an editorial guide, not medical advice or a promise that a movie will make you sleep.</p><h2>How should I use the NapMovies archive?</h2><p>Start with the official ranking, then use your own familiarity as the deciding factor. Community votes inform a weekly review, but published scores change only after owner approval.</p>` : '';
   const homeTable = route.path === '/' ? topTenTable(route) : '';
   const criteriaLink = route.path === '/criteria/' ? `<p><a href="/">Return to the owner-approved NapMovies ranking.</a></p>` : '';
-  return `<main class="seo-fallback"><h1>${escapeHtml(route.h1)}</h1><p>${escapeHtml(route.answer)}</p>${homeGuide}${homeTable}${movieArticles ? `<h2>Owner-approved nap movie rankings</h2><div class="movie-rankings">${movieArticles}</div>` : ''}${faq}${criteriaLink}<p><a href="/">Ranked archive</a> | <a href="/criteria/">Methodology</a> | <a href="/movies-to-fall-asleep-to/">Movies to fall asleep to</a> | <a href="/quiet-movies-for-bedtime/">Quiet movies for bedtime</a> | <a href="/comfort-movies-for-sleep/">Comfort movies for sleep</a></p></main>`;
+  const introduction = route.introduction ? `<p>${escapeHtml(route.introduction)}</p>` : '';
+  return `<main class="seo-fallback"><h1>${escapeHtml(route.h1)}</h1><p>${escapeHtml(route.answer)}</p>${introduction}${homeGuide}${homeTable}${movieArticles ? `<h2>Owner-approved nap movie rankings</h2><div class="movie-rankings">${movieArticles}</div>` : ''}${faq}${criteriaLink}<p><a href="/">Ranked archive</a> | <a href="/criteria/">Methodology</a> | <a href="/movies-to-fall-asleep-to/">Movies to fall asleep to</a> | <a href="/quiet-movies-for-bedtime/">Quiet movies for bedtime</a> | <a href="/comfort-movies-for-sleep/">Comfort movies for sleep</a></p></main>`;
 }
 
 function renderHtml(route) {

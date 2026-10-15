@@ -33,7 +33,7 @@ export function HomePage() {
   useEffect(() => {
     let isMounted = true;
 
-    document.title = 'Movies to Fall Asleep To | NapMovies';
+    document.title = 'NapMovies | Nap Movies to Fall Asleep To';
 
     const initialize = async () => {
       try {
@@ -120,10 +120,10 @@ export function HomePage() {
                     </div>
                   </div>
                   <h1 className="text-4xl md:text-6xl font-black tracking-tight uppercase text-white leading-none">
-                    Movies to <span className="text-primary">Fall Asleep To</span>
+                    Nap<span className="text-primary">Movies</span>
                   </h1>
                   <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto font-bold leading-relaxed">
-                    Find a nap movie for a quiet night. This ranked archive of movies to fall asleep to favors familiar rewatches, steady pacing, and predictable comfort.
+                    Nap Movies for a quiet night. This ranked archive of movies to fall asleep to favors familiar rewatches, steady pacing, and predictable comfort.
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

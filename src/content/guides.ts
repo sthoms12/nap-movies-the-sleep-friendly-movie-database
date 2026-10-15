@@ -16,8 +16,8 @@ export const guides: GuideDefinition[] = [
     slug: 'movies-to-fall-asleep-to',
     eyebrow: 'Start Here',
     title: 'Movies to Fall Asleep To',
-    answer: 'The best movies to fall asleep to are usually familiar rewatches with steady pacing, predictable sound, and a mood you already know. NapMovies ranks those qualities with its owner-approved Nap Index.',
-    introduction: 'This shortlist favors movies that are easy to rejoin after drifting off. It is built from the official NapMovies catalog, with familiar stories, longer runtimes, and consistent atmosphere carrying more weight than conventional movie quality.',
+    answer: 'Movies to nap to are usually familiar rewatches with steady pacing, predictable sound, and a mood you already know.',
+    introduction: 'This owner-approved shortlist from the NapMovies catalog favors movies you can rejoin after drifting off. Familiar stories, longer runtimes, and consistent atmosphere carry more weight than conventional movie quality.',
     selectionNote: 'Start with something you already know. Familiarity is personal, so a lower-ranked favorite may work better for your quiet night than the highest-scoring unfamiliar title.',
     movieIds: ['01', '02', '03', '08', '24', '25', '26', '36'],
     faq: [
