@@ -24,6 +24,7 @@ export const guides: GuideDefinition[] = [
       { question: 'What makes a movie good to fall asleep to?', answer: 'NapMovies looks for familiar stories, steady pacing, manageable sound changes, visual calm, and enough runtime to avoid choosing another title quickly.' },
       { question: 'Does the highest Nap Index work for everyone?', answer: 'No. The Nap Index is an editorial guide, and your own familiarity with a movie can matter more than its position.' },
       { question: 'Are these sleep recommendations medical advice?', answer: 'No. NapMovies offers entertainment recommendations for quiet-night viewing, not medical or sleep advice.' },
+      { question: 'What is the best Harry Potter movie to fall asleep to?', answer: 'Harry Potter (Complete Film Series) sits at number 2 on this list with a Nap Index of 9/10. The familiar wizarding world, gentle scoring, and a story you already know make it one of the strongest comfort rewatches in the archive.' },
     ],
   },
   {
