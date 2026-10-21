@@ -1,5 +1,3 @@
-import React, { useEffect } from 'react';
-import { Navbar } from '@/components/layout/Navbar';
 import {
   Calculator, Eye, ShieldCheck, Zap,
   Clock, Volume2, UserCheck, Wind, LayoutPanelLeft,
@@ -9,11 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function CriteriaPage() {
-  useEffect(() => {
-    document.title = 'NapMovies | Methodology';
-    window.scrollTo(0, 0);
-  }, []);
-
   const criteria = [
     {
       title: "Familiar Rewatch",
@@ -88,20 +81,21 @@ export function CriteriaPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative overflow-x-hidden flex flex-col font-mono">
-      <div className="crt-overlay" />
-      <Navbar />
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex-1">
+      <main className="mx-auto w-full max-w-4xl flex-1 px-4 sm:px-6 lg:px-8">
         <div className="py-8 md:py-10 lg:py-12">
           <header className="mb-12 space-y-6">
             <div className="inline-block bg-primary/10 border border-primary/20 px-3 py-1 text-[10px] font-black tracking-widest text-primary uppercase">
               Methodology_v1.0.1_REVISED
             </div>
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase text-white leading-tight">
-              THE <span className="text-primary">TEN-POINT</span> FRAMEWORK
+              How the Nap Index works
             </h1>
+            <p className="text-xl font-black uppercase tracking-[0.2em] text-primary">The ten-point framework</p>
             <div className="border-l-2 border-retro-accent/40 pl-6 py-4 space-y-3">
-              <p className="text-retro-text/90 text-sm md:text-base leading-relaxed max-w-2xl font-bold">
+              <p className="max-w-2xl text-sm font-bold leading-relaxed text-retro-text md:text-base">
+                The Nap Index is a subjective editorial score for quiet-night viewing, not a medical assessment or a measure of movie quality.
+              </p>
+              <p className="text-retro-text text-sm md:text-base leading-relaxed max-w-2xl font-bold">
               "A practical framework for choosing a familiar quiet-night rewatch."
               </p>
               <p className="text-muted-foreground text-xs leading-relaxed max-w-xl italic">
@@ -115,7 +109,7 @@ export function CriteriaPage() {
                 <Calculator className="w-6 h-6" />
                 <h2 className="text-xl font-black uppercase tracking-[0.2em]">The Catalog Protocol</h2>
               </div>
-              <p className="mt-6 text-xs leading-6 text-retro-text/50">
+              <p className="mt-6 text-sm leading-6 text-retro-text">
                 Community votes and comfort picks inform the weekly review. Published scores change only after owner approval. NapMovies provides entertainment recommendations, not medical or sleep advice.
               </p>
               <p className="text-sm text-retro-text/70 leading-relaxed mb-6">
@@ -165,7 +159,7 @@ export function CriteriaPage() {
               ))}
             </div>
           </section>
-          <footer className="pt-12 border-t border-border flex flex-col md:flex-row justify-between items-center gap-6 opacity-40">
+          <footer className="flex flex-col items-center justify-between gap-6 border-t border-border pt-12 text-retro-text md:flex-row">
             <div className="text-[9px] uppercase tracking-[0.3em] font-black">
               SECURE_ARCHIVE_NODE_04 // REVISION_1.0.1_FINAL
             </div>
@@ -176,6 +170,5 @@ export function CriteriaPage() {
           </footer>
         </div>
       </main>
-    </div>
   );
 }

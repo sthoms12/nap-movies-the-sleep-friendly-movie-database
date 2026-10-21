@@ -15,7 +15,7 @@ export const guides: GuideDefinition[] = [
   {
     slug: 'movies-to-fall-asleep-to',
     eyebrow: 'Start Here',
-    title: 'Movies to Fall Asleep To',
+    title: 'Movies to fall asleep to',
     answer: 'Movies to nap to are usually familiar rewatches with steady pacing, predictable sound, and a mood you already know.',
     introduction: 'This owner-approved shortlist from the NapMovies catalog favors movies you can rejoin after drifting off. Familiar stories, longer runtimes, and consistent atmosphere carry more weight than conventional movie quality.',
     selectionNote: 'Start with something you already know. Familiarity is personal, so a lower-ranked favorite may work better for your quiet night than the highest-scoring unfamiliar title.',
@@ -30,7 +30,7 @@ export const guides: GuideDefinition[] = [
   {
     slug: 'quiet-movies-for-bedtime',
     eyebrow: 'Lower-Key Picks',
-    title: 'Quiet Movies for Bedtime',
+    title: 'Quiet movies for bedtime',
     answer: 'Quiet bedtime movies tend to use still compositions, long scenes, restrained dialogue, or sustained ambient sound instead of constant cuts and abrupt shifts.',
     introduction: 'These official-catalog picks emphasize stillness, atmosphere, routine, and quieter stretches. Some contain serious themes, so the best choice is a title whose story and sound profile you already know.',
     selectionNote: '“Quiet” describes the overall viewing texture, not a promise that every scene is soft. Check the title first if sudden or intense moments are a concern.',
@@ -44,7 +44,7 @@ export const guides: GuideDefinition[] = [
   {
     slug: 'comfort-movies-for-sleep',
     eyebrow: 'Familiar Favorites',
-    title: 'Comfort Movies for Sleep',
+    title: 'Comfort movies for sleep',
     answer: 'Comfort movies for sleep are personal favorites you can follow without concentrating. Rewatch familiarity, a predictable emotional arc, and a world you enjoy revisiting matter most.',
     introduction: 'This list leans into recognizable worlds, classic rewatches, and reassuring routines. The selections are not guaranteed to make anyone sleep; they are owner-approved quiet-night choices from the NapMovies archive.',
     selectionNote: 'Choose the movie you know best, even if it is not number one. The comfort of knowing what happens next is the point of this list.',

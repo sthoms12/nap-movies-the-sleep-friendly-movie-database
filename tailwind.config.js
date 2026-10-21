@@ -5,8 +5,8 @@ export default {
   theme: {
   	extend: {
   		fontFamily: {
-  			sans: ['JetBrains Mono', 'monospace'],
-  			mono: ['JetBrains Mono', 'monospace'],
+  			sans: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace'],
+  			mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace'],
   		},
   		colors: {
         'retro': {
