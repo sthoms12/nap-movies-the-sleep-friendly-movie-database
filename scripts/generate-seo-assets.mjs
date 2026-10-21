@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const siteOrigin = 'https://napmovies.app';
 const distDir = path.resolve('dist');
-const baseHtmlPath = path.join(distDir, 'index.html');
 const movies = JSON.parse(fs.readFileSync(path.resolve('public/movies.json'), 'utf8'));
 const organizationId = `${siteOrigin}/#organization`;
 const websiteId = `${siteOrigin}/#website`;
@@ -100,7 +100,6 @@ const notFound = {
 };
 
 const today = new Date().toISOString().slice(0, 10);
-const baseHtml = fs.readFileSync(baseHtmlPath, 'utf8');
 
 function escapeHtml(value) {
   return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
@@ -113,7 +112,7 @@ function canonical(routePath) {
 function selectedMovies(route) {
   if (!route.movieIds) return [];
   const ids = new Set(route.movieIds);
-  return movies.filter((movie) => ids.has(movie.id)).sort((a, b) => b.napIndex - a.napIndex || a.title.localeCompare(b.title));
+  return movies.filter((movie) => ids.has(movie.id)).sort((a, b) => b.napIndex - a.napIndex || (a.title < b.title ? -1 : a.title > b.title ? 1 : 0));
 }
 
 function itemListJsonLd(route) {
@@ -238,43 +237,32 @@ function headTags(route) {
     <!-- SEO_META_END -->`;
 }
 
-function movieArticle(movie, rank) {
-  const meta = [`${movie.year}`, movie.duration ? `${movie.duration} min` : null, `Nap Index ${movie.napIndex}/10`]
-    .filter(Boolean)
-    .join(' · ');
-  const tags = (movie.tags ?? []).map((tag) => escapeHtml(tag)).join(', ');
-  return `<article><h3>#${String(rank).padStart(2, '0')} ${escapeHtml(movie.title)}</h3><p>${escapeHtml(meta)}${tags ? ` — ${tags}` : ''}</p></article>`;
+function relocateAssets(html) {
+  const styleMatch = html.match(/<link rel="stylesheet"[^>]*>/);
+  const scriptMatch = html.match(/<script type="module"[^>]*><\/script>/);
+  let next = html;
+  if (styleMatch) next = next.replace(styleMatch[0], '');
+  if (scriptMatch) next = next.replace(scriptMatch[0], '');
+  if (styleMatch) {
+    if (next.includes('<meta charset="UTF-8" />')) {
+      next = next.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />\n    ${styleMatch[0]}`);
+    } else {
+      next = next.replace('<head>', `<head>\n    ${styleMatch[0]}`);
+    }
+  }
+  if (scriptMatch) next = next.replace('</body>', `    ${scriptMatch[0]}\n  </body>`);
+  return next;
 }
 
-function topTenTable(route) {
-  const top = selectedMovies(route).slice(0, 10);
-  if (top.length === 0) return '';
-  const rows = top
-    .map(
-      (movie, index) =>
-        `<tr><td>${index + 1}</td><td>${escapeHtml(movie.title)}</td><td>${movie.year}</td><td>${movie.duration ? `${movie.duration} min` : '—'}</td><td>${movie.napIndex}/10</td></tr>`,
-    )
-    .join('');
-  return `<h2>Which movies top the Nap Index right now?</h2><table><caption>Top 10 nap movies by owner-approved Nap Index score</caption><thead><tr><th scope="col">Rank</th><th scope="col">Title</th><th scope="col">Year</th><th scope="col">Runtime</th><th scope="col">Nap Index</th></tr></thead><tbody>${rows}</tbody></table>`;
-}
-
-function fallbackMarkup(route) {
-  const movieArticles = selectedMovies(route).map((movie, index) => movieArticle(movie, index + 1)).join('');
-  const faq = (route.faq ?? []).map(([question, answer]) => `<h2>${escapeHtml(question)}</h2><p>${escapeHtml(answer)}</p>`).join('');
-  const homeGuide = route.path === '/' ? `<h2>What makes a good nap movie?</h2><p>A useful nap movie is usually a familiar rewatch with steady pacing, predictable sound, and a mood you already know. The Nap Index considers familiarity, pacing, sound, visual stillness, atmosphere, runtime, and rewatch comfort. It is an editorial guide, not medical advice or a promise that a movie will make you sleep.</p><h2>How should I use the NapMovies archive?</h2><p>Start with the official ranking, then use your own familiarity as the deciding factor. Community votes inform a weekly review, but published scores change only after owner approval.</p>` : '';
-  const homeTable = route.path === '/' ? topTenTable(route) : '';
-  const criteriaLink = route.path === '/criteria/' ? `<p><a href="/">Return to the owner-approved NapMovies ranking.</a></p>` : '';
-  const introduction = route.introduction ? `<p>${escapeHtml(route.introduction)}</p>` : '';
-  return `<main class="seo-fallback"><h1>${escapeHtml(route.h1)}</h1><p>${escapeHtml(route.answer)}</p>${introduction}${homeGuide}${homeTable}${movieArticles ? `<h2>Owner-approved nap movie rankings</h2><div class="movie-rankings">${movieArticles}</div>` : ''}${faq}${criteriaLink}<p><a href="/">Ranked archive</a> | <a href="/criteria/">Methodology</a> | <a href="/movies-to-fall-asleep-to/">Movies to fall asleep to</a> | <a href="/quiet-movies-for-bedtime/">Quiet movies for bedtime</a> | <a href="/comfort-movies-for-sleep/">Comfort movies for sleep</a></p></main>`;
-}
-
-function renderHtml(route) {
-  let html = baseHtml
+function renderHtml(route, template) {
+  let html = template
     .replace(/<title>.*?<\/title>/s, `<title>${escapeHtml(route.title)}</title>`)
     .replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/>/s, `<meta name="description" content="${escapeHtml(route.description)}" />`);
   html = html.replace(/\s*<!-- SEO_META_START -->[\s\S]*?<!-- SEO_META_END -->/s, '');
   html = html.replace('</head>', `    ${headTags(route)}\n  </head>`);
-  return html.replace('<div id="root"></div>', `<div id="root">${fallbackMarkup(route)}</div>`);
+  const rendered = render(route.path === '/404' ? '/404' : route.path);
+  html = html.replace('<div id="root"></div>', () => `<div id="root" data-ssr="true">${rendered}</div>`);
+  return relocateAssets(html);
 }
 
 function writeFile(filePath, content) {
@@ -282,7 +270,22 @@ function writeFile(filePath, content) {
   fs.writeFileSync(filePath, content);
 }
 
-for (const route of [...routes, notFound]) writeFile(route.output, renderHtml(route));
+const { render } = await import(pathToFileURL(path.resolve('dist-ssr/entry-server.js')).href);
+const templates = {
+  home: fs.readFileSync(path.join(distDir, 'index.html'), 'utf8'),
+  criteria: fs.readFileSync(path.join(distDir, 'criteria.html'), 'utf8'),
+  guide: fs.readFileSync(path.join(distDir, 'guide.html'), 'utf8'),
+};
+
+function templateFor(route) {
+  if (route.path === '/criteria/') return templates.criteria;
+  if (route.path === '/movies-to-fall-asleep-to/' || route.path === '/quiet-movies-for-bedtime/' || route.path === '/comfort-movies-for-sleep/') return templates.guide;
+  return templates.home;
+}
+
+for (const route of [...routes, notFound]) writeFile(route.output, renderHtml(route, templateFor(route)));
+fs.rmSync(path.join(distDir, 'criteria.html'), { force: true });
+fs.rmSync(path.join(distDir, 'guide.html'), { force: true });
 
 writeFile(path.join(distDir, 'robots.txt'), `User-agent: *\nContent-Signal: ai-train=no, search=yes, ai-input=yes\nAllow: /\n\nSitemap: ${siteOrigin}/sitemap.xml\n`);
 writeFile(path.join(distDir, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${routes.map((route) => `  <url>\n    <loc>${canonical(route.path)}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${route.path === '/' ? 'weekly' : 'monthly'}</changefreq>\n    <priority>${route.path === '/' ? '1.0' : '0.8'}</priority>\n  </url>`).join('\n')}\n</urlset>\n`);

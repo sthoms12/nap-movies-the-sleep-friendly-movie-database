@@ -58,6 +58,14 @@
   }
 }
 @layer components {
+  .tap-target {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    min-width: 48px;
+    padding: 0.75rem 0.875rem;
+  }
   .crt-overlay {
     @apply pointer-events-none fixed inset-0 z-50;
     background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.1) 50%),

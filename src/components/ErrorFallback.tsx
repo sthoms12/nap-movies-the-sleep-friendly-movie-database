@@ -59,11 +59,11 @@ export function ErrorFallback({
             )}
 
             <div className="space-y-3">
-              <Button onClick={handleRetry} className="w-full">
+              <Button onClick={handleRetry} className="min-h-12 w-full">
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Try Again
               </Button>
-              <Button onClick={handleGoHome} variant="secondary" className="w-full">
+              <Button onClick={handleGoHome} variant="secondary" className="min-h-12 w-full">
                 <Home className="w-4 h-4 mr-2" />
                 Go to Homepage
               </Button>

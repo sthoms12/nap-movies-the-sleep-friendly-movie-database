@@ -17,7 +17,7 @@ for (const route of routes) {
   const file = route === '/' ? path.join(distDir, 'index.html') : path.join(distDir, route, 'index.html');
   const html = fs.readFileSync(file, 'utf8');
   const canonical = `https://napmovies.app${route}`;
-  for (const required of [`<link rel="canonical" href="${canonical}"`, '<meta name="description"', 'application/ld+json', '<h1>']) {
+  for (const required of [`<link rel="canonical" href="${canonical}"`, '<meta name="description"', 'application/ld+json', '<h1']) {
     if (!html.includes(required)) errors.push(`${route} missing ${required}`);
   }
   if (route !== '/criteria/' && !html.includes('"@type":"ItemList"')) errors.push(`${route} missing ItemList schema`);
@@ -54,9 +54,11 @@ for (const route of routes) {
 
 const homeHtml = fs.readFileSync(path.join(distDir, 'index.html'), 'utf8');
 const homeTitle = homeHtml.match(/<title>([^<]*)<\/title>/)?.[1] ?? '';
-const homeH1 = homeHtml.match(/<h1>([^<]*)<\/h1>/)?.[1] ?? '';
+const homeH1 = (homeHtml.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)?.[1] ?? '').replace(/<[^>]+>/g, '').replace(/\s+/g, '');
 if (!homeTitle.startsWith('NapMovies')) errors.push('home title must lead with NapMovies');
 if (!/^NapMovies|^Nap Movies/.test(homeH1)) errors.push('home h1 must lead with NapMovies or Nap Movies');
+if (!homeHtml.includes('data-ssr="true"')) errors.push('home prerender is missing the server-rendered app');
+if (!homeHtml.includes('A River Runs Through It')) errors.push('home prerender is missing the catalog');
 
 const napGuide = fs.readFileSync(path.join(distDir, 'movies-to-fall-asleep-to', 'index.html'), 'utf8');
 const napAnswer = 'Movies to nap to are usually familiar rewatches with steady pacing, predictable sound, and a mood you already know.';

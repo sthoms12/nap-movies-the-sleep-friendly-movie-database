@@ -32,21 +32,18 @@ This repo does not require a custom Worker entrypoint. Cloudflare Pages can depl
 
 - Build command: `npm run build`
 - Output directory: `dist`
-- Optional environment variable: `VITE_NAP_MOVIES_API_URL`
 
 If you are using the GitHub-connected Cloudflare Pages flow, that is enough. If you are deploying with Wrangler, point the project at the same `dist` directory after building.
 
-## Community backend
+## Catalog hosting
 
-Voting and submissions are powered by a Zo-hosted API. The app defaults to:
+The ranked catalog is the static file `public/movies.json`. The production build imports that file and also publishes it at `/movies.json` on Cloudflare. The site does not request Zo Computer for movie content.
 
-```bash
-VITE_NAP_MOVIES_API_URL=https://nap-movies-api-thomstech.zocomputer.io
-```
+If `/movies.json` cannot be refreshed in the browser, the page keeps the copy bundled at build time and shows the archive instead of an error. A quiet notice appears only when that bundled copy is empty.
 
-Set `VITE_NAP_MOVIES_API_URL` in Cloudflare Pages only if the API moves. If the API is unavailable, the app falls back to the static catalog in `public/movies.json`.
+Voting and title submissions used to post to the Zo API. That API is not part of this site anymore. Official rankings still change only when `public/movies.json` is edited and the site is rebuilt.
 
-The public app shows community signals, but official rankings only change after the weekly snapshot receives owner approval.
+The Zo analytics script in `index.html` is unchanged.
 
 ## Updating the movie catalog
 
