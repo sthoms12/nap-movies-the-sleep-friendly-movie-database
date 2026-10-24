@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { assertBuildOutputClean } from './security-headers.mjs';
 
 const routes = ['/', '/criteria/', '/movies-to-fall-asleep-to/', '/quiet-movies-for-bedtime/', '/comfort-movies-for-sleep/'];
 const distDir = path.resolve('dist');
@@ -75,4 +76,5 @@ const llms = fs.readFileSync(path.join(distDir, 'llms.txt'), 'utf8');
 if (!llms.includes('not medical or sleep advice')) errors.push('llms.txt missing editorial disclaimer');
 
 if (errors.length) throw new Error(`SEO validation failed:\n${errors.join('\n')}`);
+assertBuildOutputClean(distDir);
 console.log(`Validated SEO assets for ${routes.length} routes.`);
