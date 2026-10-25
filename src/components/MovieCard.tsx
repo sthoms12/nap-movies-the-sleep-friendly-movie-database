@@ -8,9 +8,25 @@ interface MovieCardProps {
   rank: number;
 }
 
+const SCORE_BAR_WIDTH: Record<number, string> = {
+  1: 'w-[10%]',
+  2: 'w-[20%]',
+  3: 'w-[30%]',
+  4: 'w-[40%]',
+  5: 'w-[50%]',
+  6: 'w-[60%]',
+  7: 'w-[70%]',
+  8: 'w-[80%]',
+  9: 'w-[90%]',
+  10: 'w-full',
+};
+
+function scoreBarWidth(score: number) {
+  return SCORE_BAR_WIDTH[score] ?? 'w-0';
+}
+
 export function MovieCard({ movie, rank }: MovieCardProps) {
   const score = movie.napIndex;
-  const scorePercent = score * 10;
   const isOptimalLength = (movie.duration ?? 0) >= 120;
 
   return (
@@ -61,9 +77,9 @@ export function MovieCard({ movie, rank }: MovieCardProps) {
               <div
                 className={cn(
                   'relative z-10 h-full',
+                  scoreBarWidth(score),
                   score >= 8 ? 'bg-retro-accent shadow-[0_0_8px_rgba(96,165,250,0.5)]' : score >= 6 ? 'bg-retro-accent/60' : 'bg-retro-danger',
                 )}
-                style={{ width: `${scorePercent}%` }}
               />
             </div>
             <div className="flex items-center justify-end text-[9px] font-bold uppercase tracking-[0.3em] text-retro-text/70">

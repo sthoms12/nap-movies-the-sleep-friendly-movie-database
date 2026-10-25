@@ -26,14 +26,22 @@ npm run typecheck
 npm run build
 ```
 
+## Privacy
+
+NapMovies uses Cloudflare Web Analytics. It is cookieless and records aggregate page views.
+
 ## Cloudflare deployment
 
-This repo does not require a custom Worker entrypoint. Cloudflare Pages can deploy the generated static assets directly.
+Production is a Cloudflare Worker that serves this static build. There is no custom Worker script. `npm run build` writes the site to `dist` and generates `dist/_headers`. Workers static assets apply that file to every response, which is where Content-Security-Policy, `X-Content-Type-Options`, and `Referrer-Policy` are set. `frame-ancestors` has to be an HTTP header.
+
+The policy allows this site, Cloudflare Web Analytics (`https://static.cloudflareinsights.com` for the beacon script and `https://cloudflareinsights.com` for its collection calls), and same-origin catalog requests. Inline JSON-LD and the small critical style block are allowed by hash, so script `unsafe-inline` is not used. The build fails if a removed third-party analytics host shows up in `dist`, or if a `_headers` line exceeds the 2,000-character Workers limit.
+
+Production has Cloudflare Bot Fight Mode on. It injects a per-request inline JavaScript Detections script, `/cdn-cgi/challenge-platform/scripts/jsd/main.js`. The strict `script-src` blocks that script on purpose, so expect one Content-Security-Policy error in the console per page view. Bot Fight Mode still works; Cloudflare just loses that detection signal. This is intentional.
+
+`npm run deploy` publishes with Wrangler. Pushes to `main` deploy through GitHub Actions.
 
 - Build command: `npm run build`
 - Output directory: `dist`
-
-If you are using the GitHub-connected Cloudflare Pages flow, that is enough. If you are deploying with Wrangler, point the project at the same `dist` directory after building.
 
 ## Catalog hosting
 
@@ -42,8 +50,6 @@ The ranked catalog is the static file `public/movies.json`. The production build
 If `/movies.json` cannot be refreshed in the browser, the page keeps the copy bundled at build time and shows the archive instead of an error. A quiet notice appears only when that bundled copy is empty.
 
 Voting and title submissions used to post to the Zo API. That API is not part of this site anymore. Official rankings still change only when `public/movies.json` is edited and the site is rebuilt.
-
-The Zo analytics script in `index.html` is unchanged.
 
 ## Updating the movie catalog
 
@@ -81,7 +87,7 @@ npm run validate-movies
 
 ```text
 public/movies.json   Source catalog
-scripts/             Data validation script
+scripts/             Validation, SEO pages, and security headers
 shared/types.ts      Shared movie types
 src/pages/           App routes
 src/components/      UI and error boundaries

@@ -29,6 +29,9 @@ export function SiteFooter() {
             @thomstech12
           </a>
         </nav>
+        <p className="px-3 pt-2 text-center text-xs leading-5 text-retro-text">
+          Page views are measured with Cloudflare Web Analytics. It is cookieless and records aggregate page views.
+        </p>
         <p suppressHydrationWarning className="px-3 pb-3 text-center text-[11px] font-bold uppercase leading-5 tracking-[0.16em] text-retro-text">
           Copyright {year} NapMovies archive. Owner-approved rankings. Not medical or sleep advice.
         </p>
