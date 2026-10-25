@@ -36,6 +36,8 @@ Production is a Cloudflare Worker that serves this static build. There is no cus
 
 The policy allows this site, Cloudflare Web Analytics (`https://static.cloudflareinsights.com` for the beacon script and `https://cloudflareinsights.com` for its collection calls), and same-origin catalog requests. Inline JSON-LD and the small critical style block are allowed by hash, so script `unsafe-inline` is not used. The build fails if a removed third-party analytics host shows up in `dist`, or if a `_headers` line exceeds the 2,000-character Workers limit.
 
+Production has Cloudflare Bot Fight Mode on. It injects a per-request inline JavaScript Detections script, `/cdn-cgi/challenge-platform/scripts/jsd/main.js`. The strict `script-src` blocks that script on purpose, so expect one Content-Security-Policy error in the console per page view. Bot Fight Mode still works; Cloudflare just loses that detection signal. This is intentional.
+
 `npm run deploy` publishes with Wrangler. Pushes to `main` deploy through GitHub Actions.
 
 - Build command: `npm run build`
