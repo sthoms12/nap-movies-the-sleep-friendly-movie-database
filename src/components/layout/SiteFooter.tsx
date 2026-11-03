@@ -21,14 +21,6 @@ export function SiteFooter() {
             </Link>
           ))}
         </nav>
-        <nav aria-label="Creator profiles" className="flex flex-wrap items-center justify-center">
-          <a className="tap-target text-[11px] font-bold uppercase tracking-[0.16em] text-retro-text underline decoration-retro-text/40 underline-offset-4 hover:text-white" href="https://www.linkedin.com/in/steve-thoms-81381990" rel="me">
-            Steve Thoms
-          </a>
-          <a className="tap-target text-[11px] font-bold uppercase tracking-[0.16em] text-retro-text underline decoration-retro-text/40 underline-offset-4 hover:text-white" href="https://x.com/thomstech12" rel="me">
-            @thomstech12
-          </a>
-        </nav>
         <p className="px-3 pt-2 text-center text-xs leading-5 text-retro-text">
           Page views are measured with Cloudflare Web Analytics. It is cookieless and records aggregate page views.
         </p>

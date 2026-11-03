@@ -5,10 +5,8 @@ import { assertBuildOutputClean } from './security-headers.mjs';
 const routes = ['/', '/criteria/', '/movies-to-fall-asleep-to/', '/quiet-movies-for-bedtime/', '/comfort-movies-for-sleep/'];
 const distDir = path.resolve('dist');
 const errors = [];
-const referencedProfiles = [
-  'https://www.linkedin.com/in/steve-thoms-81381990',
-  'https://x.com/thomstech12',
-];
+// Attribution is the NapMovies Organization only; no personal names or profiles.
+const forbiddenAttribution = [/steve[\s-]thoms/i, /thomstech12/i];
 
 function jsonLdBlocks(html) {
   return [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((match) => JSON.parse(match[1]));
@@ -34,22 +32,17 @@ for (const route of routes) {
     if (organization.alternateName !== 'Nap Movies') errors.push(`${route} Organization alternateName must be Nap Movies`);
     if (organization.url !== 'https://napmovies.app/') errors.push(`${route} Organization url mismatch`);
     if (!organization.logo?.url?.endsWith('/og-napmovies.png')) errors.push(`${route} Organization logo missing`);
-    const sameAs = organization.sameAs ? [].concat(organization.sameAs) : [];
-    if (sameAs.length !== referencedProfiles.length || referencedProfiles.some((profile) => !sameAs.includes(profile))) {
-      errors.push(`${route} Organization sameAs must be only the referenced profiles`);
-    }
+    if (organization.sameAs) errors.push(`${route} Organization must not list personal profiles in sameAs`);
   }
   if (website) {
     if (website.name !== 'NapMovies') errors.push(`${route} WebSite name must be NapMovies`);
     if (website.alternateName !== 'Nap Movies') errors.push(`${route} WebSite alternateName must be Nap Movies`);
     if (website.url !== 'https://napmovies.app/') errors.push(`${route} WebSite url mismatch`);
-    const sameAs = website.sameAs ? [].concat(website.sameAs) : [];
-    for (const profile of sameAs) {
-      if (!referencedProfiles.includes(profile)) errors.push(`${route} WebSite sameAs is not a referenced profile: ${profile}`);
-    }
+    if (website.sameAs) errors.push(`${route} WebSite must not list personal profiles in sameAs`);
   }
-  for (const profile of referencedProfiles) {
-    if (!html.includes(profile)) errors.push(`${route} dropped referenced profile ${profile}`);
+  if (blocks.some((block) => block['@type'] === 'Person')) errors.push(`${route} must not include Person schema`);
+  for (const pattern of forbiddenAttribution) {
+    if (pattern.test(html)) errors.push(`${route} contains personal attribution ${pattern}`);
   }
 }
 

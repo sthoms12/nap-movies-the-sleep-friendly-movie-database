@@ -8,12 +8,6 @@ const distDir = path.resolve('dist');
 const movies = JSON.parse(fs.readFileSync(path.resolve('public/movies.json'), 'utf8'));
 const organizationId = `${siteOrigin}/#organization`;
 const websiteId = `${siteOrigin}/#website`;
-const creatorId = `${siteOrigin}/#creator`;
-// Only profiles already referenced in the repo. Do not add accounts that are not in the source.
-const creatorProfiles = [
-  'https://www.linkedin.com/in/steve-thoms-81381990',
-  'https://x.com/thomstech12',
-];
 const logoFile = 'og-napmovies.png';
 const logoUrl = fs.existsSync(path.resolve('public', logoFile)) ? `${siteOrigin}/${logoFile}` : undefined;
 
@@ -159,7 +153,6 @@ function organizationJsonLd() {
     name: 'NapMovies',
     alternateName: 'Nap Movies',
     url: canonical('/'),
-    sameAs: creatorProfiles,
     ...(logoUrl ? { logo: { '@type': 'ImageObject', url: logoUrl, width: 1200, height: 630 } } : {}),
   };
 }
@@ -173,21 +166,12 @@ function websiteJsonLd() {
     alternateName: 'Nap Movies',
     url: canonical('/'),
     publisher: { '@id': organizationId },
-    creator: { '@id': creatorId },
+    creator: { '@id': organizationId },
   };
 }
 
 function routeJsonLd(route) {
-  const entries = [
-    {
-      '@context': 'https://schema.org',
-      '@type': 'Person',
-      '@id': creatorId,
-      name: 'Steve Thoms',
-      url: creatorProfiles[0],
-      sameAs: creatorProfiles,
-    },
-  ];
+  const entries = [];
   if (route.path !== '/404') {
     entries.push(organizationJsonLd(), websiteJsonLd());
   }
@@ -197,7 +181,7 @@ function routeJsonLd(route) {
     name: route.h1,
     url: canonical(route.path),
     description: route.description,
-    creator: { '@id': creatorId },
+    creator: { '@id': organizationId },
     isPartOf: { '@id': websiteId },
   });
   if (route.movieIds) entries.push(itemListJsonLd(route));
