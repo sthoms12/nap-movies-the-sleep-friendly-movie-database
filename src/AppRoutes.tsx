@@ -13,6 +13,7 @@ const guidePaths = [
   'movies-to-fall-asleep-to',
   'quiet-movies-for-bedtime',
   'comfort-movies-for-sleep',
+  'visually-dark-movies-to-fall-asleep-to',
 ];
 
 export function AppRoutes({ pages }: { pages: AppPages }) {

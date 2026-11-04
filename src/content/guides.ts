@@ -1,4 +1,4 @@
-export type GuideSlug = 'movies-to-fall-asleep-to' | 'quiet-movies-for-bedtime' | 'comfort-movies-for-sleep';
+export type GuideSlug = 'movies-to-fall-asleep-to' | 'quiet-movies-for-bedtime' | 'comfort-movies-for-sleep' | 'visually-dark-movies-to-fall-asleep-to';
 
 export interface GuideDefinition {
   slug: GuideSlug;
@@ -55,6 +55,21 @@ export const guides: GuideDefinition[] = [
       { question: 'How often do the official rankings change?', answer: 'Community feedback is reviewed weekly. The public ranking changes only when a new snapshot is owner-approved.' },
     ],
   },
+  {
+    slug: 'visually-dark-movies-to-fall-asleep-to',
+    eyebrow: 'Dim & Muted Picks',
+    title: 'Visually dark movies to fall asleep to',
+    answer: 'Visually dark movies to fall asleep to tend toward dim lighting, muted colors, night settings, or fog — a low-stimulation look that stays easy on the eyes late at night.',
+    introduction: 'This owner-approved shortlist from the NapMovies catalog favors movies whose visual texture is dark or muted: shadowed rooms, night settings, fog, and desaturated palettes. Every pick scores 8 or 9 on the Nap Index, so the calm look comes with the familiar pacing and atmosphere the archive is built on.',
+    selectionNote: '“Dark” describes the look, not the mood — some of these carry serious themes, so pick a title whose story you already know. A dark movie you know beats an unfamiliar dark one.',
+    movieIds: ['29', '18', '17', '07', '11', '12', '14'],
+    faq: [
+      { question: 'What makes a movie visually dark?', answer: 'Dim lighting, muted colors, night settings, fog, or long stretches of shadow. These catalog picks share that low-stimulation visual texture, whatever their genre.' },
+      { question: 'Are visually dark movies better for falling asleep?', answer: 'Not necessarily. Darkness is about visual calm; familiarity still matters most on NapMovies. A dark movie you already know beats an unfamiliar dark one.' },
+      { question: 'Are these sleep recommendations medical advice?', answer: 'No. NapMovies offers entertainment recommendations for quiet-night viewing, not medical or sleep advice.' },
+    ],
+  },
 ];
+
 
 export const guideBySlug = Object.fromEntries(guides.map((guide) => [guide.slug, guide])) as Record<GuideSlug, GuideDefinition>;

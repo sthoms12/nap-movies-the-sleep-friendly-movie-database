@@ -83,6 +83,21 @@ const routes = [
       ['How often do official rankings change?', 'Community feedback is reviewed weekly, and the public ranking changes only when a snapshot receives owner approval.'],
     ],
   },
+  {
+    path: '/visually-dark-movies-to-fall-asleep-to/',
+    output: path.join(distDir, 'visually-dark-movies-to-fall-asleep-to', 'index.html'),
+    title: 'Visually Dark Movies to Fall Asleep To: Dim & Muted Picks | NapMovies',
+    description: 'Find visually dark movies to fall asleep to: dim lighting, muted colors, night settings, and fog from the owner-approved NapMovies archive.',
+    h1: 'Visually dark movies to fall asleep to',
+    answer: 'Visually dark movies to fall asleep to tend toward dim lighting, muted colors, night settings, or fog — a low-stimulation look that stays easy on the eyes late at night.',
+    introduction: 'This owner-approved shortlist from the NapMovies catalog favors movies whose visual texture is dark or muted: shadowed rooms, night settings, fog, and desaturated palettes. Every pick scores 8 or 9 on the Nap Index, so the calm look comes with the familiar pacing and atmosphere the archive is built on.',
+    movieIds: ['29', '18', '17', '07', '11', '12', '14'],
+    faq: [
+      ['What makes a movie visually dark?', 'Dim lighting, muted colors, night settings, fog, or long stretches of shadow. These catalog picks share that low-stimulation visual texture, whatever their genre.'],
+      ['Are visually dark movies better for falling asleep?', 'Not necessarily. Darkness is about visual calm; familiarity still matters most on NapMovies. A dark movie you already know beats an unfamiliar dark one.'],
+      ['Are these sleep recommendations medical advice?', 'No. NapMovies offers entertainment recommendations for quiet-night viewing, not medical or sleep advice.'],
+    ],
+  },
 ];
 
 const notFound = {
@@ -264,7 +279,7 @@ const templates = {
 
 function templateFor(route) {
   if (route.path === '/criteria/') return templates.criteria;
-  if (route.path === '/movies-to-fall-asleep-to/' || route.path === '/quiet-movies-for-bedtime/' || route.path === '/comfort-movies-for-sleep/') return templates.guide;
+  if (route.path === '/movies-to-fall-asleep-to/' || route.path === '/quiet-movies-for-bedtime/' || route.path === '/comfort-movies-for-sleep/' || route.path === '/visually-dark-movies-to-fall-asleep-to/') return templates.guide;
   return templates.home;
 }
 
@@ -274,7 +289,7 @@ fs.rmSync(path.join(distDir, 'guide.html'), { force: true });
 
 writeFile(path.join(distDir, 'robots.txt'), `User-agent: *\nContent-Signal: ai-train=no, search=yes, ai-input=yes\nAllow: /\n\nSitemap: ${siteOrigin}/sitemap.xml\n`);
 writeFile(path.join(distDir, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${routes.map((route) => `  <url>\n    <loc>${canonical(route.path)}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${route.path === '/' ? 'weekly' : 'monthly'}</changefreq>\n    <priority>${route.path === '/' ? '1.0' : '0.8'}</priority>\n  </url>`).join('\n')}\n</urlset>\n`);
-writeFile(path.join(distDir, 'llms.txt'), `# NapMovies\n\nNapMovies is an editorial archive of movies for quiet-night viewing. The official Nap Index ranks familiar rewatches using factors such as pacing, sound consistency, visual stillness, atmosphere, runtime, and personal comfort.\n\n## Canonical pages\n- ${canonical('/')} — complete owner-approved ranked archive\n- ${canonical('/movies-to-fall-asleep-to/')} — primary guide\n- ${canonical('/quiet-movies-for-bedtime/')} — lower-key selections\n- ${canonical('/comfort-movies-for-sleep/')} — familiar comfort rewatches\n- ${canonical('/criteria/')} — Nap Index methodology\n\n## Ranking governance\nCommunity votes and submissions are advisory signals. Official scores and rankings change only after owner approval. NapMovies provides entertainment recommendations, not medical or sleep advice.\n`);
+writeFile(path.join(distDir, 'llms.txt'), `# NapMovies\n\nNapMovies is an editorial archive of movies for quiet-night viewing. The official Nap Index ranks familiar rewatches using factors such as pacing, sound consistency, visual stillness, atmosphere, runtime, and personal comfort.\n\n## Canonical pages\n- ${canonical('/')} — complete owner-approved ranked archive\n- ${canonical('/movies-to-fall-asleep-to/')} — primary guide\n- ${canonical('/quiet-movies-for-bedtime/')} — lower-key selections\n- ${canonical('/comfort-movies-for-sleep/')} — familiar comfort rewatches\n- ${canonical('/visually-dark-movies-to-fall-asleep-to/')} — dim and muted visual picks\n- ${canonical('/criteria/')} — Nap Index methodology\n\n## Ranking governance\nCommunity votes and submissions are advisory signals. Official scores and rankings change only after owner approval. NapMovies provides entertainment recommendations, not medical or sleep advice.\n`);
 
 writeSecurityHeaders(distDir);
 console.log(`Generated SEO assets for ${routes.length} routes on napmovies.app`);
