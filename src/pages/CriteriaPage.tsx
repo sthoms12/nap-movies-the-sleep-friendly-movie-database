@@ -3,11 +3,20 @@ import {
   Clock, Volume2, UserCheck, Wind, LayoutPanelLeft,
   Search, BookOpen
 } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function CriteriaPage() {
-  const criteria = [
+  const criteria: Array<{
+    title: string;
+    icon: ReactNode;
+    desc: string;
+    case: string;
+    tag: string;
+    anchor?: { text: string; to: string };
+  }> = [
     {
       title: "Familiar Rewatch",
       icon: <UserCheck className="w-5 h-5" />,
@@ -41,7 +50,8 @@ export function CriteriaPage() {
       icon: <Wind className="w-5 h-5" />,
       desc: "Rain, snow, deep space, and nighttime settings can create a consistent atmosphere that suits quiet viewing.",
       case: "Blade Runner 2049",
-      tag: "Atmosphere"
+      tag: "Atmosphere",
+      anchor: { text: "nighttime settings", to: "/visually-dark-movies-to-fall-asleep-to/" }
     },
     {
       title: "Visual Stillness",
@@ -148,7 +158,15 @@ export function CriteriaPage() {
                   </CardHeader>
                   <CardContent className="p-5 pt-0 space-y-4">
                     <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-3">
-                      {item.desc}
+                      {item.anchor ? (
+                        <>
+                          {item.desc.split(item.anchor.text)[0]}
+                          <Link to={item.anchor.to} className="text-retro-accent underline underline-offset-4 hover:text-white">{item.anchor.text}</Link>
+                          {item.desc.split(item.anchor.text)[1]}
+                        </>
+                      ) : (
+                        item.desc
+                      )}
                     </p>
                     <div className="pt-2 border-t border-border/30">
                       <div className="text-[9px] font-black uppercase tracking-widest text-retro-accent/60 mb-1">Archetype_Study:</div>
