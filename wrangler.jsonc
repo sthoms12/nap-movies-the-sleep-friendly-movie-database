@@ -1,12 +1,23 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "nap-movies-the-sleep-friendly-movie-database",
+  "main": "worker/index.js",
   "compatibility_date": "2026-07-07",
   "observability": {
     "enabled": true
   },
   "assets": {
-    "not_found_handling": "404-page"
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": [
+      "/",
+      "/criteria/*",
+      "/movies-to-fall-asleep-to/*",
+      "/quiet-movies-for-bedtime/*",
+      "/comfort-movies-for-sleep/*",
+      "/visually-dark-movies-to-fall-asleep-to/*"
+    ]
   },
   "compatibility_flags": [
     "nodejs_compat"

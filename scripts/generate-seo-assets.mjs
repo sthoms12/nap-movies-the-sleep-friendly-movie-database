@@ -291,5 +291,56 @@ writeFile(path.join(distDir, 'robots.txt'), `User-agent: *\nContent-Signal: ai-t
 writeFile(path.join(distDir, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${routes.map((route) => `  <url>\n    <loc>${canonical(route.path)}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${route.path === '/' ? 'weekly' : 'monthly'}</changefreq>\n    <priority>${route.path === '/' ? '1.0' : '0.8'}</priority>\n  </url>`).join('\n')}\n</urlset>\n`);
 writeFile(path.join(distDir, 'llms.txt'), `# NapMovies\n\nNapMovies is an editorial archive of movies for quiet-night viewing. The official Nap Index ranks familiar rewatches using factors such as pacing, sound consistency, visual stillness, atmosphere, runtime, and personal comfort.\n\n## Canonical pages\n- ${canonical('/')} — complete owner-approved ranked archive\n- ${canonical('/movies-to-fall-asleep-to/')} — primary guide\n- ${canonical('/quiet-movies-for-bedtime/')} — lower-key selections\n- ${canonical('/comfort-movies-for-sleep/')} — familiar comfort rewatches\n- ${canonical('/visually-dark-movies-to-fall-asleep-to/')} — dim and muted visual picks\n- ${canonical('/criteria/')} — Nap Index methodology\n\n## Ranking governance\nCommunity votes and submissions are advisory signals. Official scores and rankings change only after owner approval. NapMovies provides entertainment recommendations, not medical or sleep advice.\n`);
 
+// Markdown mirrors for agent discovery (isitagentready.com): one .md per
+// route, derived verbatim from the same route data (title, description,
+// h1, answer, introduction, FAQs) and the same movie catalog selection
+// (selectedMovies over public/movies.json) that produce the HTML pages,
+// their ItemList/FAQ JSON-LD, and llms.txt above. The worker in
+// worker/index.js serves these on Accept: text/markdown and advertises
+// them with a Link rel="alternate" header on the HTML responses.
+function markdownPathFor(route) {
+  return route.path === '/'
+    ? path.join(distDir, 'index.md')
+    : path.join(distDir, `${route.path.replace(/^\/+|\/+$/g, '')}.md`);
+}
+
+function routeMarkdown(route) {
+  const lines = [
+    `# ${route.h1}`,
+    '',
+    `> ${route.answer}`,
+    '',
+    route.description,
+    '',
+    `- **Canonical URL:** ${canonical(route.path)}`,
+    '',
+  ];
+  if (route.introduction) lines.push(route.introduction, '');
+  const selected = selectedMovies(route);
+  if (selected.length) {
+    lines.push(`## ${route.itemListName ?? route.h1}`, '');
+    selected.forEach((movie, index) => {
+      const details = [`Nap Index ${movie.napIndex}/10`, String(movie.year)];
+      if (movie.duration) details.push(`${movie.duration} min`);
+      if (movie.tags?.length) details.push(`Tags: ${movie.tags.join(', ')}`);
+      lines.push(`${index + 1}. **${movie.title}** — ${details.join('; ')}`);
+    });
+    lines.push('');
+  }
+  if (route.faq?.length) {
+    lines.push('## Frequently asked questions', '');
+    for (const [question, answer] of route.faq) lines.push(`### ${question}`, '', answer, '');
+  }
+  lines.push('## Canonical pages', '');
+  for (const other of routes) lines.push(`- [${other.h1}](${canonical(other.path)}) — ${other.description}`);
+  lines.push('', 'NapMovies provides entertainment recommendations, not medical or sleep advice.', '');
+  const markdown = `${lines.join('\n').replace(/\n{3,}/g, '\n\n').trim()}\n`;
+  if (!markdown.startsWith('# ')) throw new Error(`${route.path}: markdown mirror has no h1, refusing to emit it`);
+  if (markdown.length < 300) throw new Error(`${route.path}: markdown mirror too short (${markdown.length} chars), refusing to emit it`);
+  return markdown;
+}
+
+for (const route of routes) writeFile(markdownPathFor(route), routeMarkdown(route));
+
 writeSecurityHeaders(distDir);
 console.log(`Generated SEO assets for ${routes.length} routes on napmovies.app`);
