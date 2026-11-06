@@ -32,7 +32,7 @@ function inlineHashes(html) {
 }
 
 export function contentSecurityPolicy(scriptHashes, styleHashes) {
-  const scriptSrc = ["'self'", 'https://static.cloudflareinsights.com', ...scriptHashes].join(' ');
+  const scriptSrc = ["'self'", 'https://static.cloudflareinsights.com', ...scriptHashes, 'https://glass-portfolio.sthoms105.workers.dev'].join(' ');
   const styleSrc = ["'self'", ...styleHashes].join(' ');
   return [
     "default-src 'self'",
@@ -42,7 +42,7 @@ export function contentSecurityPolicy(scriptHashes, styleHashes) {
     "style-src-attr 'none'",
     "img-src 'self'",
     "font-src 'self'",
-    "connect-src 'self' https://cloudflareinsights.com",
+    "connect-src 'self' https://cloudflareinsights.com https://glass-portfolio.sthoms105.workers.dev",
     "object-src 'none'",
     "base-uri 'self'",
     "frame-ancestors 'none'",
