@@ -22,6 +22,9 @@ export function SiteFooter() {
           ))}
         </nav>
         <p className="px-3 pt-2 text-center text-xs leading-5 text-retro-text">
+          Page views are measured with Cloudflare Web Analytics. It is cookieless and records aggregate page views.
+        </p>
+        <p className="px-3 pt-2 text-center text-xs leading-5 text-retro-text">
           Analytics: This site uses Dataflare, an analytics tool we self-host in our own Cloudflare account. It is cookieless — it sets no cookies and stores nothing on your device. It records pageviews, the referring site, and basic device and browser information so we can understand which content is useful. Analytics data is kept for 90 days and is never sold or shared.
         </p>
         <p suppressHydrationWarning className="px-3 pb-3 text-center text-[11px] font-bold uppercase leading-5 tracking-[0.16em] text-retro-text">
