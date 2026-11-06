@@ -29,8 +29,12 @@ export function MovieCard({ movie, rank }: MovieCardProps) {
   const score = movie.napIndex;
   const isOptimalLength = (movie.duration ?? 0) >= 120;
 
+  const trackView = () => {
+    try { (window as unknown as { glass?: { capture: (event: string) => void } }).glass?.capture('movie_viewed'); } catch { /* analytics is best-effort */ }
+  };
+
   return (
-    <div className="group relative border border-retro-muted/20 bg-retro-card p-6 transition-colors duration-slow hover:border-retro-accent/40 hover:bg-retro-card/90 md:p-8">
+    <div onClick={trackView} className="group relative border border-retro-muted/20 bg-retro-card p-6 transition-colors duration-slow hover:border-retro-accent/40 hover:bg-retro-card/90 md:p-8">
       <div className="absolute -left-2 -top-[14px] z-10 flex items-center gap-1 border border-retro-muted/40 bg-retro-muted px-3 py-1.5 text-[11px] font-black text-retro-text shadow-xl transition-colors group-hover:border-retro-accent group-hover:bg-retro-accent group-hover:text-retro-bg md:-left-4">
         <Hash className="h-3.5 w-3.5" /> {rank.toString().padStart(2, '0')}
       </div>
