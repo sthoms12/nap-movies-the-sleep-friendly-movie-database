@@ -68,6 +68,19 @@ for (const artifact of ['robots.txt', 'sitemap.xml', 'llms.txt']) {
 const llms = fs.readFileSync(path.join(distDir, 'llms.txt'), 'utf8');
 if (!llms.includes('not medical or sleep advice')) errors.push('llms.txt missing editorial disclaimer');
 
+const markdownRoutes = ['/', '/criteria/', '/movies-to-fall-asleep-to/', '/quiet-movies-for-bedtime/', '/comfort-movies-for-sleep/', '/visually-dark-movies-to-fall-asleep-to/'];
+for (const route of markdownRoutes) {
+  const file = route === '/' ? path.join(distDir, 'index.md') : path.join(distDir, `${route.replace(/^\/|\/$/g, '')}.md`);
+  if (!fs.existsSync(file)) {
+    errors.push(`missing markdown mirror for ${route}`);
+    continue;
+  }
+  const markdown = fs.readFileSync(file, 'utf8');
+  if (!markdown.startsWith('# ')) errors.push(`markdown mirror for ${route} must start with an h1`);
+  if (!markdown.includes(`https://napmovies.app${route}`)) errors.push(`markdown mirror for ${route} missing its canonical URL`);
+  if (markdown.length < 300) errors.push(`markdown mirror for ${route} is too short (${markdown.length} chars)`);
+}
+
 if (errors.length) throw new Error(`SEO validation failed:\n${errors.join('\n')}`);
 assertBuildOutputClean(distDir);
 console.log(`Validated SEO assets for ${routes.length} routes.`);
