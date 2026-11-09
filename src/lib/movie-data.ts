@@ -46,7 +46,7 @@ function sameCatalog(left: Movie[], right: Movie[]) {
 /**
  * The catalog ships with the site as static JSON. A same-origin refresh can
  * pick up a newer `movies.json`, and any failure keeps the bundled copy.
- * There is no Zo Computer request.
+ * There is no external content request.
  */
 export async function refreshMovies(current: Movie[]): Promise<Movie[] | null> {
   try {
