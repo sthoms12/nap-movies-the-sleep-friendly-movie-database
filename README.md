@@ -45,11 +45,11 @@ Production has Cloudflare Bot Fight Mode on. It injects a per-request inline Jav
 
 ## Catalog hosting
 
-The ranked catalog is the static file `public/movies.json`. The production build imports that file and also publishes it at `/movies.json` on Cloudflare. The site does not request Zo Computer for movie content.
+The ranked catalog is the static file `public/movies.json`. The production build imports that file and also publishes it at `/movies.json` on Cloudflare. The site does not request an external service for movie content.
 
 If `/movies.json` cannot be refreshed in the browser, the page keeps the copy bundled at build time and shows the archive instead of an error. A quiet notice appears only when that bundled copy is empty.
 
-Voting and title submissions used to post to the Zo API. That API is not part of this site anymore. Official rankings still change only when `public/movies.json` is edited and the site is rebuilt.
+Voting and title submissions used to post to an external API. That API is not part of this site anymore. Official rankings still change only when `public/movies.json` is edited and the site is rebuilt.
 
 ## Updating the movie catalog
 
