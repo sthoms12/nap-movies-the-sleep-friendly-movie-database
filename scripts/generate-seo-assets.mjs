@@ -58,9 +58,9 @@ const routes = [
   {
     path: '/quiet-movies-for-bedtime/',
     output: path.join(distDir, 'quiet-movies-for-bedtime', 'index.html'),
-    title: 'Quiet Movies for Bedtime: Lower-Key Picks | NapMovies',
-    description: 'Browse quiet movies for bedtime selected for stillness, atmosphere, routine, restrained dialogue, and steadier pacing from the NapMovies archive.',
-    h1: 'Quiet movies for bedtime',
+    title: 'Bedtime Movies: Quiet, Lower-Key Picks | NapMovies',
+    description: 'Browse quiet bedtime movies selected for stillness, atmosphere, routine, restrained dialogue, and steadier pacing from the NapMovies archive.',
+    h1: 'Quiet bedtime movies',
     answer: 'Quiet bedtime movies tend to use still compositions, long scenes, restrained dialogue, or sustained ambient sound instead of constant shifts.',
     movieIds: ['07', '11', '12', '14', '19', '31', '38', '39', '40', '46'],
     faq: [

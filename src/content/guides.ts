@@ -30,9 +30,9 @@ export const guides: GuideDefinition[] = [
   {
     slug: 'quiet-movies-for-bedtime',
     eyebrow: 'Lower-Key Picks',
-    title: 'Quiet movies for bedtime',
+    title: 'Quiet bedtime movies',
     answer: 'Quiet bedtime movies tend to use still compositions, long scenes, restrained dialogue, or sustained ambient sound instead of constant cuts and abrupt shifts.',
-    introduction: 'These official-catalog picks emphasize stillness, atmosphere, routine, and quieter stretches. Some contain serious themes, so the best choice is a title whose story and sound profile you already know.',
+    introduction: 'These official-catalog bedtime movies emphasize stillness, atmosphere, routine, and quieter stretches. Some contain serious themes, so the best choice is a title whose story and sound profile you already know.',
     selectionNote: '“Quiet” describes the overall viewing texture, not a promise that every scene is soft. Check the title first if sudden or intense moments are a concern.',
     movieIds: ['07', '11', '12', '14', '19', '31', '38', '39', '40', '46'],
     faq: [
