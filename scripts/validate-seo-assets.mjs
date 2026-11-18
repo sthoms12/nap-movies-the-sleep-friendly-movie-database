@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { assertBuildOutputClean } from './security-headers.mjs';
 
-const routes = ['/', '/criteria/', '/movies-to-fall-asleep-to/', '/quiet-movies-for-bedtime/', '/comfort-movies-for-sleep/'];
+const routes = ['/', '/criteria/', '/movies-to-fall-asleep-to/', '/quiet-movies-for-bedtime/', '/comfort-movies-for-sleep/', '/visually-dark-movies-to-fall-asleep-to/'];
 const distDir = path.resolve('dist');
 const errors = [];
 // Attribution is the NapMovies Organization only; no personal names or profiles.
@@ -57,6 +57,56 @@ if (!homeHtml.includes('A River Runs Through It')) errors.push('home prerender i
 const napGuide = fs.readFileSync(path.join(distDir, 'movies-to-fall-asleep-to', 'index.html'), 'utf8');
 const napAnswer = 'Movies to nap to are usually familiar rewatches with steady pacing, predictable sound, and a mood you already know.';
 if (!napGuide.includes(napAnswer)) errors.push('movies-to-fall-asleep-to answer-first intro is missing');
+
+const darkRoute = '/visually-dark-movies-to-fall-asleep-to/';
+const darkHtml = fs.readFileSync(path.join(distDir, 'visually-dark-movies-to-fall-asleep-to', 'index.html'), 'utf8');
+const darkTitle = darkHtml.match(/<title>([^<]*)<\/title>/)?.[1] ?? '';
+const darkH1 = (darkHtml.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i)?.[1] ?? '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+const darkDescription = darkHtml.match(/<meta\s+name="description"\s+content="([^"]*)"/)?.[1] ?? '';
+const darkQuery = 'visually dark movies to fall asleep to';
+if (darkTitle.length === 0 || darkTitle.length > 60) errors.push(`visually dark title must be 1-60 characters (got ${darkTitle.length}: ${darkTitle})`);
+if (!darkTitle.toLowerCase().includes(darkQuery)) errors.push('visually dark title must include the query');
+if (darkH1.toLowerCase() !== darkQuery) errors.push(`visually dark h1 must match the query (got ${darkH1})`);
+if (!darkDescription.toLowerCase().includes(darkQuery)) errors.push('visually dark meta description must include the query');
+if (!darkHtml.includes('id="ranked-picks"') || !darkHtml.includes('id="questions"')) errors.push('visually dark page is missing an existing anchor id');
+const darkMain = darkHtml.match(/<main\b[\s\S]*?<\/main>/i)?.[0] ?? '';
+if (darkMain.includes('—')) errors.push('visually dark page copy contains an em dash');
+if (/tv shows/i.test(darkMain)) errors.push('visually dark page must not add a TV section without TV data');
+function visibleText(html) {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .replaceAll('&amp;', '&')
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replaceAll('&quot;', '"')
+    .replaceAll('&#39;', "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+const darkVisible = visibleText(darkMain);
+const darkFaq = jsonLdBlocks(darkHtml).find((block) => block['@type'] === 'FAQPage');
+if (!darkFaq) errors.push('visually dark page missing FAQPage schema');
+for (const entity of darkFaq?.mainEntity ?? []) {
+  const question = entity?.name ?? '';
+  const answer = entity?.acceptedAnswer?.text ?? '';
+  if (!darkVisible.includes(question)) errors.push(`FAQ question is not visible: ${question}`);
+  if (!darkVisible.includes(answer)) errors.push(`FAQ answer is not visible: ${question}`);
+}
+const darkLinks = [
+  ['/movies-to-fall-asleep-to/', 'owner-approved movies to fall asleep to'],
+  ['/quiet-movies-for-bedtime/', 'quiet movies for bedtime'],
+  ['/comfort-movies-for-sleep/', 'familiar comfort movies for sleep'],
+  ['/criteria/', 'what visual stillness means in the Nap Index'],
+];
+for (const [href, anchor] of darkLinks) {
+  const linked = new RegExp(`<a\\b[^>]*href="${href}"[^>]*>${anchor}</a>`).test(darkMain);
+  if (!linked) errors.push(`visually dark page missing descriptive link ${href} (${anchor})`);
+}
+const darkMarkdown = fs.readFileSync(path.join(distDir, 'visually-dark-movies-to-fall-asleep-to.md'), 'utf8');
+if (darkMarkdown.includes('—')) errors.push('visually dark markdown mirror contains an em dash');
+if (!darkMarkdown.toLowerCase().includes(darkQuery)) errors.push('visually dark markdown mirror missing the query');
 
 const sitemap = fs.readFileSync(path.join(distDir, 'sitemap.xml'), 'utf8');
 for (const route of routes) {

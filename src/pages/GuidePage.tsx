@@ -1,10 +1,47 @@
-import { useMemo } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, ChevronRight, Moon, ShieldCheck } from 'lucide-react';
 import { MovieCard } from '@/components/MovieCard';
-import { guides, type GuideDefinition } from '@/content/guides';
+import { guides, type GuideDefinition, type GuideLink } from '@/content/guides';
 import { readBundledMovies } from '@/lib/movie-data';
 import type { Movie } from '@shared/types';
+
+function LinkedText({ text, links }: { text: string; links?: GuideLink[] }) {
+  if (!links?.length) return text;
+  const nodes: ReactNode[] = [];
+  let remaining = text;
+  links.forEach((link, index) => {
+    const at = remaining.indexOf(link.phrase);
+    if (at < 0) return;
+    if (at > 0) nodes.push(remaining.slice(0, at));
+    nodes.push(
+      <Link key={`${link.to}-${index}`} to={link.to} className="text-retro-accent underline underline-offset-4 hover:text-white">
+        {link.phrase}
+      </Link>,
+    );
+    remaining = remaining.slice(at + link.phrase.length);
+  });
+  if (remaining) nodes.push(remaining);
+  return nodes;
+}
+
+function GuideQuestions({ guide }: { guide: GuideDefinition }) {
+  return (
+    <section aria-labelledby="questions" className="mb-16">
+      <h2 id="questions" className="mb-6 text-2xl font-black uppercase tracking-tight text-white">Common questions</h2>
+      <div className="divide-y divide-border border-y border-border">
+        {guide.faq.map((item) => (
+          <div key={item.question} className="py-6">
+            <h3 className="mb-2 text-sm font-black text-white">{item.question}</h3>
+            <p className="text-sm leading-6 text-retro-text">
+              <LinkedText text={item.answer} links={item.links} />
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 export function GuidePage({ guide }: { guide: GuideDefinition }) {
   const movies = useMemo(() => readBundledMovies(), []);
@@ -27,10 +64,20 @@ export function GuidePage({ guide }: { guide: GuideDefinition }) {
         <h1 className="max-w-4xl text-4xl font-black uppercase leading-tight tracking-tight text-white md:text-5xl">{guide.title}</h1>
         <p className="max-w-3xl border-l-2 border-retro-accent/50 pl-5 text-base font-bold leading-relaxed text-retro-text md:text-lg">{guide.answer}</p>
         <p className="max-w-3xl text-sm leading-7 text-retro-text">{guide.introduction}</p>
+        {guide.lead?.length ? (
+          <ul className="max-w-3xl list-disc space-y-2 pl-5 text-sm leading-7 text-retro-text">
+            {guide.lead.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        ) : null}
       </header>
+      {guide.questionsFirst ? <GuideQuestions guide={guide} /> : null}
       <aside className="mb-14 border border-retro-accent/20 bg-retro-accent/5 p-5">
         <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-retro-accent"><ShieldCheck className="h-4 w-4" /> Selection note</div>
-        <p className="text-sm leading-6 text-retro-text">{guide.selectionNote}</p>
+        <p className="text-sm leading-6 text-retro-text">
+          <LinkedText text={guide.selectionNote} links={guide.selectionLinks} />
+        </p>
       </aside>
       <section aria-labelledby="ranked-picks" className="mb-16 space-y-8">
         <h2 id="ranked-picks" className="flex items-center gap-3 border-b border-border pb-4 text-xs font-black uppercase tracking-[0.3em] text-primary">
@@ -45,17 +92,7 @@ export function GuidePage({ guide }: { guide: GuideDefinition }) {
           selectedMovies.map((movie, index) => <MovieCard key={movie.id} movie={movie} rank={index + 1} />)
         )}
       </section>
-      <section aria-labelledby="questions" className="mb-16">
-        <h2 id="questions" className="mb-6 text-2xl font-black uppercase tracking-tight text-white">Common questions</h2>
-        <div className="divide-y divide-border border-y border-border">
-          {guide.faq.map((item) => (
-            <div key={item.question} className="py-6">
-              <h3 className="mb-2 text-sm font-black text-white">{item.question}</h3>
-              <p className="text-sm leading-6 text-retro-text">{item.answer}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {guide.questionsFirst ? null : <GuideQuestions guide={guide} />}
       <section className="grid gap-4 border-t border-border pt-6 md:grid-cols-2">
         <Link to="/" className="tap-target justify-start border border-border bg-black/20 text-xs font-black uppercase tracking-widest text-retro-text hover:border-retro-accent/40 hover:text-retro-accent">View the full ranked archive</Link>
         <Link to="/criteria/" className="tap-target justify-start border border-border bg-black/20 text-xs font-black uppercase tracking-widest text-retro-text hover:border-retro-accent/40 hover:text-retro-accent">How the Nap Index works</Link>
