@@ -138,10 +138,11 @@ export function HomePage() {
               Start with the official ranking, then use your own familiarity as the deciding factor. Community notes can inform a later review, but published scores change only after owner approval.
             </p>
           </div>
-          <div className="grid gap-3 md:grid-cols-3">
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
             <Link to="/movies-to-fall-asleep-to/" className="tap-target justify-start border border-retro-accent/30 bg-retro-accent/5 text-[11px] font-black uppercase tracking-widest text-retro-accent hover:bg-retro-accent/10">Nap movie rankings</Link>
             <Link to="/quiet-movies-for-bedtime/" className="tap-target justify-start border border-border bg-black/20 text-[11px] font-black uppercase tracking-widest text-retro-text hover:border-retro-accent/40 hover:text-retro-accent">Quiet bedtime movies</Link>
             <Link to="/comfort-movies-for-sleep/" className="tap-target justify-start border border-border bg-black/20 text-[11px] font-black uppercase tracking-widest text-retro-text hover:border-retro-accent/40 hover:text-retro-accent">Comfort rewatches</Link>
+            <Link to="/visually-dark-movies-to-fall-asleep-to/" className="tap-target justify-start border border-border bg-black/20 text-[11px] font-black uppercase tracking-widest text-retro-text hover:border-retro-accent/40 hover:text-retro-accent">Visually dark movies</Link>
           </div>
         </section>
 
