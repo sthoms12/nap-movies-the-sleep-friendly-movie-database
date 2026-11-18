@@ -1,5 +1,16 @@
 export type GuideSlug = 'movies-to-fall-asleep-to' | 'quiet-movies-for-bedtime' | 'comfort-movies-for-sleep' | 'visually-dark-movies-to-fall-asleep-to';
 
+export interface GuideLink {
+  phrase: string;
+  to: string;
+}
+
+export interface GuideFaq {
+  question: string;
+  answer: string;
+  links?: GuideLink[];
+}
+
 export interface GuideDefinition {
   slug: GuideSlug;
   eyebrow: string;
@@ -7,8 +18,11 @@ export interface GuideDefinition {
   answer: string;
   introduction: string;
   selectionNote: string;
+  selectionLinks?: GuideLink[];
+  lead?: string[];
+  questionsFirst?: boolean;
   movieIds: string[];
-  faq: Array<{ question: string; answer: string }>;
+  faq: GuideFaq[];
 }
 
 export const guides: GuideDefinition[] = [
@@ -59,14 +73,38 @@ export const guides: GuideDefinition[] = [
     slug: 'visually-dark-movies-to-fall-asleep-to',
     eyebrow: 'Dim & Muted Picks',
     title: 'Visually dark movies to fall asleep to',
-    answer: 'Visually dark movies to fall asleep to tend toward dim lighting, muted colors, night settings, or fog — a low-stimulation look that stays easy on the eyes late at night.',
-    introduction: 'This owner-approved shortlist from the NapMovies catalog favors movies whose visual texture is dark or muted: shadowed rooms, night settings, fog, and desaturated palettes. Every pick scores 8 or 9 on the Nap Index, so the calm look comes with the familiar pacing and atmosphere the archive is built on.',
-    selectionNote: '“Dark” describes the look, not the mood — some of these carry serious themes, so pick a title whose story you already know. A dark movie you know beats an unfamiliar dark one.',
+    answer: 'Visually dark movies to fall asleep to are pictures with low brightness, a muted palette, and calm pacing. The short list below uses owner-approved NapMovies titles tagged Dark, Muted Colors, Fog, Stillness, or Slow.',
+    introduction: 'Start with these owner-approved catalog titles for quiet-night viewing, not as medical or sleep advice.',
+    selectionNote: 'Dark describes the picture, not the mood. Some of these stories are serious, so pick a title you already know. Read what visual stillness means in the Nap Index to see one editorial factor behind the score.',
+    selectionLinks: [{ phrase: 'what visual stillness means in the Nap Index', to: '/criteria/' }],
+    lead: [
+      'Prisoners (2013), Nap Index 9/10. Catalog tags include Dark and Rain.',
+      'Tinker Tailor Soldier Spy (2011), Nap Index 9/10. Catalog tags include Muted Colors and Slow.',
+      'Arrival (2016), Nap Index 8/10. Catalog tags include Quiet and Fog.',
+      'A Ghost Story (2017), Nap Index 8/10. Catalog tags include Stillness and Slow.',
+    ],
+    questionsFirst: true,
     movieIds: ['29', '18', '17', '07', '11', '12', '14'],
     faq: [
-      { question: 'What makes a movie visually dark?', answer: 'Dim lighting, muted colors, night settings, fog, or long stretches of shadow. These catalog picks share that low-stimulation visual texture, whatever their genre.' },
-      { question: 'Are visually dark movies better for falling asleep?', answer: 'Not necessarily. Darkness is about visual calm; familiarity still matters most on NapMovies. A dark movie you already know beats an unfamiliar dark one.' },
-      { question: 'Are these sleep recommendations medical advice?', answer: 'No. NapMovies offers entertainment recommendations for quiet-night viewing, not medical or sleep advice.' },
+      {
+        question: 'What is the best movie to fall asleep to?',
+        answer: 'The highest Nap Index in the owner-approved archive is 9/10, shared by many titles. In that archive, sorted by score and then by title, A River Runs Through It is first. Its tags include Water and Nature, so it is a familiar outdoor rewatch, not a visually dark movie. For the broader shortlist, see the owner-approved movies to fall asleep to.',
+        links: [{ phrase: 'owner-approved movies to fall asleep to', to: '/movies-to-fall-asleep-to/' }],
+      },
+      {
+        question: 'What is the best scary movie to fall asleep to?',
+        answer: 'NapMovies does not rank jump-scare horror, and no catalog title is tagged horror or scary. The still, slow option on this page is A Ghost Story. Its tags include Stillness and Slow, and its Nap Index is 8/10. Prisoners is the only title tagged Dark, at Nap Index 9/10, and its tags also include Rain. For lower-key pacing, see quiet movies for bedtime.',
+        links: [{ phrase: 'quiet movies for bedtime', to: '/quiet-movies-for-bedtime/' }],
+      },
+      {
+        question: 'What are some good dark movies?',
+        answer: 'Catalog tags that match a dark or muted picture include Dark on Prisoners (Nap Index 9/10), Muted Colors and Slow on Tinker Tailor Soldier Spy (9/10), Night on Margin Call (8/10), and Fog on Arrival (8/10). A Ghost Story (8/10) has tags that include Stillness and Slow. Moon (8/10, tags include Isolation and Ambient) and Solaris (2002) (8/10, tags include Space and Dreamlike) are on this page as well. When a familiar story matters more than a dim image, see familiar comfort movies for sleep.',
+        links: [{ phrase: 'familiar comfort movies for sleep', to: '/comfort-movies-for-sleep/' }],
+      },
+      {
+        question: 'Are these sleep recommendations medical advice?',
+        answer: 'No. NapMovies offers entertainment recommendations for quiet-night viewing, not medical or sleep advice.',
+      },
     ],
   },
 ];

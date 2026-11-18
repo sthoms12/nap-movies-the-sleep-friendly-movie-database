@@ -86,15 +86,23 @@ const routes = [
   {
     path: '/visually-dark-movies-to-fall-asleep-to/',
     output: path.join(distDir, 'visually-dark-movies-to-fall-asleep-to', 'index.html'),
-    title: 'Visually Dark Movies to Fall Asleep To: Dim & Muted Picks | NapMovies',
-    description: 'Find visually dark movies to fall asleep to: dim lighting, muted colors, night settings, and fog from the owner-approved NapMovies archive.',
+    title: 'Visually Dark Movies to Fall Asleep To | NapMovies',
+    description: 'Visually dark movies to fall asleep to are dim, muted pictures with calm pacing. NapMovies owner-approved titles include Prisoners, Arrival, and A Ghost Story.',
     h1: 'Visually dark movies to fall asleep to',
-    answer: 'Visually dark movies to fall asleep to tend toward dim lighting, muted colors, night settings, or fog — a low-stimulation look that stays easy on the eyes late at night.',
-    introduction: 'This owner-approved shortlist from the NapMovies catalog favors movies whose visual texture is dark or muted: shadowed rooms, night settings, fog, and desaturated palettes. Every pick scores 8 or 9 on the Nap Index, so the calm look comes with the familiar pacing and atmosphere the archive is built on.',
+    answer: 'Visually dark movies to fall asleep to are pictures with low brightness, a muted palette, and calm pacing. The short list below uses owner-approved NapMovies titles tagged Dark, Muted Colors, Fog, Stillness, or Slow.',
+    introduction: 'Start with these owner-approved catalog titles for quiet-night viewing, not as medical or sleep advice.',
+    lead: [
+      'Prisoners (2013), Nap Index 9/10. Catalog tags include Dark and Rain.',
+      'Tinker Tailor Soldier Spy (2011), Nap Index 9/10. Catalog tags include Muted Colors and Slow.',
+      'Arrival (2016), Nap Index 8/10. Catalog tags include Quiet and Fog.',
+      'A Ghost Story (2017), Nap Index 8/10. Catalog tags include Stillness and Slow.',
+    ],
+    listSeparator: ' - ',
     movieIds: ['29', '18', '17', '07', '11', '12', '14'],
     faq: [
-      ['What makes a movie visually dark?', 'Dim lighting, muted colors, night settings, fog, or long stretches of shadow. These catalog picks share that low-stimulation visual texture, whatever their genre.'],
-      ['Are visually dark movies better for falling asleep?', 'Not necessarily. Darkness is about visual calm; familiarity still matters most on NapMovies. A dark movie you already know beats an unfamiliar dark one.'],
+      ['What is the best movie to fall asleep to?', 'The highest Nap Index in the owner-approved archive is 9/10, shared by many titles. In that archive, sorted by score and then by title, A River Runs Through It is first. Its tags include Water and Nature, so it is a familiar outdoor rewatch, not a visually dark movie. For the broader shortlist, see the owner-approved movies to fall asleep to.'],
+      ['What is the best scary movie to fall asleep to?', 'NapMovies does not rank jump-scare horror, and no catalog title is tagged horror or scary. The still, slow option on this page is A Ghost Story. Its tags include Stillness and Slow, and its Nap Index is 8/10. Prisoners is the only title tagged Dark, at Nap Index 9/10, and its tags also include Rain. For lower-key pacing, see quiet movies for bedtime.'],
+      ['What are some good dark movies?', 'Catalog tags that match a dark or muted picture include Dark on Prisoners (Nap Index 9/10), Muted Colors and Slow on Tinker Tailor Soldier Spy (9/10), Night on Margin Call (8/10), and Fog on Arrival (8/10). A Ghost Story (8/10) has tags that include Stillness and Slow. Moon (8/10, tags include Isolation and Ambient) and Solaris (2002) (8/10, tags include Space and Dreamlike) are on this page as well. When a familiar story matters more than a dim image, see familiar comfort movies for sleep.'],
       ['Are these sleep recommendations medical advice?', 'No. NapMovies offers entertainment recommendations for quiet-night viewing, not medical or sleep advice.'],
     ],
   },
@@ -289,7 +297,7 @@ fs.rmSync(path.join(distDir, 'guide.html'), { force: true });
 
 writeFile(path.join(distDir, 'robots.txt'), `User-agent: *\nContent-Signal: ai-train=no, search=yes, ai-input=yes\nAllow: /\n\nSitemap: ${siteOrigin}/sitemap.xml\n`);
 writeFile(path.join(distDir, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${routes.map((route) => `  <url>\n    <loc>${canonical(route.path)}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${route.path === '/' ? 'weekly' : 'monthly'}</changefreq>\n    <priority>${route.path === '/' ? '1.0' : '0.8'}</priority>\n  </url>`).join('\n')}\n</urlset>\n`);
-writeFile(path.join(distDir, 'llms.txt'), `# NapMovies\n\nNapMovies is an editorial archive of movies for quiet-night viewing. The official Nap Index ranks familiar rewatches using factors such as pacing, sound consistency, visual stillness, atmosphere, runtime, and personal comfort.\n\n## Canonical pages\n- ${canonical('/')} — complete owner-approved ranked archive\n- ${canonical('/movies-to-fall-asleep-to/')} — primary guide\n- ${canonical('/quiet-movies-for-bedtime/')} — lower-key selections\n- ${canonical('/comfort-movies-for-sleep/')} — familiar comfort rewatches\n- ${canonical('/visually-dark-movies-to-fall-asleep-to/')} — dim and muted visual picks\n- ${canonical('/criteria/')} — Nap Index methodology\n\n## Ranking governance\nCommunity votes and submissions are advisory signals. Official scores and rankings change only after owner approval. NapMovies provides entertainment recommendations, not medical or sleep advice.\n`);
+writeFile(path.join(distDir, 'llms.txt'), `# NapMovies\n\nNapMovies is an editorial archive of movies for quiet-night viewing. The official Nap Index ranks familiar rewatches using factors such as pacing, sound consistency, visual stillness, atmosphere, runtime, and personal comfort.\n\n## Canonical pages\n- ${canonical('/')} — complete owner-approved ranked archive\n- ${canonical('/movies-to-fall-asleep-to/')} — primary guide\n- ${canonical('/quiet-movies-for-bedtime/')} — lower-key selections\n- ${canonical('/comfort-movies-for-sleep/')} — familiar comfort rewatches\n- ${canonical('/visually-dark-movies-to-fall-asleep-to/')}: dim, muted pictures for falling asleep\n- ${canonical('/criteria/')} — Nap Index methodology\n\n## Ranking governance\nCommunity votes and submissions are advisory signals. Official scores and rankings change only after owner approval. NapMovies provides entertainment recommendations, not medical or sleep advice.\n`);
 
 // Markdown mirrors for agent discovery (isitagentready.com): one .md per
 // route, derived verbatim from the same route data (title, description,
@@ -316,14 +324,20 @@ function routeMarkdown(route) {
     '',
   ];
   if (route.introduction) lines.push(route.introduction, '');
+  if (route.lead?.length) {
+    lines.push('## Short list', '');
+    for (const item of route.lead) lines.push(`- ${item}`);
+    lines.push('');
+  }
   const selected = selectedMovies(route);
+  const itemSep = route.listSeparator ?? ' — ';
   if (selected.length) {
     lines.push(`## ${route.itemListName ?? route.h1}`, '');
     selected.forEach((movie, index) => {
       const details = [`Nap Index ${movie.napIndex}/10`, String(movie.year)];
       if (movie.duration) details.push(`${movie.duration} min`);
       if (movie.tags?.length) details.push(`Tags: ${movie.tags.join(', ')}`);
-      lines.push(`${index + 1}. **${movie.title}** — ${details.join('; ')}`);
+      lines.push(`${index + 1}. **${movie.title}**${itemSep}${details.join('; ')}`);
     });
     lines.push('');
   }
@@ -332,7 +346,8 @@ function routeMarkdown(route) {
     for (const [question, answer] of route.faq) lines.push(`### ${question}`, '', answer, '');
   }
   lines.push('## Canonical pages', '');
-  for (const other of routes) lines.push(`- [${other.h1}](${canonical(other.path)}) — ${other.description}`);
+  const linkSep = route.listSeparator ?? ' — ';
+  for (const other of routes) lines.push(`- [${other.h1}](${canonical(other.path)})${linkSep}${other.description}`);
   lines.push('', 'NapMovies provides entertainment recommendations, not medical or sleep advice.', '');
   const markdown = `${lines.join('\n').replace(/\n{3,}/g, '\n\n').trim()}\n`;
   if (!markdown.startsWith('# ')) throw new Error(`${route.path}: markdown mirror has no h1, refusing to emit it`);
