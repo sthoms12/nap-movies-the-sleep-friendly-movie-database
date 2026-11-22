@@ -12,7 +12,6 @@ export function Shell() {
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background font-mono text-foreground">
-      <div className="crt-overlay" />
       <Navbar />
       <Suspense fallback={<p className="flex-1 px-4 py-16 text-center text-sm text-retro-text">Loading this page.</p>}>
         <Outlet />

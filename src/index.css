@@ -67,34 +67,20 @@
     padding: 0.75rem 0.875rem;
   }
   .crt-overlay {
-    @apply pointer-events-none fixed inset-0 z-50;
-    background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.1) 50%),
-                linear-gradient(90deg, rgba(255,0,0,0.03), rgba(0,255,0,0.01), rgba(0,0,255,0.03));
-    background-size: 100% 3px, 3px 100%;
-    animation: flicker 0.15s infinite;
-    opacity: 0.03;
+    display: none;
+    animation: none;
   }
 }
-@keyframes flicker {
-  0% { opacity: 0.027; }
-  5% { opacity: 0.032; }
-  10% { opacity: 0.025; }
-  15% { opacity: 0.035; }
-  20% { opacity: 0.028; }
-  25% { opacity: 0.031; }
-  30% { opacity: 0.026; }
-  35% { opacity: 0.034; }
-  40% { opacity: 0.029; }
-  45% { opacity: 0.033; }
-  50% { opacity: 0.027; }
-  55% { opacity: 0.032; }
-  60% { opacity: 0.025; }
-  65% { opacity: 0.035; }
-  70% { opacity: 0.028; }
-  75% { opacity: 0.031; }
-  80% { opacity: 0.026; }
-  85% { opacity: 0.034; }
-  90% { opacity: 0.029; }
-  95% { opacity: 0.033; }
-  100% { opacity: 0.027; }
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
