@@ -53,6 +53,12 @@ if (!homeTitle.startsWith('NapMovies')) errors.push('home title must lead with N
 if (!/^NapMovies|^Nap Movies/.test(homeH1)) errors.push('home h1 must lead with NapMovies or Nap Movies');
 if (!homeHtml.includes('data-ssr="true"')) errors.push('home prerender is missing the server-rendered app');
 if (!homeHtml.includes('A River Runs Through It')) errors.push('home prerender is missing the catalog');
+if (homeHtml.includes('class="crt-overlay"')) errors.push('home prerender must not render the 6.7Hz crt-overlay element');
+if (homeHtml.includes('High_Frequency_Tags') || homeHtml.includes('NAP_OPTIMAL_LENGTH')) errors.push('home prerender still contains developer SNAKE_CASE labels');
+for (const sleepTag of ['Quiet', 'Familiar', 'Low Stress', 'Dark', 'Slow Burn']) {
+  if (!homeHtml.includes(sleepTag)) errors.push(`home prerender missing sleep-intent tag ${sleepTag}`);
+}
+if (!homeHtml.includes('Showing 50 of 50 movies')) errors.push('home prerender missing live result count above catalog');
 
 const napGuide = fs.readFileSync(path.join(distDir, 'movies-to-fall-asleep-to', 'index.html'), 'utf8');
 const napAnswer = 'Movies to nap to are usually familiar rewatches with steady pacing, predictable sound, and a mood you already know.';
