@@ -65,8 +65,10 @@ export function writeSecurityHeaders(distDir) {
   const lines = [
     '/*',
     `  Content-Security-Policy: ${policy}`,
+    '  Strict-Transport-Security: max-age=31536000; includeSubDomains',
     '  X-Content-Type-Options: nosniff',
     '  Referrer-Policy: strict-origin-when-cross-origin',
+    '  Permissions-Policy: camera=(), microphone=(), geolocation=()',
     '',
   ];
   for (const line of lines) {
@@ -94,6 +96,7 @@ export function assertBuildOutputClean(distDir) {
   const headers = fs.readFileSync(headersPath, 'utf8');
   const required = [
     'Content-Security-Policy:',
+    'Strict-Transport-Security: max-age=31536000; includeSubDomains',
     "frame-ancestors 'none'",
     "object-src 'none'",
     "base-uri 'self'",
@@ -101,6 +104,7 @@ export function assertBuildOutputClean(distDir) {
     'https://cloudflareinsights.com',
     'X-Content-Type-Options: nosniff',
     'Referrer-Policy: strict-origin-when-cross-origin',
+    'Permissions-Policy: camera=(), microphone=(), geolocation=()',
     "script-src-attr 'none'",
   ];
   for (const item of required) {
